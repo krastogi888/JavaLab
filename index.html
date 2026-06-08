@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Learn.java</title>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0A192F; /* Deep Navy */
+            color: #8892B0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            background-color: rgba(10, 25, 47, 0.95);
+            padding: 15px 30px;
+            box-sizing: border-box;
+            border-bottom: 2px solid #00F0FF; /* Crisp Cyan */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .home-link {
+            color: #CCD6F6;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .home-link:hover {
+            color: #00F0FF;
+        }
+
+        .brand-name {
+            color: #00F0FF;
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Hero view wrapper panel */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            box-sizing: border-box;
+            padding-top: 80px;
+        }
+
+        .hero-section h1 {
+            color: #CCD6F6;
+            font-size: 3.5rem;
+            margin: 0 0 10px 0;
+        }
+
+        .hero-section h1 span {
+            color: #00F0FF;
+        }
+
+        .hero-section p {
+            max-width: 600px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        .scroll-indicator {
+            color: #00F0FF;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 40px;
+            text-decoration: none;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+            60% { transform: translateY(-4px); }
+        }
+
+        /* Scrollable content container rows */
+        .content-scroll-container {
+            background-color: #112240;
+            padding: 80px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-top: 1px solid #233554;
+        }
+
+        .features-grid {
+            max-width: 1100px;
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .feature-card {
+            background-color: #172A45;
+            border: 1px solid #233554;
+            border-radius: 8px;
+            padding: 40px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            box-sizing: border-box;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .feature-card:hover {
+            border-color: #00F0FF;
+            transform: translateY(-5px);
+        }
+
+        .feature-card h2 {
+            color: #CCD6F6;
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+
+        .feature-card p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            background-color: transparent;
+            color: #00F0FF;
+            border: 2px solid #00F0FF;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1rem;
+            text-decoration: none;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            align-self: flex-start;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(0, 240, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="home-link">Home</a>
+        <div class="brand-name">Learn.java</div>
+    </header>
+
+    <div class="hero-section">
+        <h1>Welcome to <span>Learn.java</span></h1>
+        <p>An interactive, class-paced computer science sandbox platform designed to help you study theory frameworks and verify syntax files cleanly.</p>
+        <a href="#explore" class="scroll-indicator">Explore Core Modules ↓</a>
+    </div>
+
+    <div class="content-scroll-container" id="explore">
+        <div class="features-grid">
+            
+            <div class="feature-card">
+                <div>
+                    <h2>Study Concepts</h2>
+                    <p>Dive deep into core object-oriented structures, compilation workflows, variable types, and logic blocks with step-by-step reading modules.</p>
+                </div>
+                <a href="concept.html" class="nav-btn">Open Documentation Hub</a>
+            </div>
+
+            <div class="feature-card">
+                <div>
+                    <h2>Practice Labs</h2>
+                    <p>Challenge yourself with dynamic multi-choice questions, interactive text fills, and an active sandbox compiler terminal console to check print errors.</p>
+                </div>
+                <a href="practice.html" class="nav-btn">Start Test Challenges</a>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Tests | Learn.java</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0A192F; /* Deep Navy */
+            color: #8892B0;
+            overflow: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(10, 25, 47, 0.95);
+            padding: 15px 30px;
+            box-sizing: border-box;
+            border-bottom: 2px solid #00F0FF; /* Crisp Cyan */
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .home-link {
+            color: #CCD6F6;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .home-link:hover {
+            color: #00F0FF;
+        }
+
+        .brand-name {
+            color: #00F0FF;
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .workspace {
+            display: flex;
+            margin-top: 54px;
+            height: calc(100vh - 54px);
+        }
+
+        /* Fixed Primary Sidebar */
+        .sidebar {
+            width: 320px;
+            min-width: 320px;
+            background-color: #112240;
+            border-right: 1px solid #233554;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        /* Secondary Pop-up Sidebar */
+        .sub-sidebar {
+            width: 260px;
+            min-width: 260px;
+            background-color: #172A45;
+            border-right: 1px solid #233554;
+            display: none;
+            flex-direction: column;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            gap: 10px;
+            overflow-y: auto;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { width: 0; opacity: 0; }
+            to { width: 260px; opacity: 1; }
+        }
+
+        .menu-item {
+            background-color: #172A45;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #233554;
+            text-decoration: none;
+            color: #CCD6F6;
+            font-weight: bold;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .sidebar .menu-item:hover {
+            border-color: #00F0FF;
+            color: #00F0FF;
+            transform: translateX(3px);
+        }
+
+        .sub-sidebar .menu-item {
+            background-color: #112240;
+            font-size: 0.9rem;
+        }
+        
+        .sub-sidebar .menu-item:hover {
+            border-color: #00F0FF;
+            color: #00F0FF;
+        }
+
+        .back-btn {
+            border-color: #f87171 !important;
+            color: #f87171 !important;
+        }
+        .back-btn:hover {
+            background-color: rgba(248, 113, 113, 0.1);
+        }
+
+        /* Locked Layout style - Diagonal from exact bottom-left to exact top-right */
+        .menu-item.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: linear-gradient(to top right, transparent calc(50% - 1px), #495670 calc(50% - 1px), #495670 calc(50% + 1px), transparent calc(50% + 1px));
+        }
+
+        .menu-item.locked:hover {
+            border-color: #233554;
+            color: #CCD6F6;
+            transform: none;
+        }
+
+        /* Center Display Window */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .main-content.expanded-layout {
+            justify-content: flex-start;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .main-content h1 {
+            color: #CCD6F6;
+            margin-top: 0;
+            font-size: 2.2rem;
+            width: 100%;
+        }
+
+        .main-content p {
+            max-width: 700px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #8892B0;
+        }
+
+        /* Screen-filling Content Wrapper */
+        .challenge-container {
+            background-color: #112240;
+            border: 2px solid #233554;
+            border-radius: 8px;
+            padding: 35px;
+            width: calc(100% - 10px);
+            max-width: 1200px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px -15px rgba(2,12,27,0.5);
+            margin-top: 15px;
+            animation: fadeIn 0.3s ease;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-container.success-highlight {
+            border-color: #4ade80 !important;
+            box-shadow: 0 0 25px rgba(74, 222, 128, 0.25);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .challenge-title {
+            color: #00F0FF;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .option-btn {
+            background-color: #172A45;
+            color: #8892B0;
+            border: 1px solid #233554;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            border-color: #00F0FF;
+            color: white;
+            background-color: #1a3152;
+        }
+
+        .option-btn.selected-state {
+            border-color: #00F0FF !important;
+            background-color: #1e3656;
+            color: #CCD6F6;
+        }
+
+        .input-field {
+            background-color: #0A192F;
+            border: 1px solid #233554;
+            color: white;
+            padding: 14px;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1.05rem;
+            font-family: monospace;
+            margin-bottom: 15px;
+        }
+
+        .input-field:focus {
+            border-color: #00F0FF;
+            outline: none;
+        }
+
+        /* IDE Splitscreen Layout */
+        .ide-wrapper {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .ide-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .scrollable-prompt {
+            background-color: #172A45;
+            border-left: 4px solid #00F0FF;
+            padding: 15px;
+            border-radius: 4px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #CCD6F6;
+        }
+
+        .code-editor {
+            background-color: #020c1b;
+            border: 1px solid #233554;
+            color: #4ade80;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.05rem;
+            padding: 15px;
+            border-radius: 4px;
+            height: 200px;
+            resize: none;
+            width: 100%;
+            box-sizing: border-box;
+            line-height: 1.5;
+        }
+
+        .code-editor:focus {
+            outline: none;
+            border-color: #00F0FF;
+        }
+
+        .ide-right {
+            width: 40%;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .console-box {
+            background-color: #020c1b;
+            border: 1px solid #233554;
+            border-radius: 4px;
+            flex-grow: 1;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: #a1a1aa;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .console-header {
+            color: #64748b;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* UI Control Buttons */
+        .action-btn {
+            background-color: transparent;
+            color: #00F0FF;
+            border: 2px solid #00F0FF;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(0, 240, 255, 0.1);
+        }
+
+        .action-btn:disabled {
+            border-color: #233554;
+            color: #495670;
+            cursor: not-allowed;
+            background-color: transparent;
+        }
+
+        .submit-trigger-btn {
+            margin-top: 15px;
+            align-self: flex-start;
+        }
+
+        .next-btn {
+            background-color: #00F0FF;
+            color: #0A192F;
+            border: none;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .next-btn:hover {
+            background-color: #33f3ff;
+            color: #0A192F;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+        .explanation-text {
+            display: block;
+            font-size: 0.95rem;
+            color: #8892B0;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+        .correct { color: #4ade80; font-weight: bold; }
+        .wrong { color: #f87171; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="home-link" onclick="resetPage();">Home</a>
+        <div class="brand-name">Learn.java</div>
+    </header>
+
+    <div class="workspace">
+        <div class="sidebar">
+            <div class="menu-item" onclick="openSubMenu()"><span>1. Intro to Java Basics</span><span>&rarr;</span></div>
+            <div class="menu-item locked"><span>2. Variables & Data Types 🔒</span></div>
+            <div class="menu-item locked"><span>3. Conditionals (If/Else) 🔒</span></div>
+            <div class="menu-item locked"><span>4. While Loops 🔒</span></div>
+            <div class="menu-item locked"><span>5. For Loops 🔒</span></div>
+            <div class="menu-item locked"><span>6. Nested Loops 🔒</span></div>
+            <div class="menu-item locked"><span>7. Creating Methods 🔒</span></div>
+            <div class="menu-item locked"><span>8. Working with Arrays 🔒</span></div>
+            <div class="menu-item locked"><span>9. Two-Dimensional Arrays 🔒</span></div>
+            <div class="menu-item locked"><span>10. Intro to OOP 🔒</span></div>
+        </div>
+
+        <div class="sub-sidebar" id="sub-sidebar">
+            <div class="menu-item back-btn" onclick="closeSubMenu()"><span>&larr; Go Back</span></div>
+            <div class="menu-item" onclick="loadMultipleChoice()"><span>Multiple Choice</span><span>&rarr;</span></div>
+            <div class="menu-item" onclick="loadFillInBlank()"><span>Fill in the Blank</span><span>&rarr;</span></div>
+            <div class="menu-item" onclick="loadCodeExercise()"><span>Code</span><span>&rarr;</span></div>
+        </div>
+
+        <div class="main-content" id="display-window">
+            <h1>Online Practice Tests</h1>
+            <p>Welcome to the testing sandbox. These modules are configured to match our exact class pacing to keep you on track and well prepared without skipping ahead. Use these interactive quizzes to study, practice logic, and write error-free code before your upcoming unit exams.</p>
+        </div>
+    </div>
+
+    <script>
+        const subSidebar = document.getElementById('sub-sidebar');
+        const displayWindow = document.getElementById('display-window');
+
+        let activeSelectionElement = null;
+        let activeSelectionValue = null;
+
+        function openSubMenu() { subSidebar.style.display = 'flex'; }
+        function closeSubMenu() { subSidebar.style.display = 'none'; resetPage(); }
+
+        function resetPage() {
+            displayWindow.classList.remove('expanded-layout');
+            displayWindow.innerHTML = `
+                <h1>Online Practice Tests</h1>
+                <p>Welcome to the testing sandbox. These modules are configured to match our exact class pacing to keep you on track and well prepared without skipping ahead. Use these interactive quizzes to study, practice logic, and write error-free code before your upcoming unit exams.</p>
+            `;
+        }
+
+        // Branch 1: Multiple Choice
+        function loadMultipleChoice() {
+            activeSelectionElement = null;
+            activeSelectionValue = null;
+            
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = `
+                <h1>Intro to Java: Multiple Choice</h1>
+                <div class="challenge-container">
+                    <div class="challenge-title">Question 1</div>
+                    <p style="color:#CCD6F6; font-size:1.15rem; margin-top:0;">Which statement accurately describes the foundational structural nature of Java?</p>
+                    
+                    <div class="options-list">
+                        <button class="option-btn" onclick="stageOptionSelection(this, true)">A) Every functional line of executable code must reside inside a class wrapper structure.</button>
+                        <button class="option-btn" onclick="stageOptionSelection(this, false)">B) Java is a loose, interpreted scripting language that requires no strict system compilation files.</button>
+                        <button class="option-btn" onclick="stageOptionSelection(this, false)">C) Execution instructions run directly from top to bottom without needing an explicit driver header main configuration.</button>
+                        <button class="option-btn" onclick="stageOptionSelection(this, false)">D) Statements can be saved anywhere on a machine file and ran natively by operating engines without compiling.</button>
+                    </div>
+                    
+                    <button class="action-btn submit-trigger-btn" id="submit-choice-btn" onclick="commitMultipleChoiceAnswer()" disabled>Submit Answer</button>
+                    
+                    <div class="feedback" id="challenge-feedback"></div>
+                    <button class="action-btn next-btn" id="next-q-btn" onclick="loadBlankNextQuestion('Multiple Choice')">Next Question &rarr;</button>
+                </div>
+            `;
+        }
+
+        function stageOptionSelection(element, isCorrect) {
+            const allOptions = document.querySelectorAll('.option-btn');
+            allOptions.forEach(opt => opt.classList.remove('selected-state'));
+            
+            element.classList.add('selected-state');
+            activeSelectionElement = element;
+            activeSelectionValue = isCorrect;
+            
+            document.getElementById('submit-choice-btn').disabled = false;
+        }
+
+        function commitMultipleChoiceAnswer() {
+            if (!activeSelectionElement) return;
+            
+            const fb = document.getElementById('challenge-feedback');
+            const allOptions = document.querySelectorAll('.option-btn');
+            
+            allOptions.forEach(opt => opt.disabled = true);
+            document.getElementById('submit-choice-btn').style.display = "none";
+            
+            if (activeSelectionValue === true) {
+                activeSelectionElement.style.borderColor = "#4ade80";
+                fb.innerHTML = `<span class="correct">✓ Correct!</span> <span class="explanation-text">Java is fully object-oriented; all statement logs must reside inside a class wrapper structure to compile cleanly.</span>`;
+            } else {
+                activeSelectionElement.style.borderColor = "#f87171";
+                fb.innerHTML = `<span class="wrong">✗ Incorrect.</span> <span class="explanation-text"><strong>Correct answer: A.</strong> Java code cannot run freely in text blocks. It demands explicit object class packaging footprints and runtime anchor configurations.</span>`;
+            }
+            document.getElementById('next-q-btn').style.display = "inline-block";
+        }
+
+        // Branch 2: Fill in the Blank
+        function loadFillInBlank() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = `
+                <h1>Intro to Java: Fill in the Blank</h1>
+                <div class="challenge-container">
+                    <div class="challenge-title">Syntax Completion</div>
+                    <p style="color:#CCD6F6; font-size:1.15rem; margin-top:0;">Fill in the exact case-sensitive method name call needed to display output text and automatically append a new console line break:</p>
+                    <div class="input-field" style="background:#0A192F; padding:15px; border:1px solid #233554; color:#ccd6f6; margin-bottom:15px; border-radius:4px;">
+                        System.out.<span style="color:#00F0FF; font-weight:bold;">[blank]</span>("Hello Hub");
+                    </div>
+                    <input type="text" class="input-field" id="blank-input" placeholder="Type case-sensitive answer here..." autocomplete="off">
+                    <button class="action-btn" id="submit-blank-btn" onclick="evalBlank()">Submit Answer</button>
+                    <div class="feedback" id="challenge-feedback"></div>
+                    <button class="action-btn next-btn" id="next-q-btn" onclick="loadBlankNextQuestion('Fill in the Blank')">Next Question &rarr;</button>
+                </div>
+            `;
+        }
+
+        function evalBlank() {
+            const ans = document.getElementById('blank-input').value.trim();
+            const fb = document.getElementById('challenge-feedback');
+            document.getElementById('submit-blank-btn').style.display = "none";
+            
+            if(ans === "println") {
+                fb.innerHTML = `<span class="correct">✓ Correct!</span> <span class="explanation-text">The method 'println' correctly outputs parameters and drops the terminal pointer row down to the next row index space line.</span>`;
+            } else if(ans.toLowerCase() === "println") {
+                fb.innerHTML = `<span class="wrong">✗ Incorrect (Case Sensitivity Error).</span> <span class="explanation-text"><strong>Correct answer: println.</strong> You typed uppercase letters! Compilers treat 'Println' and 'println' as completely unique symbols. Java keywords use strict lowercase layouts.</span>`;
+            } else {
+                fb.innerHTML = `<span class="wrong">✗ Incorrect.</span> <span class="explanation-text"><strong>Correct answer: println.</strong> The standard call print structure blueprint definition format is System.out.println();</span>`;
+            }
+            document.getElementById('next-q-btn').style.display = "inline-block";
+        }
+
+        // Branch 3: Code Compilation Workspace
+        function loadCodeExercise() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = `
+                <h1>Intro to Java: Coding File Workspace</h1>
+                <div class="challenge-container" id="ide-container">
+                    <div class="challenge-title">Interactive Compilation Challenge</div>
+                    <div class="ide-wrapper">
+                        <div class="ide-left">
+                            <div class="scrollable-prompt">
+                                <strong>Task Instructions:</strong><br>
+                                Write a single, complete statement that outputs the text <code>Java Hub</code> to the terminal display console. Make sure to use exact uppercase syntax spacing, parameters, and terminating markers!
+                            </div>
+                            <textarea class="code-editor" id="editor-textarea" placeholder="// Write empty code file statement here..." autocomplete="off" spellcheck="false"></textarea>
+                            <div>
+                                <button class="action-btn" onclick="compileCodeSandbox()">Run Code</button>
+                            </div>
+                        </div>
+                        <div class="ide-right">
+                            <div class="console-box" id="console-output">
+                                <div class="console-header">System Output Console Simulation</div>[Awaiting code execution file run...]
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feedback" id="challenge-feedback"></div>
+                    <button class="action-btn next-btn" id="next-q-btn" onclick="loadBlankNextQuestion('Code Sandbox')">Next Question &rarr;</button>
+                </div>
+            `;
+        }
+
+        function compileCodeSandbox() {
+            const codeInput = document.getElementById('editor-textarea').value.trim();
+            const consoleOutput = document.getElementById('console-output');
+            const ideContainer = document.getElementById('ide-container');
+            const fb = document.getElementById('challenge-feedback');
+            
+            consoleOutput.innerHTML = `<div class="console-header">System Output Console Simulation</div>Compiling and running workspace binary...`;
+            
+            setTimeout(() => {
+                if (codeInput === 'System.out.print("Java Hub");' || codeInput === 'System.out.println("Java Hub");') {
+                    consoleOutput.style.color = "#4ade80";
+                    consoleOutput.innerHTML = `<div class="console-header">System Output Console Simulation</div>Java Hub\n\nProcess finished with exit code 0`;
+                    ideContainer.classList.add('success-highlight');
+                    fb.innerHTML = `<span class="correct">✓ Code Verification Complete!</span> <span class="explanation-text">Your structural input parameters handle exact capitalization values and semicolon line termination markers cleanly.</span>`;
+                } else {
+                    consoleOutput.style.color = "#f87171";
+                    consoleOutput.innerHTML = `<div class="console-header">System Output Console Simulation</div>ERROR: Main compilation syntax logic error thrown.\nProcess terminated with exit code 1`;
+                    ideContainer.classList.remove('success-highlight');
+                    fb.innerHTML = `<span class="wrong">✗ Compilation Output Test Failed.</span> <span class="explanation-text"><strong>Expected Answer:</strong> <code>System.out.println("Java Hub");</code><br>Check for missing structural capitalization flags (S in System), unmatched quotes, or missing closing semicolon characters!</span>`;
+                }
+                document.getElementById('next-q-btn').style.display = "inline-block";
+            }, 600);
+        }
+
+        function loadBlankNextQuestion(moduleType) {
+            displayWindow.innerHTML = `
+                <h1>Intro to Java: ${moduleType}</h1>
+                <div class="challenge-container">
+                    <div class="challenge-title">Question 2</div>
+                    <p style="color:#64748b; font-size:1.2rem; font-style:italic; margin: 40px 0; text-align:center;">
+                        [Question 2 slot is currently blank. Ready for additional curriculum content items as the semester progresses.]
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Return to Module Hub</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

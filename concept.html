@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Concepts | Learn.java</title>
+    <title>Concepts | JavaLab</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -110,6 +110,17 @@
             transform: translateX(3px);
         }
 
+        /* Active unit indicator — highlights the unit you're currently on */
+        .sidebar .menu-item.active-unit {
+            border-color: #00F0FF;
+            color: #00F0FF;
+            background-color: #15375a;
+            box-shadow: inset 3px 0 0 #00F0FF;
+        }
+        .sidebar .menu-item.active-unit:hover {
+            transform: none;
+        }
+
         .sub-sidebar .menu-item {
             background-color: #112240;
             font-size: 0.9rem;
@@ -154,10 +165,12 @@
             box-sizing: border-box;
         }
 
+        /* ====== SUBSTACK-STYLE READING LAYOUT ====== */
         .main-content.expanded-layout {
             justify-content: flex-start;
-            align-items: flex-start;
+            align-items: center;        /* center the article column */
             text-align: left;
+            padding: 48px 40px 96px;
         }
 
         .main-content h1 {
@@ -167,6 +180,18 @@
             width: 100%;
         }
 
+        /* The reading column — narrow, centered, generous whitespace */
+        .main-content.expanded-layout h1 {
+            width: 100%;
+            max-width: 700px;
+            font-size: 2.1rem;
+            font-weight: 700;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+            color: #e6edf3;
+            margin: 0 auto 6px;
+        }
+
         .main-content p {
             max-width: 700px;
             font-size: 1.1rem;
@@ -174,18 +199,24 @@
             color: #8892B0;
         }
 
-        /* Max Space filling Content Container Layout */
+        /* Each section flows like an article — no boxes, just subtle dividers */
         .concept-container {
-            background-color: #112240;
-            border: 2px solid #233554;
-            border-radius: 8px;
-            padding: 35px;
-            width: calc(100% - 10px);
-            max-width: 1200px;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 30px 0 0;
+            margin: 30px auto 0;
+            width: 100%;
+            max-width: 700px;
             box-sizing: border-box;
-            box-shadow: 0 10px 30px -15px rgba(2,12,27,0.5);
-            margin-top: 15px;
+            border-top: 1px solid #1d2c46;
             animation: fadeIn 0.3s ease;
+        }
+        .concept-container:first-of-type {
+            border-top: none;
+            padding-top: 14px;
+            margin-top: 14px;
         }
 
         @keyframes fadeIn {
@@ -194,25 +225,48 @@
         }
 
         .concept-section-title {
-            color: #00F0FF;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #d7e0f0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+            text-transform: none;
+            letter-spacing: -0.01em;
+            line-height: 1.3;
         }
 
-        .code-block {
-            background-color: #020c1b;
-            border: 1px solid #233554;
-            padding: 20px;
+        /* Body text — comfortable, muted, readable */
+        .expanded-layout p { max-width: 700px; margin: 0 0 1.15em; }
+        .expanded-layout .lead  { color: #c9d4e8; font-size: 1.08rem; line-height: 1.85; }
+        .expanded-layout .muted { color: #97a3ba; font-size: 1.08rem; line-height: 1.85; }
+        .expanded-layout .warn  { color: #d98c8c; font-size: 1.08rem; line-height: 1.85; }
+        .expanded-layout .accent { color: #8fb4d6; font-weight: 600; }
+        .expanded-layout strong { color: #d3dcec; font-weight: 600; }
+        .expanded-layout em { color: #aab6cd; }
+        .expanded-layout code {
+            background: #16243c;
+            color: #b7c6e0;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
             font-family: 'Courier New', Courier, monospace;
-            color: #4ade80;
+        }
+        .expanded-layout ul, .expanded-layout ol { max-width: 700px; color: #aab6cd; line-height: 1.8; }
+
+        .code-block {
+            background-color: #0e1828;
+            border: 1px solid #1d2c46;
+            border-left: 3px solid #2c3e5e;
+            padding: 16px 18px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #aebfdb;
             border-radius: 6px;
-            margin: 20px 0;
+            margin: 18px 0;
+            max-width: 700px;
+            box-sizing: border-box;
             overflow-x: auto;
             white-space: pre;
-            line-height: 1.5;
+            line-height: 1.55;
+            font-size: 0.95rem;
         }
 
         .action-btn {
@@ -237,33 +291,28 @@
 
     <header>
         <a href="index.html" class="home-link" onclick="resetPage();">Home</a>
-        <div class="brand-name">Learn.java</div>
+        <div class="brand-name">JavaLab</div>
     </header>
 
     <div class="workspace">
         <div class="sidebar">
-            <div class="menu-item" onclick="openSubMenu()"><span>1. Intro to Java Basics</span><span>&rarr;</span></div>
-            <div class="menu-item locked"><span>2. Variables & Data Types 🔒</span></div>
-            <div class="menu-item locked"><span>3. Conditionals (If/Else) 🔒</span></div>
-            <div class="menu-item locked"><span>4. While Loops 🔒</span></div>
-            <div class="menu-item locked"><span>5. For Loops 🔒</span></div>
-            <div class="menu-item locked"><span>6. Nested Loops 🔒</span></div>
-            <div class="menu-item locked"><span>7. Creating Methods 🔒</span></div>
-            <div class="menu-item locked"><span>8. Working with Arrays 🔒</span></div>
-            <div class="menu-item locked"><span>9. Two-Dimensional Arrays 🔒</span></div>
-            <div class="menu-item locked"><span>10. Intro to OOP 🔒</span></div>
+            <div class="menu-item" onclick="openSubMenu(1)"><span>Unit 1: Computer Fundamentals</span></div>
+            <div class="menu-item" onclick="openSubMenu(2)"><span>Unit 2: Data Types &amp; Printing</span></div>
+            <div class="menu-item" onclick="openSubMenu(3)"><span>Unit 3: IO &amp; Expressions</span></div>
+            <div class="menu-item" onclick="openSubMenu(4)"><span>Unit 4: Methods &amp; Classes</span></div>
+            <div class="menu-item" onclick="openSubMenu(5)"><span>Unit 5: OOP Inheritance</span></div>
+            <div class="menu-item locked"><span>6. Loops &amp; Iteration</span></div>
+            <div class="menu-item locked"><span>7. Single Arrays</span></div>
+            <div class="menu-item locked"><span>8. 2D Arrays</span></div>
+            <div class="menu-item locked"><span>9. ArrayLists</span></div>
+            <div class="menu-item locked"><span>10. Recursion &amp; Sorting</span></div>
         </div>
 
-        <div class="sub-sidebar" id="sub-sidebar">
-            <div class="menu-item back-btn" onclick="closeSubMenu()"><span>&larr; Go Back</span></div>
-            <div class="menu-item" onclick="loadCoreReading()"><span>Core Reading</span><span>&rarr;</span></div>
-            <div class="menu-item" onclick="loadSyntaxGuide()"><span>Syntax Guide</span><span>&rarr;</span></div>
-            <div class="menu-item" onclick="loadRealWorldContext()"><span>Real World Application</span><span>&rarr;</span></div>
-        </div>
+        <div class="sub-sidebar" id="sub-sidebar"></div>
 
         <div class="main-content" id="display-window">
-            <h1>Java Concept Modules</h1>
-            <p>Welcome to the core documentation hub. Select an open study track unit from the primary curriculum sidebar dashboard to explore structural design logs, syntax theory breakdowns, and object paradigms.</p>
+            <h1>Concept Labs</h1>
+            <p>Select a unit from the sidebar to explore concept breakdowns for each topic. Read through each module before taking the practice test — understanding the material here will make the questions much easier.</p>
         </div>
     </div>
 
@@ -271,87 +320,1655 @@
         const subSidebar = document.getElementById('sub-sidebar');
         const displayWindow = document.getElementById('display-window');
 
-        function openSubMenu() { subSidebar.style.display = 'flex'; }
+        function openSubMenu(unit) {
+            // Highlight the active unit in the sidebar
+            const unitItems = document.querySelectorAll('.sidebar .menu-item');
+            unitItems.forEach(m => m.classList.remove('active-unit'));
+            if (unitItems[unit - 1]) unitItems[unit - 1].classList.add('active-unit');
+            let html = '<div class="menu-item back-btn" onclick="closeSubMenu()"><span>&larr; Go Back</span></div>';
+            if (unit === 1) {
+                html += '<div class="menu-item" onclick="loadCalculatingGrades()"><span>Calculating Grades</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadBinaryConversion()"><span>Binary Conversion</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadMemoryStorage()"><span>Memory &amp; Storage</span><span>&rarr;</span></div>';
+            } else if (unit === 2) {
+                html += '<div class="menu-item" onclick="loadDataTypes()"><span>Data Types &amp; Variables</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadPrintStatements()"><span>Print Statements</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadEscapesFormatting()"><span>Escape Sequences &amp; Formatting</span><span>&rarr;</span></div>';
+            } else if (unit === 3) {
+                html += '<div class="menu-item" onclick="loadExpressions()"><span>Expressions &amp; Order of Operations</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadCastingASCII()"><span>Type Casting &amp; ASCII</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadScannerIO()"><span>Scanner &amp; Program Structure</span><span>&rarr;</span></div>';
+            } else if (unit === 4) {
+                html += '<div class="menu-item" onclick="loadMethodAnatomy()"><span>Anatomy of a Method</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadClassesObjects()"><span>Classes, Objects &amp; Fields</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadConstructors()"><span>Constructors</span><span>&rarr;</span></div>';
+            } else if (unit === 5) {
+                html += '<div class="menu-item" onclick="loadInheritanceBasics()"><span>Inheritance Basics</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadSuperKeyword()"><span>Super &amp; Constructors</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="loadOverriding()"><span>Overriding Methods</span><span>&rarr;</span></div>';
+            }
+            subSidebar.innerHTML = html;
+            subSidebar.style.display = 'flex';
+        }
+
         function closeSubMenu() { subSidebar.style.display = 'none'; resetPage(); }
 
         function resetPage() {
+            document.querySelectorAll('.sidebar .menu-item').forEach(m => m.classList.remove('active-unit'));
             displayWindow.classList.remove('expanded-layout');
             displayWindow.innerHTML = `
-                <h1>Java Concept Modules</h1>
-                <p>Welcome to the core documentation hub. Select an open study track unit from the primary curriculum sidebar dashboard to explore structural design logs, syntax theory breakdowns, and object paradigms.</p>
+                <h1>Concept Labs</h1>
+                <p>Select a unit from the sidebar to explore concept breakdowns for each topic. Read through each module before taking the practice test — understanding the material here will make the questions much easier.</p>
             `;
         }
 
-        // Branch 1: Core Reading Layout
-        function loadCoreReading() {
+        // ====== MODULE 1: CALCULATING GRADES ======
+        function loadCalculatingGrades() {
             displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>Intro to Java: Core Reading</h1>
+                <h1>Computer Fundamentals: Calculating Grades</h1>
+
                 <div class="concept-container">
-                    <div class="concept-section-title">Object Orientation Philosophy</div>
-                    <p style="color:#CCD6F6; font-size:1.1rem; line-height:1.7; margin-top:0;">
-                        Java is an strictly structured, object-oriented, class-based computing programming language. It relies heavily on the design rule of <strong>Write Once, Run Anywhere (WORA)</strong>. This means compiled bytecode can execute natively across all major platforms operating with an installation footprint of the Java Virtual Machine (JVM).
+                    <div class="concept-section-title">What Is a Weighted Grade System?</div>
+                    <p class="lead">
+                        In most classes, not all assignments carry equal weight. A <strong>weighted grading system</strong> assigns a percentage to each category of work, meaning some categories count more toward your final grade than others. Your final grade is the sum of each category's average multiplied by its weight.
                     </p>
-                    <p style="color:#8892B0; font-size:1.05rem; line-height:1.7;">
-                        Unlike loose execution environments where single code expressions flow uncontained in empty document spaces, Java forces strict encapsulation rules. Everything belongs cleanly safely inside a Class blueprint module frame context wrapper.
+                    <p class="muted">
+                        In this computer science class, the weights are:
                     </p>
-                    <button class="action-btn" onclick="loadNextBlankConcept('Core Reading')">Next Concept &rarr;</button>
+                    <div class="code-block">Homework       →  30%
+Exams          →  30%
+Participation  →  20%
+Quizzes        →   5%
+Final Exam     →  15%
+               ─────────
+Total          → 100%</div>
+                    <p class="muted">
+                        Notice that all weights add up to exactly 100. This is intentional — it means we can treat each weight as a whole-number multiplier and work with totals out of 10,000 (or 9,000 if we target 90%).
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Calculating Your Current Overall Grade</div>
+                    <p class="lead">
+                        To find your overall grade, multiply each category's score by its weight, sum the products, then divide by 100 (the sum of all weights).
+                    </p>
+                    <p class="muted">
+                        <strong class="accent">Formula:</strong> Overall% = [ (HW% &times; 30) + (Exam% &times; 30) + (Part% &times; 20) + (Quiz% &times; 5) + (Final% &times; 15) ] &divide; 100
+                    </p>
+                    <p class="muted">
+                        <strong>Example:</strong> Suppose a student earned these scores:
+                    </p>
+                    <div class="code-block">Homework:       92%
+Exams:          88%
+Participation:  95%
+Quizzes:        90%
+Final Exam:     84%</div>
+                    <p class="lead">
+                        Step 1 — Multiply each score by its weight:
+                    </p>
+                    <div class="code-block">92 &times; 30 = 2760
+88 &times; 30 = 2640
+95 &times; 20 = 1900
+90 &times;  5 =  450
+84 &times; 15 = 1260</div>
+                    <p class="lead">
+                        Step 2 — Add the products:
+                    </p>
+                    <div class="code-block">2760 + 2640 + 1900 + 450 + 1260 = 9010</div>
+                    <p class="lead">
+                        Step 3 — Divide by 100:
+                    </p>
+                    <div class="code-block">9010 &divide; 100 = 90.10%</div>
+                    <p class="muted">
+                        That student earned a <strong class="accent">90.10% overall</strong> — just above the A- threshold.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Solving for a Needed Score</div>
+                    <p class="lead">
+                        A common exam problem: <em>"What is the minimum Final Exam score needed to achieve a 90% overall?"</em>
+                        The trick is to set up the equation with a target total of <strong>9000</strong> (because 90 &times; 100 = 9000), then solve for the unknown.
+                    </p>
+                    <p class="muted">
+                        <strong>Setup:</strong> Replace the unknown category with a variable (x):
+                    </p>
+                    <div class="code-block">30(HW) + 30(Exam) + 20(Part) + 5(Quiz) + 15(x) = 9000</div>
+                    <p class="lead">
+                        <strong>Example:</strong> Using the same grades above (excluding the final):
+                    </p>
+                    <div class="code-block">30(92) + 30(88) + 20(95) + 5(90) + 15(x) = 9000
+2760   + 2640  + 1900  +  450  + 15x   = 9000
+                          7750  + 15x   = 9000
+                                  15x   = 1250
+                                    x   = 83.33...</div>
+                    <p class="muted">
+                        Since exam scores must be whole numbers, and 83 would leave you at 89.95% (just under 90), you must <strong class="accent">round UP</strong> to <strong>84</strong>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Rounding Rule — Always Round Up</div>
+                    <p class="lead">
+                        When the algebra gives you a decimal (like 83.33), you always round up to the next integer when looking for a <em>minimum</em> score. Here is why:
+                    </p>
+                    <div class="code-block">If x = 83:   (7750 + 83&times;15) &divide; 100 = 8995 &divide; 100 = 89.95%  ✗ (under 90)
+If x = 84:   (7750 + 84&times;15) &divide; 100 = 9010 &divide; 100 = 90.10%  ✓ (at or above 90)</div>
+                    <p class="muted">
+                        Never round down for minimum-score problems. Even one point below means you miss the target grade.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Common Mistakes to Avoid</div>
+                    <p class="muted">
+                        <strong style="color:#f87171;">1. Using 100 as the target instead of 9000.</strong><br>
+                        The equation works in "weight-scaled" points. Multiply the desired percentage (90) by the sum of weights (100) to get the target: 90 &times; 100 = 9000.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">2. Rounding down on the final answer.</strong><br>
+                        Always round the needed score <em>up</em> to the nearest integer.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">3. Forgetting the 5% quiz weight.</strong><br>
+                        All five categories must be included. Missing even the small 5% quiz term throws off your equation.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">4. Misidentifying which category is unknown.</strong><br>
+                        Read the problem carefully — the unknown (x) is always the category the question asks about.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
                 </div>
             `;
         }
 
-        // Branch 2: Syntax Guide Layout
-        function loadSyntaxGuide() {
+        // ====== MODULE 2: BINARY CONVERSION ======
+        function loadBinaryConversion() {
             displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>Intro to Java: Syntax Guide</h1>
+                <h1>Computer Fundamentals: Binary Conversion</h1>
+
                 <div class="concept-container">
-                    <div class="concept-section-title">Standard Console Print Structure</div>
-                    <p style="color:#CCD6F6; font-size:1.1rem; margin-top:0;">
-                        To display diagnostic data strings on user output interface screens, use the standard system print functions:
+                    <div class="concept-section-title">Three Number Systems</div>
+                    <p class="lead">
+                        Humans naturally use <strong>decimal (base-10)</strong> — ten digits: 0 through 9. Computers, however, only understand two states: on and off, represented as <strong>binary (base-2)</strong> with just two digits: 0 and 1. A third system, <strong>hexadecimal (base-16)</strong>, serves as a compact shorthand for binary that programmers use constantly.
                     </p>
-                    <div class="code-block">public class Main {
-    public static void main(String[] args) {
-        System.out.println("This appends a line break automatically!");
-        System.out.print("This prints text without row breaks.");
+                    <div class="code-block">Decimal     (base-10):  digits 0–9
+Binary      (base-2) :  digits 0, 1
+Hexadecimal (base-16):  digits 0–9 and A–F</div>
+                    <p class="muted">
+                        In hex, the letters A through F represent values 10 through 15. This is necessary because a single hex digit can hold values 0–15 (16 total), which requires more symbols than the standard digits 0–9 can provide.
+                    </p>
+                    <div class="code-block">A = 10    B = 11    C = 12
+D = 13    E = 14    F = 15</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Binary Place Values</div>
+                    <p class="lead">
+                        Each position in a binary number represents a power of 2. An 8-bit number (one byte) uses these place values from left to right:
+                    </p>
+                    <div class="code-block">Position:   8     7     6     5     4     3     2     1
+Value:    128    64    32    16     8     4     2     1</div>
+                    <p class="muted">
+                        To read a binary number, find every position with a 1-bit and add those place values together. 0-bits contribute nothing.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Binary &rarr; Decimal</div>
+                    <p class="lead">
+                        Write out the place values under each bit, then add the values for every 1-bit.
+                    </p>
+                    <div class="code-block">Example: 1110 1010
+
+  1    1    1    0    1    0    1    0
+128   64   32   16    8    4    2    1
+
+Include:  128 + 64 + 32 + 8 + 2  =  234</div>
+                    <p class="muted">
+                        <strong>Another example:</strong> 1100 1010<br>
+                        128 + 64 + 8 + 2 = <strong class="accent">202</strong>
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Decimal &rarr; Binary</div>
+                    <p class="lead">
+                        Use the <strong>repeated division by 2</strong> method. Divide, record the remainder, divide again, repeat until the quotient reaches 0. Then read remainders from <em>bottom to top</em>.
+                    </p>
+                    <div class="code-block">Example: Convert 42 to binary
+
+42 &divide; 2 = 21  remainder  0
+21 &divide; 2 = 10  remainder  1
+10 &divide; 2 =  5  remainder  0
+ 5 &divide; 2 =  2  remainder  1
+ 2 &divide; 2 =  1  remainder  0
+ 1 &divide; 2 =  0  remainder  1
+
+Read remainders bottom to top: 1 0 1 0 1 0  =  101010</div>
+                    <p class="muted">
+                        Verify: 32 + 8 + 2 = 42 ✓
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Binary &rarr; Hex Using Nibbles</div>
+                    <p class="lead">
+                        A <strong>nibble</strong> is a group of exactly 4 binary bits. One nibble maps to exactly one hex digit (values 0–15). To convert binary to hex, split the binary number into nibbles (groups of 4, starting from the right), then convert each nibble.
+                    </p>
+                    <div class="code-block">Nibble reference chart:
+0000=0   0001=1   0010=2   0011=3
+0100=4   0101=5   0110=6   0111=7
+1000=8   1001=9   1010=A   1011=B
+1100=C   1101=D   1110=E   1111=F</div>
+                    <p class="muted">
+                        <strong>Example:</strong> Convert 1101 0110 to hex<br>
+                        Left nibble: 1101 = D (8+4+1=13)<br>
+                        Right nibble: 0110 = 6 (4+2=6)<br>
+                        Result: <strong class="accent">D6</strong>
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Hex &rarr; Binary</div>
+                    <p class="lead">
+                        Reverse the process: replace each hex digit with its 4-bit binary equivalent. Always pad to exactly 4 bits per digit (add leading zeros if needed).
+                    </p>
+                    <div class="code-block">Example: Convert 3F to binary
+
+3  =  0011   (0&times;8 + 0&times;4 + 1&times;2 + 1&times;1)
+F  =  1111   (1&times;8 + 1&times;4 + 1&times;2 + 1&times;1 = 15)
+
+Result: 0011 1111</div>
+                    <p class="muted">
+                        Always write all 4 bits for each nibble. Writing "11" for hex 3 instead of "0011" is a common error.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Decimal &rarr; Hex</div>
+                    <p class="lead">
+                        Divide the decimal number by 16. The quotient is the first (left) hex digit; the remainder is the second (right) hex digit. Convert both to hex if &ge; 10.
+                    </p>
+                    <div class="code-block">Example: Convert 200 to hex
+
+200 &divide; 16 = 12  remainder  8
+                12 = C in hex
+                 8 = 8 in hex
+
+Result: C8</div>
+                    <p class="muted">
+                        <strong>Another example:</strong> 202 &divide; 16 = 12 r10 → C(A) = <strong class="accent">CA</strong>
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Hex &rarr; Decimal</div>
+                    <p class="lead">
+                        Multiply the left hex digit by 16 and add the right hex digit (converting A–F to 10–15 as needed).
+                    </p>
+                    <div class="code-block">Example: Convert 3F to decimal
+
+3 &times; 16 = 48
+F = 15
+48 + 15 = 63</div>
+                    <p class="muted">
+                        <strong>Another example:</strong> D6 → 13&times;16 + 6 = 208 + 6 = <strong class="accent">214</strong>
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">ASCII — Characters as Numbers</div>
+                    <p class="lead">
+                        Every character stored on a computer has a numeric code defined by the <strong>ASCII</strong> (American Standard Code for Information Interchange) table. Key values to memorize:
+                    </p>
+                    <div class="code-block">'0' = 48   '1' = 49   '2' = 50   ...   '9' = 57
+'A' = 65   'B' = 66   'C' = 67   ...   'Z' = 90
+'a' = 97   'b' = 98   'c' = 99   ...   'z' = 122</div>
+                    <p class="muted">
+                        Because digit characters are sequential starting at 48, you can always calculate them: <em>'7' = 48 + 7 = 55</em>. The difference between uppercase and lowercase letters is always exactly 32.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== MODULE 3: MEMORY & STORAGE ======
+        function loadMemoryStorage() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Computer Fundamentals: Memory &amp; Storage</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Bits and Bytes — The Foundation</div>
+                    <p class="lead">
+                        The smallest unit of data in a computer is a <strong>bit</strong> (short for binary digit). A bit is always either 0 or 1 — that single on/off state is the atom of all digital information. Eight bits grouped together form one <strong>byte</strong>.
+                    </p>
+                    <div class="code-block">1 byte = 8 bits
+
+Example: the letter 'A' in ASCII (65) stored as one byte:
+  0  1  0  0  0  0  0  1
+128 64 32 16  8  4  2  1  →  64 + 1 = 65</div>
+                    <p class="muted">
+                        Everything — text, images, music, video — is ultimately stored as sequences of bytes. Understanding byte counts helps you predict file sizes and transfer times.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Storage Unit Hierarchy</div>
+                    <p class="lead">
+                        Storage units scale up by a factor of <strong>1,024</strong> at each step (not 1,000, because computers work in powers of 2 — 2<sup>10</sup> = 1,024).
+                    </p>
+                    <div class="code-block">1 Kilobyte (KB)  =  1,024 bytes
+1 Megabyte (MB)  =  1,024 KB   =  1,048,576 bytes
+1 Gigabyte (GB)  =  1,024 MB   =  1,073,741,824 bytes
+1 Terabyte (TB)  =  1,024 GB</div>
+                    <p class="muted">
+                        A common mistake is dividing by 1,000 instead of 1,024. For example: 82,800 KB &divide; 1,000 = 82.8 MB (wrong) vs 82,800 KB &divide; 1,024 &asymp; 80.86 MB (correct).
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Data Transfer Rates</div>
+                    <p class="lead">
+                        Transfer rates describe how fast data moves from one place to another. They are measured in units <em>per second</em>:
+                    </p>
+                    <div class="code-block">KBps  =  Kilobytes per second
+MBps  =  Megabytes per second
+Mbps  =  Megabits per second  (note lowercase b = bits)</div>
+                    <p class="muted">
+                        In this class, problems use <strong>KBps</strong> (Kilobytes per second). A rate of 150 KBps means the connection moves 150 KB of data every single second.
+                    </p>
+                    <p class="muted">
+                        Note: Mbps (bits) vs MBps (bytes) is a common trick — 1 MBps = 8 Mbps. Always check which unit the problem uses.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Calculating File Size from Transfer</div>
+                    <p class="lead">
+                        If you know the transfer rate and the time it took, you can calculate the file size. The key formula is:
+                    </p>
+                    <div class="code-block">File Size (KB) = Transfer Rate (KBps) &times; Time (seconds)</div>
+                    <p class="muted">
+                        <strong style="color:#f87171;">Critical step:</strong> always convert time to seconds before multiplying. If the problem gives minutes, multiply by 60 first.
+                    </p>
+                    <div class="code-block">Example: 150 KBps, 9.2 minutes
+
+Step 1 — Convert to seconds:    9.2 &times; 60 = 552 seconds
+Step 2 — Calculate KB total:  150 &times; 552 = 82,800 KB
+Step 3 — Convert KB to MB:  82,800 &divide; 1,024 &asymp; 80.86 MB</div>
+                    <p class="muted">
+                        <strong>Another example:</strong> 320 KBps, 4 minutes<br>
+                        4 &times; 60 = 240 seconds &nbsp;&rarr;&nbsp; 320 &times; 240 = 76,800 KB &nbsp;&rarr;&nbsp; 76,800 &divide; 1,024 = <strong class="accent">75 MB</strong>
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Storage Scaling Problems</div>
+                    <p class="lead">
+                        Some problems ask you to scale a storage size by a multiplier and then convert units. These follow a simple two-step pattern:
+                    </p>
+                    <div class="code-block">Step 1:  New capacity (GB) = Original (GB) &times; Multiplier
+Step 2:  Convert to target unit (&divide;1,024 per step upward)</div>
+                    <p class="muted">
+                        <strong>Example:</strong> A tablet has 64 GB. A school wants 12&times; that capacity.
+                    </p>
+                    <div class="code-block">Step 1:  64 GB &times; 12 = 768 GB
+Step 2:  768 GB &divide; 1,024 = 0.75 TB</div>
+                    <p class="muted">
+                        <strong>Another example:</strong> 16 GB USB, need 250&times; capacity in TB:<br>
+                        16 &times; 250 = 4,000 GB &nbsp;&rarr;&nbsp; 4,000 &divide; 1,024 &asymp; <strong class="accent">3.91 TB</strong>
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Multi-Step Unit Conversions</div>
+                    <p class="lead">
+                        When converting across multiple unit levels, divide by 1,024 once for <em>each</em> step upward:
+                    </p>
+                    <div class="code-block">KB  &rarr;  MB  :  &divide; 1,024   (one step)
+KB  &rarr;  GB  :  &divide; 1,024 &divide; 1,024   (two steps)
+KB  &rarr;  TB  :  &divide; 1,024 &divide; 1,024 &divide; 1,024   (three steps)
+
+To go downward, multiply instead:
+GB  &rarr;  MB  :  &times; 1,024
+GB  &rarr;  KB  :  &times; 1,024 &times; 1,024</div>
+                    <p class="muted">
+                        A common mistake is jumping from KB to GB in one &divide;1,024 step — you must do it twice.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Special Values — Windows &amp; File Basics</div>
+                    <p class="lead">
+                        A few specific facts that appear frequently on exams:
+                    </p>
+                    <div class="code-block">1 byte          = 8 bits
+Windows newline = CR + LF = 2 bytes   (Carriage Return + Line Feed)
+Unix/Mac newline = LF only = 1 byte</div>
+                    <p class="muted">
+                        On Windows, every time you press Enter in a text file, the system stores <em>two</em> bytes — a carriage return character (ASCII 13) followed by a line feed character (ASCII 10). This is why Windows text files are slightly larger than the equivalent Unix file.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Common Mistakes to Avoid</div>
+                    <p class="muted">
+                        <strong style="color:#f87171;">1. Not converting time to seconds.</strong><br>
+                        The rate is in KBps (per second). Multiply by minutes directly gives you the wrong answer.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">2. Dividing by 1,000 instead of 1,024.</strong><br>
+                        Memory always uses binary-based units: 1 KB = 1,024 bytes, not 1,000.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">3. Skipping a conversion step.</strong><br>
+                        Going KB &rarr; GB requires two &divide;1,024 operations, not one.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">4. Rounding to the wrong number of decimal places.</strong><br>
+                        Read the problem — it will tell you how many decimal places to use. When in doubt, round to 2 decimal places.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">5. Confusing KBps (bytes/sec) with Kbps (bits/sec).</strong><br>
+                        Capital B = bytes, lowercase b = bits. 1 KBps = 8 Kbps.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 2 MODULE 1: DATA TYPES & VARIABLES ======
+        function loadDataTypes() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Data Types &amp; Printing: Data Types &amp; Variables</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">What Is a Variable?</div>
+                    <p class="lead">
+                        A <strong>variable</strong> is a named container that stores a value in memory. Think of it like a labeled box — the label is the variable name, and the contents are the value. In Java, every variable must have a specific <strong>data type</strong> that tells the computer what kind of value it can hold.
+                    </p>
+                    <p class="muted">
+                        Java is a <strong>statically typed</strong> language — once you set a variable's type, it cannot change. Trying to put a decimal number into an <code>int</code> variable will cause a compiler error.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Declaring vs. Initializing</div>
+                    <p class="lead">
+                        There are two distinct actions you can take when creating a variable, and exam questions test whether you know the difference:
+                    </p>
+                    <div class="code-block">// DECLARE — create the box, but leave it empty
+int age;
+String name;
+char letter;
+
+// INITIALIZE — create the box AND put a value in it
+int age = 17;
+String name = "Kunal";
+char letter = 'A';</div>
+                    <p class="muted">
+                        <strong class="accent">Declare</strong> = type + name + semicolon. No value.<br>
+                        <strong class="accent">Initialize</strong> = type + name + <code>=</code> + value + semicolon.
+                    </p>
+                    <p class="muted">
+                        On exams, pay close attention to the wording: "declare" means no value, "initialize" means include a value. Getting these mixed up is the most common mistake.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Primitive Data Types</div>
+                    <p class="lead">
+                        Java has 8 <strong>primitive types</strong> — basic building blocks built into the language. The ones you need to know for this class:
+                    </p>
+                    <div class="code-block">Type      Size      Range / Description              Example
+────      ────      ───────────────────              ───────
+byte      1 byte    -128 to 127                      byte b = 100;
+short     2 bytes   -32,768 to 32,767                short s = 1000;
+int       4 bytes   -2.1 billion to 2.1 billion      int x = 314;
+long      8 bytes   very large whole numbers         long big = 999999999L;
+
+float     4 bytes   ~7 decimal digits precision      float f = 3.14f;
+double    8 bytes   ~15 decimal digits precision     double d = 3.14;
+
+char      2 bytes   single character (Unicode)       char c = 'A';
+boolean   1 bit     true or false only               boolean done = false;</div>
+                    <p class="muted">
+                        <strong style="color:#f87171;">Key rules:</strong><br>
+                        &bull; Whole numbers default to <code>int</code>. Use <code>int</code> unless the problem specifies otherwise.<br>
+                        &bull; Decimal numbers default to <code>double</code>. A <code>float</code> requires an <code>f</code> suffix.<br>
+                        &bull; <code>char</code> uses single quotes: <code>'A'</code>. Strings use double quotes: <code>"Hello"</code>.<br>
+                        &bull; <code>byte</code> is the smallest integer type — only -128 to 127.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">String — Not a Primitive</div>
+                    <p class="lead">
+                        <code>String</code> is NOT a primitive type — it is a <strong>class</strong> (an object type). That is why it starts with a capital letter, while all primitives are lowercase.
+                    </p>
+                    <div class="code-block">String name = "JavaLab";     // capital S — it's a class
+int count = 42;              // lowercase — it's a primitive</div>
+                    <p class="muted">
+                        This matters on exams — writing <code>string name;</code> with a lowercase 's' would be a compiler error. Always capitalize <code>String</code>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Naming Rules for Variables</div>
+                    <p class="lead">
+                        Java variable names must follow these rules:
+                    </p>
+                    <p class="muted">
+                        &bull; Can contain letters, digits, underscores <code>_</code>, and dollar signs <code>$</code><br>
+                        &bull; Must start with a letter, <code>_</code>, or <code>$</code> — <strong>never</strong> a digit<br>
+                        &bull; Cannot be a Java keyword (<code>int</code>, <code>class</code>, <code>public</code>, etc.)<br>
+                        &bull; Are <strong>case-sensitive</strong>: <code>Score</code> and <code>score</code> are different variables<br>
+                        &bull; Convention: use <code>camelCase</code> (e.g. <code>studentAge</code>, <code>firstName</code>)
+                    </p>
+                    <div class="code-block">int studentAge = 17;    // ✓ valid — camelCase
+int 2ndPlace = 5;       // ✗ invalid — starts with a digit
+int my score = 10;      // ✗ invalid — contains a space
+int class = 3;          // ✗ invalid — "class" is a keyword</div>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 2 MODULE 2: PRINT STATEMENTS ======
+        function loadPrintStatements() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Data Types &amp; Printing: Print Statements</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Three Print Methods</div>
+                    <p class="lead">
+                        Java has three ways to print text to the console. Understanding the difference between them is essential for predicting output on exams.
+                    </p>
+                    <div class="code-block">System.out.println("Hello");   // prints "Hello" then moves to next line
+System.out.print("Hello");     // prints "Hello" and stays on same line
+System.out.printf("%s", "Hi"); // prints formatted text, stays on same line</div>
+                    <p class="muted">
+                        <strong class="accent">println</strong> = print + line break (cursor goes to next line)<br>
+                        <strong class="accent">print</strong> = print only (cursor stays at end of text)<br>
+                        <strong class="accent">printf</strong> = formatted print (cursor stays, uses format specifiers)
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">print vs println — Tracing Output</div>
+                    <p class="lead">
+                        The key skill is tracing where the cursor ends up after each statement. Let's walk through an example:
+                    </p>
+                    <div class="code-block">System.out.print("AB");      // Output so far: AB_  (cursor at _)
+System.out.println("CD");    // Output so far: ABCD
+                             //                 _    (cursor on new line)
+System.out.print("EF");     // Output so far: ABCD
+                             //                EF_  (cursor at _)</div>
+                    <p class="muted">
+                        Final output has two lines: <code>ABCD</code> and <code>EF</code>. The trick is that <code>print</code> keeps everything on the same line, while <code>println</code> ends the current line.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">String Concatenation with +</div>
+                    <p class="lead">
+                        The <code>+</code> operator does <strong>two different things</strong> depending on context:
+                    </p>
+                    <p class="muted">
+                        &bull; Between two numbers → <strong>addition</strong><br>
+                        &bull; When at least one side is a String → <strong>concatenation</strong> (joins as text)
+                    </p>
+                    <p class="lead">
+                        Java evaluates <strong>left to right</strong>. Once it encounters a String, everything after becomes concatenation:
+                    </p>
+                    <div class="code-block">System.out.println("Score: " + 10 + 5);
+// "Score: " is a String, so:
+// "Score: " + 10 → "Score: 10"  (concat)
+// "Score: 10" + 5 → "Score: 105"  (concat)
+// Output: Score: 105
+
+System.out.println(10 + 5 + " points");
+// 10 + 5 → 15  (both are numbers → addition)
+// 15 + " points" → "15 points"  (now it's concat)
+// Output: 15 points</div>
+                    <p class="warn">
+                        <strong>This is one of the most tested concepts.</strong> Always evaluate left to right and watch for when the first String appears.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">More Concatenation Examples</div>
+                    <p class="lead">
+                        Practice these — they cover the patterns that appear on exams:
+                    </p>
+                    <div class="code-block">System.out.println(10 * 3 + "+" + 2 * 5);
+// 10 * 3 → 30   (multiplication happens first — PEMDAS)
+// 2 * 5 → 10    (multiplication happens first)
+// 30 + "+" → "30+"  (concat starts)
+// "30+" + 10 → "30+10"  (still concat)
+// Output: 30+10
+
+System.out.println(1 + 2 + "abc" + 3 + 4);
+// 1 + 2 → 3  (addition — both numbers)
+// 3 + "abc" → "3abc"  (concat starts)
+// "3abc" + 3 → "3abc3"
+// "3abc3" + 4 → "3abc34"
+// Output: 3abc34</div>
+                    <p class="muted">
+                        The rule is simple: <em>numbers before the first String are added; numbers after are concatenated</em>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">printf — Formatted Output</div>
+                    <p class="lead">
+                        <code>printf</code> uses <strong>format specifiers</strong> — placeholders that get replaced by values. Common specifiers:
+                    </p>
+                    <div class="code-block">%s    →  String
+%d    →  integer (whole number)
+%f    →  floating-point (decimal)
+%%    →  literal % character</div>
+                    <p class="lead">
+                        You can add a <strong>width</strong> number between <code>%</code> and the letter to control alignment:
+                    </p>
+                    <div class="code-block">System.out.printf("%10s", "Hi");
+//         Hi     ← right-aligned in 10-char field (8 spaces + "Hi")
+
+System.out.printf("%-10s!", "Hi");
+// Hi        !    ← left-aligned in 10-char field (dash = left)
+
+System.out.printf("%25s", "love to eat pie.");
+//          love to eat pie.   ← right-aligned in 25-char field</div>
+                    <p class="muted">
+                        <strong>Default = right-aligned.</strong> Add a <code>-</code> (dash) to left-align. The number is the <em>total width</em> including the text itself.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Common Mistakes to Avoid</div>
+                    <p class="muted">
+                        <strong style="color:#f87171;">1. Confusing print and println.</strong><br>
+                        <code>print</code> does NOT add a newline. If you use <code>print</code> twice in a row, both texts appear on the same line.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">2. Assuming + always adds numbers.</strong><br>
+                        When one side is a String, <code>+</code> concatenates. <code>"3" + 5</code> gives <code>"35"</code>, not <code>8</code>.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">3. Forgetting printf stays on the same line.</strong><br>
+                        <code>printf</code> behaves like <code>print</code>, not <code>println</code>. It does NOT add a newline unless you include <code>\\n</code>.
+                    </p>
+                    <p class="muted">
+                        <strong style="color:#f87171;">4. Wrong order of operations with concatenation.</strong><br>
+                        Multiplication and division happen before <code>+</code>, so <code>10 * 3 + "x"</code> gives <code>"30x"</code>, not <code>"10 * 3x"</code>.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 2 MODULE 3: ESCAPE SEQUENCES & FORMATTING ======
+        function loadEscapesFormatting() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Data Types &amp; Printing: Escape Sequences &amp; Formatting</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">What Are Escape Sequences?</div>
+                    <p class="lead">
+                        An <strong>escape sequence</strong> is a combination of a backslash <code>\\</code> followed by a character that represents something special. They are typed as two characters in your source code, but display as a single action in the output.
+                    </p>
+                    <div class="code-block">Sequence   Name              What It Does
+────────   ──────────────    ─────────────────────────────────
+\\n         Newline           Moves cursor to next line
+\\t         Tab               Moves cursor to next tab stop (~4-8 spaces)
+\\"         Double quote      Prints a literal " inside a string
+\\\\         Backslash         Prints a literal \\ character
+\\r         Carriage return   Moves cursor to start of current line</div>
+                    <p class="muted">
+                        These are placed <em>inside</em> string literals (between the double quotes). Java processes them at runtime and converts them into their special behavior.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">\\n — Newline in Action</div>
+                    <p class="lead">
+                        <code>\\n</code> creates a line break <em>within</em> a single print statement. This is different from using <code>println</code>, which adds a newline <em>after</em> the text.
+                    </p>
+                    <div class="code-block">System.out.print("A\\nB\\nC");
+// Output:
+// A
+// B
+// C
+
+// Equivalent to:
+System.out.println("A");
+System.out.println("B");
+System.out.print("C");</div>
+                    <p class="muted">
+                        Notice the difference: <code>println("Hello\\n")</code> actually produces <em>two</em> newlines — one from <code>\\n</code> and one from <code>println</code> itself. This leaves an extra blank line.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">\\t — Tab Character</div>
+                    <p class="lead">
+                        The tab character <code>\\t</code> moves the cursor forward to the next <strong>tab stop</strong>. Tab stops are typically every 8 characters, but the exact spacing depends on the console.
+                    </p>
+                    <div class="code-block">System.out.println("Name:\\tJoe");
+// Output: Name:   Joe
+//              ↑ tab jumps to next tab stop
+
+System.out.println("\\t\\nMy name is ");
+// Output:      (tab on this line)
+//         My name is
+// \\t prints a tab, then \\n moves to the next line</div>
+                    <p class="muted">
+                        On exams, when you see <code>\\t</code> in output, draw a visible gap or write "TAB" to show you understand it. The exact width doesn't need to be perfect.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">\\" — Printing Quotation Marks</div>
+                    <p class="lead">
+                        Since double quotes <code>"</code> are used to mark the start and end of strings, you need <code>\\"</code> to print a literal quote character:
+                    </p>
+                    <div class="code-block">System.out.println("She said \\"hello\\"");
+// Output: She said "hello"
+
+System.out.println("The file is called \\"data.txt\\"");
+// Output: The file is called "data.txt"</div>
+                    <p class="muted">
+                        Without the backslash, Java would think the second <code>"</code> ends the string, causing a compiler error.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Format.left() — Left-Aligned Formatting</div>
+                    <p class="lead">
+                        <code>Format.left(value, width, decimals)</code> formats a number into a fixed-width field, left-aligned, with a specified number of decimal places.
+                    </p>
+                    <div class="code-block">Format.left(3.14159, 14, 3)
+// Result: "3.142         "
+//         ← value (3.142) followed by spaces to fill 14 total characters
+//         3 decimal places: 3.14159 rounds to 3.142
+
+Format.left(99.5, 10, 2)
+// Result: "99.50     "
+//         10 characters total, 2 decimal places</div>
+                    <p class="muted">
+                        The three arguments: <strong>value</strong> (the number), <strong>width</strong> (total character width), <strong>decimals</strong> (decimal places). The number is placed at the left and the remaining space is filled with spaces.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Putting It All Together — Full Trace</div>
+                    <p class="lead">
+                        Here is an exam-style example combining everything. Trace through it step by step:
+                    </p>
+                    <div class="code-block">System.out.println("\\t\\nMy name is ");
+System.out.print("Joe. " + Format.left(3.14159, 14, 3) + "But I");
+System.out.printf("%25s", "love to eat pie.");</div>
+                    <p class="lead">
+                        <strong>Line 1:</strong> <code>println("\\t\\nMy name is ")</code>
+                    </p>
+                    <p class="muted">
+                        &bull; <code>\\t</code> prints a tab on line 1<br>
+                        &bull; <code>\\n</code> moves cursor to line 2<br>
+                        &bull; <code>My name is </code> prints on line 2<br>
+                        &bull; <code>println</code> adds a newline → cursor on line 3
+                    </p>
+                    <p class="lead">
+                        <strong>Line 2:</strong> <code>print("Joe. " + Format.left(3.14159, 14, 3) + "But I")</code>
+                    </p>
+                    <p class="muted">
+                        &bull; <code>"Joe. "</code> starts on line 3<br>
+                        &bull; <code>Format.left(3.14159, 14, 3)</code> → <code>"3.142"</code> + 9 spaces = 14 chars<br>
+                        &bull; <code>"But I"</code> appended after<br>
+                        &bull; <code>print</code> — cursor stays on line 3
+                    </p>
+                    <p class="lead">
+                        <strong>Line 3:</strong> <code>printf("%25s", "love to eat pie.")</code>
+                    </p>
+                    <p class="muted">
+                        &bull; <code>"love to eat pie."</code> is 16 chars, field is 25 wide → 9 leading spaces<br>
+                        &bull; Right-aligned in 25-char field, appended on same line 3
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 3 MODULE 1: EXPRESSIONS & ORDER OF OPERATIONS ======
+        function loadExpressions() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>IO &amp; Expressions: Expressions &amp; Order of Operations</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Java's Order of Operations (PEMDAS)</div>
+                    <p class="lead">
+                        Java follows standard math order of operations, but with a few extra operators. From highest to lowest priority:
+                    </p>
+                    <div class="code-block">Priority 1 (highest):  Parentheses ()  — always first
+Priority 2:            Unary: -, +, (cast), !
+Priority 3:            *, /, %   — left to right
+Priority 4 (lowest):   +, -      — left to right</div>
+                    <p class="muted">
+                        When operators share the same priority (like <code>*</code> and <code>%</code>), evaluate <strong>left to right</strong>. This is called <em>left-to-right associativity</em>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Integer Division — The #1 Trap</div>
+                    <p class="lead">
+                        When <strong>both</strong> operands of <code>/</code> are integers, Java performs <strong>integer division</strong> — the decimal part is completely dropped (truncated, not rounded).
+                    </p>
+                    <div class="code-block">15 / 4    →  3      (not 3.75 — decimal is dropped)
+7 / 2     →  3      (not 3.5)
+1 / 3     →  0      (0.333... truncates to 0)
+-7 / 2    →  -3     (truncates toward zero)</div>
+                    <p class="muted">
+                        To get decimal division, at least <strong>one operand must be a double</strong>:
+                    </p>
+                    <div class="code-block">15.0 / 4   →  3.75   (left is double → double division)
+15 / 4.0   →  3.75   (right is double → double division)
+(double)15 / 4  →  3.75  (cast forces double division)</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Modulus Operator (%)</div>
+                    <p class="lead">
+                        The <code>%</code> operator returns the <strong>remainder</strong> after division. It has the same priority as <code>*</code> and <code>/</code>.
+                    </p>
+                    <div class="code-block">17 % 5   →  2    (17 ÷ 5 = 3 remainder 2)
+25 % 7   →  4    (25 ÷ 7 = 3 remainder 4)
+10 % 3   →  1    (10 ÷ 3 = 3 remainder 1)
+8 % 2    →  0    (8 ÷ 2 = 4 remainder 0 — even number check!)</div>
+                    <p class="muted">
+                        A useful trick: <code>x % 2 == 0</code> checks if a number is even. Modulus is extremely common on exams.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Full Trace Example</div>
+                    <p class="lead">
+                        Evaluate: <code>6 - 75 % 12 * 5 + 87 / 12 % 3</code>
+                    </p>
+                    <div class="code-block">Step 1 — Find *, /, % (left to right):
+  75 % 12 = 3         →   6 - 3 * 5 + 87 / 12 % 3
+  3 * 5 = 15          →   6 - 15 + 87 / 12 % 3
+  87 / 12 = 7         →   6 - 15 + 7 % 3
+  7 % 3 = 1           →   6 - 15 + 1
+
+Step 2 — Find +, - (left to right):
+  6 - 15 = -9         →   -9 + 1
+  -9 + 1 = -8
+
+Answer: -8 (data type: int)</div>
+                    <p class="muted">
+                        The key insight: <code>%</code>, <code>*</code>, and <code>/</code> all share the same priority, so process them strictly left to right before touching <code>+</code> and <code>-</code>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Type Promotion Rules</div>
+                    <p class="lead">
+                        When you mix types in an expression, Java automatically promotes the smaller type to the larger one:
+                    </p>
+                    <div class="code-block">byte → short → int → long → float → double
+
+Rules:
+• int + double  →  double  (int promoted to double)
+• int + float   →  float   (int promoted to float)
+• char + int    →  int     (char promoted to int)
+• All arithmetic with byte/short  →  int (always promoted)</div>
+                    <p class="muted">
+                        The result type is always the <strong>widest</strong> type involved. Even <code>'A' + 1</code> produces <code>int</code> (not char), because char is promoted to int for arithmetic.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 3 MODULE 2: TYPE CASTING & ASCII ======
+        function loadCastingASCII() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>IO &amp; Expressions: Type Casting &amp; ASCII</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">What Is Type Casting?</div>
+                    <p class="lead">
+                        <strong>Casting</strong> is explicitly converting a value from one data type to another. You write the target type in parentheses before the value:
+                    </p>
+                    <div class="code-block">(int) 7.9      →  7       // double → int (truncates decimal)
+(double) 10    →  10.0    // int → double
+(char) 65      →  'A'     // int → char (ASCII lookup)
+(int) 'A'      →  65      // char → int (ASCII code)
+(short) 73.5   →  73      // double → short (truncates)</div>
+                    <p class="muted">
+                        <strong style="color:#f87171;">Critical:</strong> Casting to <code>int</code>, <code>short</code>, or <code>long</code> from a decimal <strong>truncates</strong> — it does NOT round. <code>(int) 9.99</code> = 9, not 10.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Casting Changes Division Behavior</div>
+                    <p class="lead">
+                        One of the most important uses of casting is forcing decimal (double) division:
+                    </p>
+                    <div class="code-block">53 / 6          →  8     (integer division — decimal dropped)
+(double) 53 / 6 →  8.833...  (53 cast to 53.0 → double division)
+
+// The cast applies ONLY to the value right after it:
+(double)(53 / 6)  →  8.0   // 53/6 = 8 first (int), THEN cast to double
+(double) 53 / 6   →  8.83  // 53 cast first, THEN divided as double</div>
+                    <p class="muted">
+                        Watch where the parentheses go — <code>(double)(53/6)</code> is very different from <code>(double)53/6</code>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">ASCII — Characters Are Numbers</div>
+                    <p class="lead">
+                        Every character has a numeric code in the <strong>ASCII</strong> table. The key values to memorize:
+                    </p>
+                    <div class="code-block">'0' = 48    '1' = 49    ...    '9' = 57
+'A' = 65    'B' = 66    ...    'Z' = 90
+'a' = 97    'b' = 98    ...    'z' = 122
+
+Patterns:
+• Digits are sequential: '5' = 48 + 5 = 53
+• Letters are sequential: 'D' = 65 + 3 = 68
+• Upper→Lower difference: 'a' - 'A' = 97 - 65 = 32</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Casting Between char and int</div>
+                    <p class="lead">
+                        You can freely convert between <code>char</code> and <code>int</code> using casting:
+                    </p>
+                    <div class="code-block">(int) 'A'      →  65     // get the ASCII code
+(char) 65      →  'A'    // get the character
+
+// Arithmetic with chars:
+(int)('A') + 1  →  66    // result is int
+(char)(65 + 3)  →  'D'   // 65+3=68 → 'D'
+
+// Expression from exam:
+(char)(65 + 44 % 15 / 5 - 3 * 2 % 9)
+  44%15=14, 14/5=2, 3*2=6, 6%9=6
+  65 + 2 - 6 = 61  →  (char)61 = '='</div>
+                    <p class="muted">
+                        Note: <code>'A' + 1</code> without a cast produces <code>int</code> (66), not <code>char</code> ('B'). You must explicitly cast back to char if you want a character.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Complex Casting Examples</div>
+                    <p class="lead">
+                        Trace through these exam-style problems:
+                    </p>
+                    <div class="code-block">// Example 1:
+(int) 9.7 + (int) 2.3
+  (int)9.7 = 9,  (int)2.3 = 2
+  9 + 2 = 11  (type: int)
+
+// Example 2:
+(double) 53 / 6 + (short)(73.5) / 8 - 2
+  (double)53/6 = 8.833...
+  (short)73.5 = 73,  73/8 = 9 (integer division!)
+  8.833 + 9 - 2 = 15.83  (type: double)
+
+// Example 3:
+(int)('6') / 9.0f * 3 + (long)(34.7 / 8.9)
+  (int)'6' = 54,  54/9.0f = 6.0f,  6.0f*3 = 18.0f
+  34.7/8.9 = 3.898...,  (long)3.898 = 3
+  18.0f + 3 = 21.0  (type: float)</div>
+                    <p class="muted">
+                        Always apply casts <em>before</em> performing the next operation. Then determine the result type based on which types were combined.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 3 MODULE 3: SCANNER & PROGRAM STRUCTURE ======
+        function loadScannerIO() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>IO &amp; Expressions: Scanner &amp; Program Structure</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Java Program Template</div>
+                    <p class="lead">
+                        Every Java program follows this basic structure. Memorize this template — you'll write it on every coding question:
+                    </p>
+                    <div class="code-block">import java.util.Scanner;     // import at the very top
+
+public class ClassName {       // class declaration
+    public static void main(String[] args) {  // main method
+        // your code goes here
     }
 }</div>
-                    <p style="color:#8892B0; font-size:1.05rem; line-height:1.6;">
-                        Remember: <code>System</code> must explicitly begin with an uppercase character. Every statement line requires a semicolon character separator marker to avoid parser engine faults.
+                    <p class="muted">
+                        <strong class="accent">Class</strong> = the container for your program (the file name must match).<br>
+                        <strong class="accent">Method</strong> = a block of code that performs a task (<code>main</code> is the entry point).<br>
+                        <strong class="accent">Import</strong> = brings in code from Java's libraries (needed for Scanner).
                     </p>
-                    <button class="action-btn" onclick="loadNextBlankConcept('Syntax Guide')">Next Concept &rarr;</button>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Creating a Scanner</div>
+                    <p class="lead">
+                        <code>Scanner</code> reads user input from the keyboard. Two steps are always required:
+                    </p>
+                    <div class="code-block">// Step 1: Import (at the top of the file, before the class)
+import java.util.Scanner;
+
+// Step 2: Create the Scanner object (inside main)
+Scanner keyboard = new Scanner(System.in);</div>
+                    <p class="muted">
+                        <code>System.in</code> represents the keyboard input stream. The variable name (<code>keyboard</code>, <code>kb</code>, <code>scan</code>) can be anything — it's just a name.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Reading Input</div>
+                    <p class="lead">
+                        Scanner has different methods for reading different data types:
+                    </p>
+                    <div class="code-block">int x = keyboard.nextInt();       // reads a whole number
+double d = keyboard.nextDouble();  // reads a decimal number
+String s = keyboard.nextLine();    // reads a full line of text
+String w = keyboard.next();        // reads one word (stops at space)</div>
+                    <p class="muted">
+                        Always prompt the user <em>before</em> reading input so they know what to type:
+                    </p>
+                    <div class="code-block">System.out.print("Enter your age: ");   // prompt (no newline)
+int age = keyboard.nextInt();            // waits for input</div>
+                    <p class="muted">
+                        Use <code>print()</code> (not <code>println()</code>) for prompts so the user types on the same line as the prompt text.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Complete Program Example</div>
+                    <p class="lead">
+                        Here is a complete program that calculates the area of a rectangle:
+                    </p>
+                    <div class="code-block">import java.util.Scanner;
+
+public class RectangleArea {
+    public static void main(String[] args) {
+        Scanner kb = new Scanner(System.in);
+
+        System.out.print("Enter length: ");
+        double length = kb.nextDouble();
+
+        System.out.print("Enter width: ");
+        double width = kb.nextDouble();
+
+        double area = length * width;
+
+        System.out.printf("Area: %.2f\\n", area);
+    }
+}</div>
+                    <p class="muted">
+                        Notice the pattern: <strong>import → class → main → scanner → prompt → read → calculate → print</strong>. This same pattern works for every coding question.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Declaration vs Initialization vs Assignment</div>
+                    <p class="lead">
+                        Exam questions frequently ask you to identify which lines are declarations, initializations, or assignments:
+                    </p>
+                    <div class="code-block">String name;              // DECLARATION — type + name, no value
+String name = "Joe";      // INITIALIZATION — type + name + value
+name = "Bob";             // ASSIGNMENT — name + value, no type
+
+int x;                    // declaration
+int x = 5;                // initialization
+x = 10;                   // assignment</div>
+                    <p class="muted">
+                        <strong class="accent">Declaration:</strong> creates the variable (type + name)<br>
+                        <strong class="accent">Initialization:</strong> creates AND assigns in one line (type + name = value)<br>
+                        <strong class="accent">Assignment:</strong> changes value of existing variable (no type keyword)
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Identifying Classes and Methods</div>
+                    <p class="lead">
+                        Exams ask you to identify classes and methods in code. Here are the rules:
+                    </p>
+                    <div class="code-block">// Classes — look for the "class" keyword or capitalized names:
+AnnualInterest   // your class (after "class" keyword)
+String           // built-in class (capital S)
+Scanner          // imported class
+System           // built-in class
+Math             // built-in class
+
+// Methods — look for parentheses after a name:
+main(...)        // the main method
+println(...)     // a method of System.out
+nextInt()        // a method of Scanner
+Math.pow(...)    // a method of Math class
+printf(...)      // a method of System.out (originated from C)</div>
+                    <p class="muted">
+                        <strong>Quick test:</strong> if it has <code>()</code> after it, it's a method. If it appears after <code>class</code> or is used as a type, it's a class. Keywords like <code>int</code>, <code>double</code>, <code>void</code>, <code>public</code> are neither — they're reserved words.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
                 </div>
             `;
         }
 
-        // Branch 3: Real World Context Layout
-        function loadRealWorldContext() {
+        // ====== UNIT 4 — MODULE 1: ANATOMY OF A METHOD ======
+        function loadMethodAnatomy() {
             displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>Intro to Java: Real World Application</h1>
+                <h1>Methods &amp; Classes: Anatomy of a Method</h1>
+
                 <div class="concept-container">
-                    <div class="concept-section-title">Enterprise System Scale Logic</div>
-                    <p style="color:#CCD6F6; font-size:1.1rem; line-height:1.7; margin-top:0;">
-                        Why do massive tech firms utilize Java? The structural rigidity of compiling and runtime object type checking keeps massive distributed code infrastructure databases predictable, highly performant, secure, and incredibly safe from code injection vulnerabilities.
+                    <div class="concept-section-title">What Is a Method?</div>
+                    <p class="lead">
+                        A <strong>method</strong> is a named block of code that performs one specific task. Instead of repeating the same lines over and over, you write them once inside a method and then <em>call</em> that method by name whenever you need it. Methods make programs shorter, easier to read, and easier to fix.
                     </p>
-                    <p style="color:#8892B0; font-size:1.05rem; line-height:1.7;">
-                        From banking processing mainframes to Android mobile operating system architecture packages, Java structural footprints form the foundation of major global data processing grids.
+                    <p class="muted">
+                        You have already used many methods: <code>System.out.println(...)</code>, <code>Math.pow(...)</code>, and <code>kb.nextInt()</code> are all method calls. In this unit you learn to <em>read</em> and <em>write</em> your own.
                     </p>
-                    <button class="action-btn" onclick="loadNextBlankConcept('Real World Application')">Next Concept &rarr;</button>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Reading a Method Header</div>
+                    <p class="lead">
+                        Every method begins with a <strong>header</strong>. Read it left to right — each piece has a name and a job:
+                    </p>
+                    <div class="code-block">public      int      honda      (short passengers, int insurance, String model, double price)
+  |          |         |                          |
+access     return    method                  parameter list
+specifier   type      name              (type + name, separated by commas)</div>
+                    <p class="muted">
+                        &bull; <strong class="accent">Access specifier</strong> — usually <code>public</code> (who can call it).<br>
+                        &bull; <strong class="accent">Return type</strong> — the data type the method hands back (<code>int</code> here). Use <code>void</code> if it returns nothing.<br>
+                        &bull; <strong class="accent">Name</strong> — what you call it (<code>honda</code>). It sits right before the parentheses.<br>
+                        &bull; <strong class="accent">Parameters</strong> — the inputs, each written as <code>type name</code>. This method has <strong>4</strong> parameters.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Parameters vs Arguments</div>
+                    <p class="lead">
+                        These two words are easy to mix up. A <strong>parameter</strong> is the placeholder in the method definition. An <strong>argument</strong> is the actual value you pass in when you call it.
+                    </p>
+                    <div class="code-block">// Definition — "passengers" is a PARAMETER
+public int honda(short passengers, int insurance, String model, double price)
+
+// Call — 4, 500, "XLE", 25.0 are ARGUMENTS
+honda(4, 500, "XLE", 25.0);</div>
+                    <p class="muted">
+                        The number of arguments must match the number of parameters, and their data types must line up in order.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Return Types and the return Keyword</div>
+                    <p class="lead">
+                        A method that returns a value must end with a <code>return</code> statement, and the returned value's type must match the return type in the header. A value-returning method is meant to be <strong>used</strong> — stored in a variable or placed inside a larger expression.
+                    </p>
+                    <div class="code-block">public int square(int n)
+{
+    return n * n;          // returns an int
+}
+
+int answer = square(6);    // the returned 36 is stored
+System.out.println(square(6));   // or used directly</div>
+                    <p class="muted">
+                        If a method's return type is <code>void</code>, it performs an action but hands nothing back — you call it as its own statement, not inside an assignment.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Static Calls and Nested Calls</div>
+                    <p class="lead">
+                        When a method is called as <code>ClassName.method(...)</code>, it is a <strong>static</strong> method that belongs to the class itself — no object is needed. You can also nest one call inside another.
+                    </p>
+                    <div class="code-block">int finalPrice = Car.nissan( Car.taxes(1.085 * grossCarPrice), model );</div>
+                    <p class="muted">
+                        Java evaluates the <strong>inner</strong> call first: <code>Car.taxes(...)</code> runs, and its result becomes one of the two arguments handed to <code>Car.nissan(...)</code>. Here <code>Car</code> is the <em>class</em> that contains both methods, and the value <code>1.085 * grossCarPrice</code> is a <code>double</code>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Common Mistakes</div>
+                    <p class="warn">
+                        &bull; Forgetting that a <code>void</code> method cannot be stored in a variable.<br>
+                        &bull; Mismatching the number or types of arguments with the parameters.<br>
+                        &bull; Writing a return type on a constructor (constructors have none).<br>
+                        &bull; Thinking the inner nested call runs last — it always runs <strong>first</strong>.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
                 </div>
             `;
         }
 
-        // Router to push to next blank concept section space
-        function loadNextBlankConcept(moduleType) {
+        // ====== UNIT 4 — MODULE 2: CLASSES, OBJECTS & FIELDS ======
+        function loadClassesObjects() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>Intro to Java: ${moduleType}</h1>
+                <h1>Methods &amp; Classes: Classes, Objects &amp; Fields</h1>
+
                 <div class="concept-container">
-                    <div class="concept-section-title">Section Concept 2</div>
-                    <p style="color:#64748b; font-size:1.2rem; font-style:italic; margin: 40px 0; text-align:center;">
-                        [Concept Page Content 2 slot is currently blank. Ready for additional curriculum data nodes as the semester progresses.]
+                    <div class="concept-section-title">A Class Is a Blueprint</div>
+                    <p class="lead">
+                        A <strong>class</strong> describes what something <em>is</em> and what it can <em>do</em>. It bundles together <strong>fields</strong> (the data) and <strong>methods</strong> (the behavior). From one class you can build many <strong>objects</strong>, just like many houses can be built from one blueprint.
                     </p>
-                    <button class="action-btn" onclick="closeSubMenu()">&larr; Return to Concept Hub</button>
+                    <div class="code-block">public class PlanRates     // the class keyword declares it
+{
+    // fields and methods go inside
+}</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Fields (Instance Variables)</div>
+                    <p class="lead">
+                        <strong>Fields</strong> are variables declared in the class body, outside of any method. They hold the object's data and exist for the entire life of the object. Choose the simplest data type that fits the value.
+                    </p>
+                    <div class="code-block">public class PlanRates
+{
+    private int dataRate;          // a whole number
+    private double start;          // money/decimals
+    private double reduce;
+    private double callMessageRate;
+}</div>
+                    <p class="muted">
+                        A base cost like <code>$20.00</code> has decimals, so it is a <code>double</code>. A count like the number of users is a whole number, so it is an <code>int</code>. Fields are different from <strong>local variables</strong>, which are declared inside a method and disappear when that method ends.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">private and Encapsulation</div>
+                    <p class="lead">
+                        Fields are usually marked <code>private</code> so that code outside the class cannot change them directly. This protection is called <strong>encapsulation</strong>. Other classes interact with the object through public methods instead of reaching in and grabbing the data.
+                    </p>
+                    <p class="muted">
+                        Think of it like an ATM: you can't open the machine and grab cash. You use the public buttons (methods), and the machine controls its private balance.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Creating Objects with new</div>
+                    <p class="lead">
+                        To build an actual object from a class, use the <code>new</code> keyword. The result is stored in a <strong>reference variable</strong>. You then call methods on that object using the dot operator.
+                    </p>
+                    <div class="code-block">PhonePlan user1 = new PhonePlan();   // build an object
+user1.findInfo();                    // call a method on it</div>
+                    <p class="muted">
+                        <code>user1</code> is the object's name; <code>new PhonePlan()</code> builds it; <code>user1.findInfo()</code> tells that specific object to run its <code>findInfo</code> method.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Getters</div>
+                    <p class="lead">
+                        Because fields are private, classes provide <strong>getter</strong> methods so other code can read a value safely. A getter simply returns the field.
+                    </p>
+                    <div class="code-block">public int getDataRate()
+{
+    return dataRate;     // hand back the field's value
+}</div>
+                    <p class="muted">
+                        A getter <em>returns</em> a value — it does not print it. Notice the return type (<code>int</code>) matches the field's type.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Common Mistakes</div>
+                    <p class="warn">
+                        &bull; Confusing a <strong>field</strong> (class body) with a <strong>local variable</strong> (inside a method).<br>
+                        &bull; Forgetting <code>new</code> when creating an object.<br>
+                        &bull; Making a getter print instead of <code>return</code>.<br>
+                        &bull; Trying to read a <code>private</code> field directly from another class instead of using a getter.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 4 — MODULE 3: CONSTRUCTORS ======
+        function loadConstructors() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Methods &amp; Classes: Constructors</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">What Is a Constructor?</div>
+                    <p class="lead">
+                        A <strong>constructor</strong> is a special method that runs automatically when you create an object with <code>new</code>. Its job is to set up the object's fields. A constructor has two rules that make it unique: it shares the exact name of the class, and it has <strong>no return type</strong> — not even <code>void</code>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The No-Args Constructor</div>
+                    <p class="lead">
+                        A <strong>no-args</strong> (no arguments) constructor takes no parameters and gives every field a sensible default value.
+                    </p>
+                    <div class="code-block">public PlanRates()        // class name, empty parentheses, no return type
+{
+    dataRate = 3;
+    start = 20.00;
+    reduce = 0.0;
+    callMessageRate = 0.10;
+}</div>
+                    <p class="muted">
+                        Calling <code>new PlanRates()</code> with no arguments runs this constructor.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Overloaded Constructor</div>
+                    <p class="lead">
+                        An <strong>overloaded</strong> constructor has the same name but a different <strong>parameter list</strong>. It lets the caller supply the starting values instead of using the defaults.
+                    </p>
+                    <div class="code-block">public PlanRates(int dataRate, double start, double reduce, double callMessageRate)
+{
+    this.dataRate = dataRate;
+    this.start = start;
+    this.reduce = reduce;
+    this.callMessageRate = callMessageRate;
+}</div>
+                    <p class="muted">
+                        Now <code>new PlanRates(0, 100, 0.15, 0)</code> matches this 4-parameter version. Java picks the constructor whose parameter list matches the arguments you pass.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The this Keyword</div>
+                    <p class="lead">
+                        When a parameter has the <em>same name</em> as a field, <code>this</code> tells Java which one you mean. <code>this.start</code> is the object's field; plain <code>start</code> is the parameter.
+                    </p>
+                    <div class="code-block">this.start = start;
+//   |           |
+//  field    parameter</div>
+                    <p class="muted">
+                        Using the field name as the parameter name is the standard convention — <code>this</code> removes the ambiguity cleanly.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Common Mistakes</div>
+                    <p class="warn">
+                        &bull; Writing a return type such as <code>void</code> on a constructor (it has none).<br>
+                        &bull; Misspelling the constructor so it no longer matches the class name.<br>
+                        &bull; Forgetting <code>this</code> when the parameter and field share a name — without it, you assign the parameter to itself.<br>
+                        &bull; Passing the wrong number of arguments so no constructor matches.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 5 — MODULE 1: INHERITANCE BASICS ======
+        function loadInheritanceBasics() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>OOP Inheritance: Inheritance Basics</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">What Is Inheritance?</div>
+                    <p class="lead">
+                        <strong>Inheritance</strong> lets one class build on another instead of starting from scratch. The new class automatically receives the fields and methods of the class it inherits from. This models an <strong>is-a</strong> relationship: a Wizard <em>is a</em> Character, a Dog <em>is an</em> Animal.
+                    </p>
+                    <p class="muted">
+                        The class being inherited from is the <strong class="accent">superclass</strong> (parent). The class that inherits is the <strong class="accent">subclass</strong> (child).
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The extends Keyword</div>
+                    <p class="lead">
+                        You create an inheritance relationship with the <code>extends</code> keyword in the subclass header.
+                    </p>
+                    <div class="code-block">public class Character     // the superclass (parent)
+{
+    private String combat;
+    private int attack;
+}
+
+public class Wizard extends Character   // Wizard is-a Character
+{
+    // Wizard automatically has combat and attack behavior
+}</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Reading a Class Hierarchy</div>
+                    <p class="lead">
+                        A taxonomy (tree) shows how classes relate. Read upward to find a parent, downward to find a child.
+                    </p>
+                    <div class="code-block">Character          (top: the base of everything)
+   |
+ Knight
+   |
+ Paladin
+   |
+ Aegis             (bottom)</div>
+                    <p class="muted">
+                        Here Knight is the <strong>superclass</strong> of Paladin. Going two levels up from Aegis (Aegis &rarr; Paladin &rarr; Knight) makes Knight the <strong>super-superclass</strong> of Aegis. Every class ultimately traces back to the base class at the top.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">What Gets Inherited</div>
+                    <p class="lead">
+                        A subclass inherits the <strong>public</strong> (and <code>protected</code>) members of its superclass — the methods and fields meant to be shared. It can also add brand-new fields and methods of its own.
+                    </p>
+                    <p class="muted">
+                        Java uses <strong>single inheritance</strong>: a class may extend only <em>one</em> superclass directly. That one parent may itself have a parent, forming a chain.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Common Mistakes</div>
+                    <p class="warn">
+                        &bull; Mixing up the direction — the class after <code>extends</code> is always the <strong>parent</strong>.<br>
+                        &bull; Trying to extend two classes at once (Java allows only one).<br>
+                        &bull; Assuming private members are directly usable in the subclass — they are accessed through inherited public methods.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 5 — MODULE 2: super & CONSTRUCTORS ======
+        function loadSuperKeyword() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>OOP Inheritance: Super &amp; Constructors</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The super Keyword</div>
+                    <p class="lead">
+                        Inside a subclass, the keyword <code>super</code> refers to the <strong>superclass</strong> part of the object. It lets the child reach the parent's constructor, methods, and fields.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Calling the Parent Constructor with super(...)</div>
+                    <p class="lead">
+                        A subclass constructor can hand values up to the superclass constructor using <code>super(...)</code>. This must be the <strong>first line</strong> of the subclass constructor.
+                    </p>
+                    <div class="code-block">public class Vehicle
+{
+    private String name;
+
+    public Vehicle(String name)
+    {
+        this.name = name;
+    }
+}
+
+public class Car extends Vehicle
+{
+    public Car(String name)
+    {
+        super(name);     // runs the Vehicle constructor first
+    }
+}</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Constructor Chaining Order</div>
+                    <p class="lead">
+                        When you build a subclass object, the <strong>superclass constructor always runs first</strong>, then the subclass constructor finishes. The parent must be fully built before the child adds to it.
+                    </p>
+                    <div class="code-block">new Car("Tesla");
+
+// Order of execution:
+// 1. Vehicle(String name)  — the parent constructor (via super)
+// 2. Car(String name)      — the rest of the child constructor</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">super.method() and super.field</div>
+                    <p class="lead">
+                        <code>super</code> also reaches the parent's behavior. <code>super.doDamage()</code> runs the parent's version of a method, and <code>super.combat</code> refers to the inherited field.
+                    </p>
+                    <div class="code-block">super.doDamage();              // run the parent's version
+super.combat = "protect";      // change the inherited field</div>
+                    <p class="muted">
+                        This is how you reuse what the parent already does instead of rewriting it.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Common Mistakes</div>
+                    <p class="warn">
+                        &bull; Placing <code>super(...)</code> somewhere other than the first line of the constructor.<br>
+                        &bull; Passing the wrong number or type of arguments to <code>super(...)</code>.<br>
+                        &bull; Expecting the subclass constructor to run before the parent's — the parent always goes first.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 5 — MODULE 3: OVERRIDING METHODS ======
+        function loadOverriding() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>OOP Inheritance: Overriding Methods</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">What Is Overriding?</div>
+                    <p class="lead">
+                        <strong>Overriding</strong> means a subclass provides its <em>own</em> version of a method it inherited, replacing the parent's behavior. To override, the new method must have the <strong>same signature</strong> — the same name and the same parameter list.
+                    </p>
+                    <div class="code-block">public class Animal
+{
+    public void speak()
+    {
+        System.out.println("Some sound");
+    }
+}
+
+public class Dog extends Animal
+{
+    public void speak()              // same signature — overrides
+    {
+        System.out.println("Woof");
+    }
+}</div>
+                    <p class="muted">
+                        A <code>Dog</code> object now barks instead of making the generic sound, even though <code>speak()</code> came from <code>Animal</code>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Overriding vs Overloading</div>
+                    <p class="lead">
+                        These sound similar but are different:
+                    </p>
+                    <p class="muted">
+                        &bull; <strong class="accent">Overriding</strong> — a subclass rewrites an inherited method using the <em>same</em> signature.<br>
+                        &bull; <strong class="accent">Overloading</strong> — the <em>same class</em> has several methods with the same name but <em>different</em> parameter lists.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Reusing the Parent's Version</div>
+                    <p class="lead">
+                        Sometimes you want to add to the parent's behavior, not throw it away. Call <code>super.method()</code> inside your override to run the original first.
+                    </p>
+                    <div class="code-block">public void doDamage()
+{
+    super.doDamage();         // do what the parent does...
+    System.out.println("...plus a bonus hit");   // ...then add more
+}</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Fields vs Local Variables (Recap)</div>
+                    <p class="lead">
+                        On these exams you are often asked to classify a variable. A <strong>field</strong> is declared in the class body and belongs to the object. A <strong>local variable</strong> is declared inside a method and exists only while that method runs.
+                    </p>
+                    <div class="code-block">public class Character
+{
+    private String combat;     // combat is a FIELD, type String
+
+    public void doDamage()
+    {
+        int hits = 3;          // hits is a LOCAL variable
+    }
+}</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Common Mistakes</div>
+                    <p class="warn">
+                        &bull; Changing the parameter list — that makes it an <em>overload</em>, not an override.<br>
+                        &bull; Trying <code>super.super.method()</code> — Java does not allow it.<br>
+                        &bull; Forgetting <code>super.method()</code> when you meant to keep the parent's behavior.<br>
+                        &bull; Calling a field a "local" variable when it is declared in the class body.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
                 </div>
             `;
         }

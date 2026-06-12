@@ -3,30 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practice Tests | Learn.java</title>
+    <title>JavaLab | Interactive Practice Workspace</title>
+    <!-- CodeMirror for syntax-highlighted Java editor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/closebrackets.min.js"></script>
     <style>
+        /* ====== CORE LAYOUT ====== */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #0A192F; /* Deep Navy */
-            color: #8892B0;
+            background-color: #0A192F;
+            color: #CCD6F6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             overflow: hidden;
         }
 
         header {
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
             background-color: rgba(10, 25, 47, 0.95);
             padding: 15px 30px;
             box-sizing: border-box;
-            border-bottom: 2px solid #00F0FF; /* Crisp Cyan */
-            z-index: 1000;
+            border-bottom: 2px solid #00F0FF;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
         }
 
         .home-link {
@@ -36,8 +47,15 @@
             font-size: 1.2rem;
         }
 
-        .home-link:hover {
-            color: #00F0FF;
+        .home-link:hover { color: #00F0FF; }
+
+        .study-tip {
+            color: #8892B0;
+            font-size: 0.8rem;
+            letter-spacing: 0.3px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .brand-name {
@@ -53,146 +71,288 @@
             height: calc(100vh - 54px);
         }
 
-        /* Fixed Primary Sidebar */
-        .sidebar {
-            width: 320px;
-            min-width: 320px;
+        #sidebar {
+            width: 300px;
+            min-width: 300px;
             background-color: #112240;
-            border-right: 1px solid #233554;
+            padding: 20px 16px;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
-            padding: 20px 10px;
-            box-sizing: border-box;
             gap: 10px;
-            z-index: 10;
+            border-right: 1px solid #233554;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
-        /* Secondary Pop-up Sidebar */
-        .sub-sidebar {
-            width: 260px;
-            min-width: 260px;
-            background-color: #172A45;
-            border-right: 1px solid #233554;
+        #sub-sidebar {
+            width: 240px;
+            min-width: 240px;
+            background-color: #0f1e35;
+            padding: 20px 14px;
             display: none;
             flex-direction: column;
-            padding: 20px 10px;
-            box-sizing: border-box;
             gap: 10px;
-            overflow-y: auto;
+            border-right: 1px solid #233554;
+            box-sizing: border-box;
             animation: slideIn 0.2s ease-out;
         }
 
         @keyframes slideIn {
             from { width: 0; opacity: 0; }
-            to { width: 260px; opacity: 1; }
+            to { width: 240px; opacity: 1; }
         }
 
-        .menu-item {
-            background-color: #172A45;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid #233554;
-            text-decoration: none;
-            color: #CCD6F6;
-            font-weight: bold;
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .sidebar .menu-item:hover {
-            border-color: #00F0FF;
-            color: #00F0FF;
-            transform: translateX(3px);
-        }
-
-        .sub-sidebar .menu-item {
-            background-color: #112240;
-            font-size: 0.9rem;
-        }
-        
-        .sub-sidebar .menu-item:hover {
-            border-color: #00F0FF;
-            color: #00F0FF;
-        }
-
-        .back-btn {
-            border-color: #f87171 !important;
-            color: #f87171 !important;
-        }
-        .back-btn:hover {
-            background-color: rgba(248, 113, 113, 0.1);
-        }
-
-        /* Locked Layout style - Diagonal from exact bottom-left to exact top-right */
-        .menu-item.locked {
-            opacity: 0.4;
-            cursor: not-allowed;
-            background: linear-gradient(to top right, transparent calc(50% - 1px), #495670 calc(50% - 1px), #495670 calc(50% + 1px), transparent calc(50% + 1px));
-        }
-
-        .menu-item.locked:hover {
-            border-color: #233554;
-            color: #CCD6F6;
-            transform: none;
-        }
-
-        /* Center Display Window */
-        .main-content {
-            flex-grow: 1;
+        #display-window {
+            flex: 1;
             padding: 40px;
+            box-sizing: border-box;
             overflow-y: auto;
+        }
+
+        #display-window.centered-view {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            box-sizing: border-box;
         }
 
-        .main-content.expanded-layout {
-            justify-content: flex-start;
-            align-items: flex-start;
-            text-align: left;
+        #display-window.centered-view h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
         }
 
-        .main-content h1 {
-            color: #CCD6F6;
-            margin-top: 0;
-            font-size: 2.2rem;
-            width: 100%;
-        }
-
-        .main-content p {
-            max-width: 700px;
-            font-size: 1.1rem;
-            line-height: 1.6;
+        #display-window.centered-view p {
+            max-width: 520px;
+            font-size: 1.15rem;
+            line-height: 1.7;
             color: #8892B0;
         }
 
-        /* Screen-filling Content Wrapper */
-        .challenge-container {
-            background-color: #112240;
-            border: 2px solid #233554;
-            border-radius: 8px;
-            padding: 35px;
-            width: calc(100% - 10px);
-            max-width: 1200px;
-            box-sizing: border-box;
-            box-shadow: 0 10px 30px -15px rgba(2,12,27,0.5);
-            margin-top: 15px;
-            animation: fadeIn 0.3s ease;
+        /* ====== SIDEBAR BUTTONS ====== */
+        button {
+            background: #172A45;
+            color: #CCD6F6;
+            border: 1px solid #233554;
+            padding: 14px 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 600;
             transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
-        .challenge-container.success-highlight {
+        button:hover:not(:disabled) {
+            border-color: #00F0FF;
+            color: #00F0FF;
+            transform: translateX(3px);
+        }
+
+        button:disabled {
+            color: #8892B0;
+            border-color: #233554;
+            cursor: not-allowed;
+            opacity: 0.4;
+            background: linear-gradient(to top right, transparent calc(50% - 1px), #495670 calc(50% - 1px), #495670 calc(50% + 1px), transparent calc(50% + 1px)), #172A45;
+        }
+
+        button:disabled:hover {
+            transform: none;
+            color: #8892B0;
+            border-color: #233554;
+        }
+
+        /* Active unit indicator — highlights the unit you're currently on */
+        #sidebar button.active-unit {
+            border-color: #00F0FF;
+            color: #00F0FF;
+            background: #15375a;
+            box-shadow: inset 3px 0 0 #00F0FF;
+        }
+        #sidebar button.active-unit:hover:not(:disabled) {
+            transform: none;
+        }
+
+        #sub-sidebar button {
+            background: #112240;
+            font-size: 0.9rem;
+        }
+
+        #sub-sidebar button:hover:not(:disabled) {
+            border-color: #00F0FF;
+            color: #00F0FF;
+        }
+
+        #sub-sidebar button:disabled {
+            background: linear-gradient(to top right, transparent calc(50% - 1px), #495670 calc(50% - 1px), #495670 calc(50% + 1px), transparent calc(50% + 1px)), #112240;
+        }
+
+        /* ====== QUIZ ELEMENTS ====== */
+        .option-btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 15px;
+            background: #112240;
+            color: #CCD6F6;
+            border: 1px solid #233554;
+            text-align: left;
+            font-weight: normal;
+            white-space: normal;
+        }
+
+        .option-btn:hover:not(.answered) { transform: none; }
+
+        .option-btn.selected-state {
+            border-color: #00F0FF;
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .option-btn.answered {
+            pointer-events: none;
+            cursor: default;
+            opacity: 1;
+        }
+
+        .option-btn.answer-correct {
             border-color: #4ade80 !important;
-            box-shadow: 0 0 25px rgba(74, 222, 128, 0.25);
+            background: rgba(74, 222, 128, 0.08) !important;
+        }
+
+        .option-btn.answer-wrong {
+            border-color: #f87171 !important;
+            background: rgba(248, 113, 113, 0.08) !important;
+        }
+
+        .action-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: transparent;
+            color: #00F0FF;
+            border: 2px solid #00F0FF;
+            font-weight: bold;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: transparent;
+        }
+
+        .next-btn {
+            background: #00F0FF;
+            color: #0A192F;
+            font-weight: bold;
+            border-color: #00F0FF;
+        }
+
+        .input-field {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            background: #112240;
+            border: 1px solid #233554;
+            color: #CCD6F6;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .input-field:focus { outline: none; border-color: #00F0FF; }
+
+        .feedback { margin-top: 15px; font-size: 1.1rem; }
+        .correct { color: #4ade80; font-weight: bold; }
+        .wrong { color: #f87171; font-weight: bold; }
+        .explanation-text { color: #8892B0; display: block; margin-top: 5px; }
+
+        .explanation-breakdown {
+            background: #0d1b2e;
+            border: 1px solid #233554;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 18px;
+        }
+
+        .explanation-breakdown .exp-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #1a2d4a;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .explanation-breakdown .exp-row:last-child { border-bottom: none; }
+        .exp-label { font-weight: bold; margin-right: 6px; }
+        .exp-label.exp-correct { color: #4ade80; }
+        .exp-label.exp-wrong { color: #f87171; }
+
+        .ai-hint {
+            background: #0d1b2e;
+            border: 1px solid #233554;
+            border-left: 3px solid #00F0FF;
+            border-radius: 0 6px 6px 0;
+            padding: 16px 20px;
+            margin-top: 14px;
+            line-height: 1.6;
+        }
+
+        .ai-hint-header {
+            color: #00F0FF;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        /* ====== IDE WORKSPACE ====== */
+        .ide-wrapper { display: flex; gap: 20px; margin-top: 15px; align-items: flex-start; }
+        .ide-left { flex: 1.2; display: flex; flex-direction: column; min-width: 0; }
+        .ide-right { flex: 0.8; display: flex; flex-direction: column; min-width: 0; }
+        .scrollable-prompt { background: #112240; padding: 15px; border: 1px solid #233554; border-bottom: none; border-radius: 6px 6px 0 0; line-height: 1.5; }
+        /* CodeMirror overrides to match theme */
+        .CodeMirror {
+            height: 150px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            border: 1px solid #233554;
+            border-radius: 0 0 6px 6px;
+            background: #282a36;
+        }
+        .CodeMirror.tall { height: 280px; }
+        .CodeMirror-focused { border-color: #00F0FF !important; }
+        .CodeMirror-scroll { padding: 4px 0; }
+        /* Dark, theme-matched scrollbars (kills the white scrollbar tab at the editor bottom) */
+        .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler { background: #282a36 !important; }
+        .CodeMirror-vscrollbar::-webkit-scrollbar, .CodeMirror-hscrollbar::-webkit-scrollbar,
+        .CodeMirror-scroll::-webkit-scrollbar { width: 9px; height: 9px; }
+        .CodeMirror-vscrollbar::-webkit-scrollbar-track, .CodeMirror-hscrollbar::-webkit-scrollbar-track,
+        .CodeMirror-scroll::-webkit-scrollbar-track { background: #282a36; }
+        .CodeMirror-vscrollbar::-webkit-scrollbar-thumb, .CodeMirror-hscrollbar::-webkit-scrollbar-thumb,
+        .CodeMirror-scroll::-webkit-scrollbar-thumb { background: #44475a; border-radius: 5px; }
+        /* Keep old textarea class for short-form Unit 2 questions */
+        .code-editor { width: 100%; height: 150px; background: #020C1B; border: 1px solid #233554; color: #a9b7c6; font-family: 'Courier New', Courier, monospace; font-size: 1rem; padding: 12px; box-sizing: border-box; resize: none; border-radius: 0 0 6px 6px; }
+        .code-editor:focus { outline: none; border-color: #00F0FF; }
+        .console-box { background: #020C1B; border: 1px solid #233554; min-height: 235px; font-family: 'Courier New', Courier, monospace; padding: 15px; box-sizing: border-box; white-space: normal; border-radius: 6px; text-align: left; font-size: 0.9rem; line-height: 1.5; }
+        .console-header { color: #8892B0; font-size: 0.8rem; border-bottom: 1px solid #233554; padding-bottom: 5px; margin-bottom: 10px; font-family: 'Segoe UI', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* Run / Submit button row */
+        .btn-row { display: flex; gap: 12px; align-items: center; margin-top: 15px; }
+        .btn-row .action-btn { margin-top: 0; }
+        /* Read-only solution editor (answer key) auto-sizes to its content */
+        .CodeMirror.solution-cm { height: auto; border-radius: 6px; margin-top: 4px; }
+
+        .challenge-container {
+            background: #112240;
+            padding: 30px;
+            border: 2px solid #233554;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px -15px rgba(2,12,27,0.5);
+            animation: fadeIn 0.3s ease;
         }
 
         @keyframes fadeIn {
@@ -200,406 +360,1624 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .challenge-title {
-            color: #00F0FF;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-top: 20px;
-        }
-
-        .option-btn {
-            background-color: #172A45;
-            color: #8892B0;
-            border: 1px solid #233554;
-            padding: 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .option-btn:hover {
-            border-color: #00F0FF;
-            color: white;
-            background-color: #1a3152;
-        }
-
-        .option-btn.selected-state {
-            border-color: #00F0FF !important;
-            background-color: #1e3656;
-            color: #CCD6F6;
-        }
-
-        .input-field {
-            background-color: #0A192F;
-            border: 1px solid #233554;
-            color: white;
-            padding: 14px;
-            border-radius: 4px;
-            width: 100%;
-            box-sizing: border-box;
-            font-size: 1.05rem;
-            font-family: monospace;
-            margin-bottom: 15px;
-        }
-
-        .input-field:focus {
-            border-color: #00F0FF;
-            outline: none;
-        }
-
-        /* IDE Splitscreen Layout */
-        .ide-wrapper {
-            display: flex;
-            gap: 25px;
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .ide-left {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .scrollable-prompt {
-            background-color: #172A45;
-            border-left: 4px solid #00F0FF;
-            padding: 15px;
-            border-radius: 4px;
-            max-height: 120px;
-            overflow-y: auto;
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #CCD6F6;
-        }
-
-        .code-editor {
-            background-color: #020c1b;
-            border: 1px solid #233554;
-            color: #4ade80;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.05rem;
-            padding: 15px;
-            border-radius: 4px;
-            height: 200px;
-            resize: none;
-            width: 100%;
-            box-sizing: border-box;
-            line-height: 1.5;
-        }
-
-        .code-editor:focus {
-            outline: none;
-            border-color: #00F0FF;
-        }
-
-        .ide-right {
-            width: 40%;
-            min-width: 320px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .console-box {
-            background-color: #020c1b;
-            border: 1px solid #233554;
-            border-radius: 4px;
-            flex-grow: 1;
-            padding: 15px;
-            font-family: monospace;
-            font-size: 0.95rem;
-            color: #a1a1aa;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-
-        .console-header {
-            color: #64748b;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            border-bottom: 1px solid #1e293b;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        /* UI Control Buttons */
-        .action-btn {
-            background-color: transparent;
-            color: #00F0FF;
-            border: 2px solid #00F0FF;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .action-btn:hover {
-            background-color: rgba(0, 240, 255, 0.1);
-        }
-
-        .action-btn:disabled {
-            border-color: #233554;
-            color: #495670;
-            cursor: not-allowed;
-            background-color: transparent;
-        }
-
-        .submit-trigger-btn {
-            margin-top: 15px;
-            align-self: flex-start;
-        }
-
-        .next-btn {
-            background-color: #00F0FF;
-            color: #0A192F;
-            border: none;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .next-btn:hover {
-            background-color: #33f3ff;
-            color: #0A192F;
-        }
-
-        .feedback {
-            margin-top: 20px;
-            font-size: 1.05rem;
-            line-height: 1.5;
-        }
-        .explanation-text {
-            display: block;
-            font-size: 0.95rem;
-            color: #8892B0;
-            margin-top: 5px;
-            font-weight: normal;
-        }
-        .correct { color: #4ade80; font-weight: bold; }
-        .wrong { color: #f87171; font-weight: bold; }
+        .challenge-container.success-highlight { border-color: #4ade80; }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="index.html" class="home-link" onclick="resetPage();">Home</a>
-        <div class="brand-name">Learn.java</div>
+        <a href="index.html" class="home-link">Home</a>
+        <span class="study-tip">Tip: Review concept breakdowns first, then take practice tests</span>
+        <div class="brand-name">JavaLab</div>
     </header>
 
     <div class="workspace">
-        <div class="sidebar">
-            <div class="menu-item" onclick="openSubMenu()"><span>1. Intro to Java Basics</span><span>&rarr;</span></div>
-            <div class="menu-item locked"><span>2. Variables & Data Types 🔒</span></div>
-            <div class="menu-item locked"><span>3. Conditionals (If/Else) 🔒</span></div>
-            <div class="menu-item locked"><span>4. While Loops 🔒</span></div>
-            <div class="menu-item locked"><span>5. For Loops 🔒</span></div>
-            <div class="menu-item locked"><span>6. Nested Loops 🔒</span></div>
-            <div class="menu-item locked"><span>7. Creating Methods 🔒</span></div>
-            <div class="menu-item locked"><span>8. Working with Arrays 🔒</span></div>
-            <div class="menu-item locked"><span>9. Two-Dimensional Arrays 🔒</span></div>
-            <div class="menu-item locked"><span>10. Intro to OOP 🔒</span></div>
+        <div id="sidebar">
+            <span style="color:#8892B0; font-size:0.75rem; font-weight:bold; letter-spacing:1px; text-transform:uppercase; padding:0 4px; margin-bottom:4px;">Practice Units</span>
+            <button onclick="openSubMenu(1)">Unit 1: Computer Fundamentals</button>
+            <button onclick="openSubMenu(2)">Unit 2: Data Types &amp; Printing</button>
+            <button onclick="openSubMenu(3)">Unit 3: IO &amp; Expressions</button>
+            <button onclick="openSubMenu(4)">Unit 4: Methods &amp; Classes</button>
+            <button onclick="openSubMenu(5)">Unit 5: OOP Inheritance</button>
+            <button disabled>Unit 6: Loops &amp; Iteration</button>
+            <button disabled>Unit 7: Single Arrays</button>
+            <button disabled>Unit 8: 2D Arrays</button>
+            <button disabled>Unit 9: ArrayLists</button>
+            <button disabled>Unit 10: Recursion &amp; Sorting</button>
         </div>
 
-        <div class="sub-sidebar" id="sub-sidebar">
-            <div class="menu-item back-btn" onclick="closeSubMenu()"><span>&larr; Go Back</span></div>
-            <div class="menu-item" onclick="loadMultipleChoice()"><span>Multiple Choice</span><span>&rarr;</span></div>
-            <div class="menu-item" onclick="loadFillInBlank()"><span>Fill in the Blank</span><span>&rarr;</span></div>
-            <div class="menu-item" onclick="loadCodeExercise()"><span>Code</span><span>&rarr;</span></div>
-        </div>
+        <div id="sub-sidebar"></div>
 
-        <div class="main-content" id="display-window">
+        <div id="display-window" class="centered-view">
             <h1>Online Practice Tests</h1>
-            <p>Welcome to the testing sandbox. These modules are configured to match our exact class pacing to keep you on track and well prepared without skipping ahead. Use these interactive quizzes to study, practice logic, and write error-free code before your upcoming unit exams.</p>
+            <p>Welcome to the testing sandbox. Use these interactive quizzes to study, practice logic, and write error-free code before your upcoming unit exams.</p>
         </div>
     </div>
 
     <script>
+        // ====== UTILITY ======
+        function shuffleArray(arr) {
+            const s = [...arr];
+            for (let i = s.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [s[i], s[j]] = [s[j], s[i]];
+            }
+            return s;
+        }
+
+        // ====== MULTIPLE CHOICE DATABASE (10 questions, 7 shown per quiz) ======
+        const mcQuestions = [
+            {
+                title: "Question", prompt: "If ASCII character '0' has a decimal value of 48, what is the decimal value of ASCII character '7'?",
+                options: ["A) 57","B) 7","C) 55","D) 48"], correctIndex: 2,
+                optionExplanations: [
+                    "57 would be ASCII '9' (48+9). Character '7' is only 7 positions after '0'.",
+                    "7 is the digit character itself, not its ASCII code. Each character has a unique numeric code.",
+                    "Correct. ASCII digits are sequential starting at 48. So '7' = 48 + 7 = 55.",
+                    "48 is the code for '0'. Each digit after '0' increments by 1, so '7' = 55."
+                ]
+            },
+            {
+                title: "Question", prompt: "What is the hexadecimal equivalent of binary 1101 0110?",
+                options: ["A) 6D","B) B6","C) D4","D) D6"], correctIndex: 3,
+                optionExplanations: [
+                    "6D reverses the nibble order. Always process nibbles left to right.",
+                    "B6 would be 1011 0110. The upper nibble 1101 = D (13), not B (11).",
+                    "D4 would be 1101 0100. The lower nibble 0110 = 6, not 4.",
+                    "Correct. Split into nibbles: 1101 = D (13), 0110 = 6. Combined: D6."
+                ]
+            },
+            {
+                title: "Question", prompt: "Which of the following binary numbers equals decimal 202?",
+                options: ["A) 1100 1100","B) 1100 1010","C) 1101 0010","D) 1100 0110"], correctIndex: 1,
+                optionExplanations: [
+                    "1100 1100 = 128 + 64 + 8 + 4 = 204. Off by 2.",
+                    "Correct. 128 + 64 + 8 + 2 = 202.",
+                    "1101 0010 = 128 + 64 + 16 + 2 = 210. Off by 8.",
+                    "1100 0110 = 128 + 64 + 4 + 2 = 198. Off by 4."
+                ]
+            },
+            {
+                title: "Question", prompt: "What is the hexadecimal equivalent of decimal 200?",
+                options: ["A) D0","B) CA","C) C8","D) B8"], correctIndex: 2,
+                optionExplanations: [
+                    "D0 = 13×16 + 0 = 208, not 200.",
+                    "CA = 12×16 + 10 = 202, not 200.",
+                    "Correct. 200 ÷ 16 = 12 remainder 8. 12 = C in hex, so C8.",
+                    "B8 = 11×16 + 8 = 184, not 200."
+                ]
+            },
+            {
+                title: "Question", prompt: "What is the binary equivalent of hexadecimal 3F?",
+                options: ["A) 0011 1110","B) 0111 1100","C) 0011 1011","D) 0011 1111"], correctIndex: 3,
+                optionExplanations: [
+                    "0011 1110 = hex 3E. The digit F converts to 1111, not 1110.",
+                    "0111 1100 = hex 7C. You may have reversed or misread the nibbles.",
+                    "0011 1011 = hex 3B. F = 1111, not 1011 (which is B).",
+                    "Correct. 3 = 0011, F = 1111. Combined: 0011 1111."
+                ]
+            },
+            {
+                title: "Question", prompt: "Which of the following statements about Windows is TRUE?",
+                options: [
+                    "A) There is only one way to take a screenshot on Windows",
+                    "B) You should always log out when done using a shared computer",
+                    "C) Ctrl+P is the keyboard shortcut for pasting content",
+                    "D) Files save automatically when you close Notepad without saving"
+                ], correctIndex: 1,
+                optionExplanations: [
+                    "False. Windows has multiple screenshot methods: Print Screen, Snipping Tool, Win+Shift+S, and more.",
+                    "Correct. Logging out protects your accounts and personal data, especially on shared or school computers.",
+                    "False. Ctrl+P opens the Print dialog. Ctrl+V is the shortcut for pasting.",
+                    "False. Notepad prompts you to save unsaved changes. Clicking 'Don't Save' discards your work."
+                ]
+            },
+            {
+                title: "Question", prompt: "Which keyboard shortcut is correctly paired with its function?",
+                options: [
+                    "A) Ctrl+C → Cut content",
+                    "B) Ctrl+X → Copy content",
+                    "C) Ctrl+V → Paste content",
+                    "D) Ctrl+Z → Redo last action"
+                ], correctIndex: 2,
+                optionExplanations: [
+                    "Ctrl+C is for Copy, not Cut. Remember: C = Copy. Ctrl+X is for Cut.",
+                    "Ctrl+X is for Cut, not Copy. Think of X as scissors cutting.",
+                    "Correct. Ctrl+V pastes content from the clipboard into the current location.",
+                    "Ctrl+Z is for Undo, not Redo. Ctrl+Y is typically used for Redo."
+                ]
+            },
+            {
+                title: "Question", prompt: "What does Ctrl+Shift+N do in Windows File Explorer?",
+                options: [
+                    "A) Opens a new browser window in incognito mode",
+                    "B) Creates a new folder in the currently open directory",
+                    "C) Always creates a new folder on the Desktop",
+                    "D) Creates a new blank text document"
+                ], correctIndex: 1,
+                optionExplanations: [
+                    "In a browser, Ctrl+Shift+N opens incognito/private mode — but in File Explorer it creates a new folder.",
+                    "Correct. In File Explorer, Ctrl+Shift+N creates a new folder in whatever directory you currently have open.",
+                    "It creates a folder in the active File Explorer location, which could be any directory — not always the Desktop.",
+                    "Ctrl+Shift+N creates a folder, not a text file. Right-click → New → Text Document is how you create a .txt file."
+                ]
+            },
+            {
+                title: "Question", prompt: "A school's wifi transfers data at 280 KBps. A student's project took 7.5 minutes to upload. Approximately how large was the file?",
+                options: ["A) 2,100 MB","B) 20.51 MB","C) 126.00 MB","D) 123.05 MB"], correctIndex: 3,
+                optionExplanations: [
+                    "2,100 MB — you multiplied 280 × 7.5 without converting minutes to seconds first.",
+                    "20.51 MB — you may have divided by 1024 an extra time (KB → MB is only one ÷1024).",
+                    "126.00 MB — close, but you forgot to convert KB to MB. 126,000 KB ÷ 1024 = 123.05 MB.",
+                    "Correct. 7.5 min = 450 sec. 280 KB/s × 450 = 126,000 KB ÷ 1024 ≈ 123.05 MB."
+                ]
+            },
+            {
+                title: "Question", prompt: "A tablet has 64 GB of storage. A school wants to upgrade to devices with 12 times the capacity. What is the new storage requirement in Terabytes?",
+                options: ["A) 0.75 TB","B) 7.68 TB","C) 768 TB","D) 0.064 TB"], correctIndex: 0,
+                optionExplanations: [
+                    "Correct. 64 × 12 = 768 GB. 768 GB ÷ 1024 = 0.75 TB.",
+                    "7.68 TB — you may have divided by 100 instead of 1024. Storage uses base-1024.",
+                    "768 TB — you multiplied correctly (768 GB) but forgot to convert GB → TB (÷1024).",
+                    "0.064 TB — you converted 64 GB to TB without multiplying by 12 first."
+                ]
+            }
+        ];
+
+        // ====== FILL IN THE BLANK DATABASE (20 questions, 15 shown per quiz) ======
+        const blankQuestions = [
+            // --- CLASS POLICIES ---
+            { title: "Class Policy", prompt: "How many late passes is a student permitted to use per semester?",
+              snippet: "Late passes per semester: <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "2", caseSensitive: true, alternates: ["two"], category: "policy" },
+
+            { title: "Class Policy", prompt: "Using a late pass allows you to turn in an assignment how many days late?",
+              snippet: "Days late with one pass: <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "1", caseSensitive: true, alternates: ["one"], category: "policy" },
+
+            { title: "Grade Calculation", prompt: "A student earned: Homework 92% (30%), Exams 88% (30%), Participation 95% (20%), Quizzes 90% (5%). What minimum integer score on the Final Exam (15%) is needed for a 90% overall?",
+              snippet: "30(92) + 30(88) + 20(95) + 5(90) + 15(<span style='color:#00F0FF; font-weight:bold;'>[?]</span>) = 9000",
+              correct: "84", caseSensitive: true, alternates: [], category: "grade-calc" },
+
+            { title: "Grade Calculation", prompt: "A student earned: Homework 94% (30%), Exams 86% (30%), Participation 92% (20%), Quizzes 88% (5%). What minimum integer score on the Final Exam (15%) is needed for a 90% overall?",
+              snippet: "30(94) + 30(86) + 20(92) + 5(88) + 15(<span style='color:#00F0FF; font-weight:bold;'>[?]</span>) = 9000",
+              correct: "88", caseSensitive: true, alternates: [], category: "grade-calc" },
+
+            // --- CONVERSIONS (harder, unique numbers) ---
+            { title: "ASCII Conversion", prompt: "If ASCII '0' = 48, what is the decimal value of ASCII character '7'?",
+              snippet: "ASCII '0' = 48 → ASCII '7' = <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "55", caseSensitive: true, alternates: [], category: "ascii" },
+
+            { title: "Binary → Hex", prompt: "Convert binary 1101 0110 to hexadecimal:",
+              snippet: "Binary: <span style='color:#00F0FF'>1101 0110</span> → Hex: <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "D6", caseSensitive: false, alternates: ["0xD6"], category: "bin-hex" },
+
+            { title: "Binary → Decimal", prompt: "Convert binary 1110 1010 to decimal:",
+              snippet: "Binary: <span style='color:#00F0FF'>1110 1010</span> → Decimal: <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "234", caseSensitive: true, alternates: [], category: "bin-dec" },
+
+            { title: "Decimal → Hex", prompt: "Convert decimal 200 to hexadecimal:",
+              snippet: "Decimal: <span style='color:#00F0FF'>200</span> → Hex: <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "C8", caseSensitive: false, alternates: ["0xC8"], category: "dec-hex" },
+
+            { title: "Hex → Binary", prompt: "Convert hexadecimal 3F to binary:",
+              snippet: "Hex: <span style='color:#00F0FF'>3F</span> → Binary: <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "00111111", caseSensitive: true, alternates: ["0011 1111","111111","11 1111"], category: "hex-bin" },
+
+            { title: "Hex → Decimal", prompt: "Convert hexadecimal 3F to decimal:",
+              snippet: "Hex: <span style='color:#00F0FF'>3F</span> → Decimal: <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "63", caseSensitive: true, alternates: [], category: "hex-dec" },
+
+            { title: "Decimal → Binary", prompt: "Convert decimal 42 to binary:",
+              snippet: "Decimal: <span style='color:#00F0FF'>42</span> → Binary: <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "101010", caseSensitive: true, alternates: ["10 1010","0010 1010"], category: "dec-bin" },
+
+            { title: "Binary → Decimal", prompt: "Convert binary 1010 0011 to decimal:",
+              snippet: "Binary: <span style='color:#00F0FF'>1010 0011</span> → Decimal: <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "163", caseSensitive: true, alternates: [], category: "bin-dec" },
+
+            // --- MEMORY WORD PROBLEMS ---
+            { title: "Data Transfer", prompt: "A school's wifi transfers at 150 KBps. A student's video project took 9.2 minutes to upload. How large was the file in MB? (round to 2 decimal places)",
+              snippet: "Rate: 150 KBps | Time: 9.2 min | File size: <span style='color:#00F0FF; font-weight:bold;'>[?]</span> MB",
+              correct: "80.86", caseSensitive: true, alternates: ["80.85","80.859"], category: "memory-calc" },
+
+            { title: "Data Transfer", prompt: "A lab printer server transfers files at 320 KBps. A student's poster took 4 minutes to print. How large was the file in MB?",
+              snippet: "Rate: 320 KBps | Time: 4 min | File size: <span style='color:#00F0FF; font-weight:bold;'>[?]</span> MB",
+              correct: "75", caseSensitive: true, alternates: ["75.0","75.00"], category: "memory-calc" },
+
+            { title: "Storage Upgrade", prompt: "A USB drive holds 16 GB. A company needs 250 times this capacity for backups. What is the total storage needed in TB? (round to 2 decimal places)",
+              snippet: "16 GB × 250 = ? GB ÷ 1024 = <span style='color:#00F0FF; font-weight:bold;'>[?]</span> TB",
+              correct: "3.91", caseSensitive: true, alternates: ["3.90","3.906"], category: "memory-calc" },
+
+            // --- WINDOWS & BASICS ---
+            { title: "Keyboard Shortcuts", prompt: "Ctrl+X is the keyboard shortcut for ___.",
+              snippet: "Ctrl+X → <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "cut", caseSensitive: false, alternates: ["cutting"], category: "shortcut" },
+
+            { title: "Keyboard Shortcuts", prompt: "Ctrl+Z is the keyboard shortcut for ___.",
+              snippet: "Ctrl+Z → <span style='color:#00F0FF; font-weight:bold;'>[?]</span>",
+              correct: "undo", caseSensitive: false, alternates: ["undoing"], category: "shortcut" },
+
+            { title: "File Basics", prompt: "On Windows, a standard newline (CRLF) takes up how many bytes?",
+              snippet: "Windows newline (CR + LF) = <span style='color:#00F0FF; font-weight:bold;'>[?]</span> bytes",
+              correct: "2", caseSensitive: true, alternates: ["two"], category: "newline" },
+
+            { title: "Computer Basics", prompt: "How many bits are in one byte?",
+              snippet: "1 byte = <span style='color:#00F0FF; font-weight:bold;'>[?]</span> bits",
+              correct: "8", caseSensitive: true, alternates: ["eight"], category: "bits" }
+        ];
+
+        // ====== UNIT 2: DATA TYPES & PRINTING — FILL IN BLANK (8 questions, 5 shown) ======
+        const blankQuestionsU2 = [
+            { title: "Print Output", prompt: "What is the output of this code?",
+              snippet: `<span style='color:#a9b7c6;'>System.out.print(<span style='color:#6A8759;'>"Hello "</span>);<br>System.out.println(<span style='color:#6A8759;'>"World"</span>);</span>`,
+              correct: "Hello World", caseSensitive: true, alternates: [], category: "print-output" },
+
+            { title: "Print Output", prompt: "What is the output of this code? (Separate lines with | )",
+              snippet: `<span style='color:#a9b7c6;'>System.out.println(<span style='color:#6A8759;'>"Top"</span>);<br>System.out.print(<span style='color:#6A8759;'>"Mid"</span>);<br>System.out.println(<span style='color:#6A8759;'>"dle"</span>);<br>System.out.print(<span style='color:#6A8759;'>"End"</span>);</span>`,
+              correct: "Top\nMiddle\nEnd", caseSensitive: true, alternates: [], category: "print-multiline" },
+
+            { title: "String Concatenation", prompt: "What is the output of this code?",
+              snippet: `<span style='color:#a9b7c6;'>System.out.println(<span style='color:#6A8759;'>"Score: "</span> + <span style='color:#6897BB;'>10</span> + <span style='color:#6897BB;'>5</span>);</span>`,
+              correct: "Score: 105", caseSensitive: true, alternates: [], category: "concat" },
+
+            { title: "String Concatenation", prompt: "What is the output of this code?",
+              snippet: `<span style='color:#a9b7c6;'>System.out.println(<span style='color:#6897BB;'>10</span> + <span style='color:#6897BB;'>5</span> + <span style='color:#6A8759;'>" points"</span>);</span>`,
+              correct: "15 points", caseSensitive: true, alternates: [], category: "concat" },
+
+            { title: "Escape Sequences", prompt: "What is the output of this code? (Separate lines with | )",
+              snippet: `<span style='color:#a9b7c6;'>System.out.print(<span style='color:#6A8759;'>"A\\nB\\nC"</span>);</span>`,
+              correct: "A\nB\nC", caseSensitive: true, alternates: [], category: "print-multiline" },
+
+            { title: "Print Output", prompt: "What is the output of this code? (Separate lines with | )",
+              snippet: `<span style='color:#a9b7c6;'>System.out.println(<span style='color:#6A8759;'>"Hi"</span> + <span style='color:#6A8759;'>"\\n"</span> + <span style='color:#6A8759;'>"Bye"</span>);</span>`,
+              correct: "Hi\nBye", caseSensitive: true, alternates: [], category: "print-multiline" },
+
+            { title: "String Concatenation", prompt: "What is the output of this code?",
+              snippet: `<span style='color:#a9b7c6;'>System.out.println(<span style='color:#6897BB;'>10</span> * <span style='color:#6897BB;'>3</span> + <span style='color:#6A8759;'>"+"</span> + <span style='color:#6897BB;'>2</span> * <span style='color:#6897BB;'>5</span>);</span>`,
+              correct: "30+10", caseSensitive: true, alternates: [], category: "concat" },
+
+            { title: "Print Output", prompt: "What is the output of this code? (Separate lines with | )",
+              snippet: `<span style='color:#a9b7c6;'>System.out.println(<span style='color:#6A8759;'>"Java"</span>);<br>System.out.print(<span style='color:#6897BB;'>20</span> + <span style='color:#6897BB;'>25</span>);<br>System.out.println(<span style='color:#6A8759;'>" total"</span>);</span>`,
+              correct: "Java\n45 total", caseSensitive: true, alternates: [], category: "print-multiline" }
+        ];
+
+        // ====== UNIT 2: DATA TYPES & PRINTING — CODE QUESTIONS (4 questions, 2 shown) ======
+        const codeQuestionsU2 = [
+            { title: "Variable Initialization",
+              prompt: "Write the single line of code to <strong>initialize</strong> a variable called <code>score</code> as <code>100</code>. DO ONLY THIS!",
+              correct: "int score = 100;",
+              alternates: ["int score=100;", "int score =100;", "int score= 100;"],
+              hint: "To <em>initialize</em> a variable, you must declare its type, give it a name, and assign a value using <code>=</code>. Since 100 is a whole number, the type is <code>int</code>." },
+
+            { title: "Variable Declaration",
+              prompt: "Write the single line of code to <strong>declare</strong> a variable called <code>name</code> as a <code>String</code>. DO ONLY THIS!",
+              correct: "String name;",
+              alternates: ["String name ;"],
+              hint: "To <em>declare</em> (not initialize) means only type and name — no value. String starts with a capital S because it's a class, not a primitive." },
+
+            { title: "Variable Initialization",
+              prompt: "Write the single line of code to <strong>initialize</strong> a variable called <code>price</code> as <code>9.99</code>. DO ONLY THIS!",
+              correct: "double price = 9.99;",
+              alternates: ["double price=9.99;", "double price =9.99;", "double price= 9.99;"],
+              hint: "Decimal numbers need the <code>double</code> type (or <code>float</code> with <code>f</code> suffix). Since this is a standard decimal, use <code>double</code>." },
+
+            { title: "Variable Declaration",
+              prompt: "Write the single line of code to <strong>declare</strong> a variable called <code>letter</code> as a <code>char</code>. DO ONLY THIS!",
+              correct: "char letter;",
+              alternates: ["char letter ;"],
+              hint: "To <em>declare</em> means type + name only, no value. A <code>char</code> stores a single character. Don't forget the semicolon." }
+        ];
+
+        // ====== UNIT 3: IO & EXPRESSIONS — MULTIPLE CHOICE (15 questions, 10 shown) ======
+        const mcQuestionsU3 = [
+            { title: "Question", prompt: "What is the result of <code>7 + 3 * 2</code> in Java?",
+              options: ["A) 20","B) 17","C) 13","D) 10"], correctIndex: 2,
+              optionExplanations: ["20 assumes left-to-right without PEMDAS. Multiplication happens first: 3*2=6, then 7+6=13.","17 doesn't match any valid evaluation of this expression.","Correct. Multiplication before addition: 3*2=6, then 7+6=13.","10 doesn't match. 3*2=6, then 7+6=13."] },
+            { title: "Question", prompt: "What is the result of <code>15 / 4</code> in Java?",
+              options: ["A) 3","B) 3.75","C) 4","D) 3.0"], correctIndex: 0,
+              optionExplanations: ["Correct. Integer division: 15÷4 = 3 remainder 3. The decimal is dropped.","3.75 would require float division. Both operands are int, so integer division truncates.","4 would require rounding up. Integer division truncates the decimal.","3.0 would be a double. int / int = int, so the result is just 3."] },
+            { title: "Question", prompt: "What is the result of <code>17 % 5</code>?",
+              options: ["A) 3","B) 3.4","C) 12","D) 2"], correctIndex: 3,
+              optionExplanations: ["3 would be 18%5. 17÷5 = 3 remainder 2.","Modulus always returns a whole number, never a decimal.","12 = 17-5, but modulus is the remainder after division, not subtraction.","Correct. 17÷5 = 3 remainder 2. The % operator returns the remainder."] },
+            { title: "Question", prompt: "What is the data type of the expression <code>5 + 3.0</code>?",
+              options: ["A) double","B) int","C) float","D) long"], correctIndex: 0,
+              optionExplanations: ["Correct. 3.0 is a double, so 5 is promoted to double. Result: double.","When an int is combined with a double, the int is promoted to double.","3.0 is a double literal (not float). Floats require an 'f' suffix like 3.0f.","long is for large integers. The decimal makes this a double."] },
+            { title: "Question", prompt: "What is the value of <code>(int) 7.9</code>?",
+              options: ["A) 8","B) 7.0","C) 8.0","D) 7"], correctIndex: 3,
+              optionExplanations: ["Casting to int truncates — it does NOT round. 7.9 becomes 7.","The result of (int) is always an integer, not a double.","(int) truncates and produces an integer, not 8.0.","Correct. (int) truncates the decimal part. 7.9 → 7."] },
+            { title: "Question", prompt: "What character does <code>(char) 65</code> produce?",
+              options: ["A) '6'","B) 'A'","C) 'a'","D) '5'"], correctIndex: 1,
+              optionExplanations: ["'6' has ASCII value 54, not 65.","Correct. ASCII 65 = 'A'. The uppercase letters start at 65.","'a' has ASCII value 97. Uppercase 'A' is 65.","'5' has ASCII value 53, not 65."] },
+            { title: "Question", prompt: "Which import statement is needed to use <code>Scanner</code>?",
+              options: ["A) import java.io.Scanner","B) import Scanner","C) import java.util.Scanner","D) import java.lang.Scanner"], correctIndex: 2,
+              optionExplanations: ["Scanner is in java.util, not java.io.","You must specify the full package path in Java imports.","Correct. Scanner is part of the java.util package.","java.lang is auto-imported. Scanner is in java.util."] },
+            { title: "Question", prompt: "In <code>printf(\"%-10s\", \"Hi\")</code>, what does the <code>-</code> do?",
+              options: ["A) Left-aligns the text","B) Subtracts from width","C) Right-aligns the text","D) Adds a negative sign"], correctIndex: 0,
+              optionExplanations: ["Correct. The minus sign in printf format means left-align within the field width.","The dash doesn't subtract — it controls alignment direction.","Without the dash, text is right-aligned. The dash switches to LEFT.","The dash controls alignment, not the sign of the value."] },
+            { title: "Question", prompt: "What does <code>%9.2f</code> format?",
+              options: ["A) A string in 9 chars","B) A float/double — 9 wide, 2 decimals","C) An integer with 2 zeros","D) A double in 2 chars"], correctIndex: 1,
+              optionExplanations: ["%s is for strings. %f is for floating-point numbers.","Correct. %9.2f = floating-point number, total width 9, with 2 decimal places.","%.2f controls decimal places, not zero-padding for integers.","9 is the total width, 2 is the decimal places. Not the other way around."] },
+            { title: "Question", prompt: "Which of these is ONLY a declaration (not initialization)?",
+              options: ["A) int x = 5;","B) String s = \"hi\";","C) double y;","D) x = 10;"], correctIndex: 2,
+              optionExplanations: ["This is an initialization — it declares AND assigns a value.","This is an initialization — it includes an assigned value.","Correct. Declaration = type + name + semicolon. No value assigned.","This is an assignment — no type specified, so it's not even a declaration."] },
+            { title: "Question", prompt: "Which line shows <strong>initialization</strong>?",
+              options: ["A) int x;","B) x = 5;","C) System.out.println(x);","D) int x = 5;"], correctIndex: 3,
+              optionExplanations: ["This is only a declaration — no value is assigned.","This is assignment, not initialization. Initialization includes the type.","This is a method call, not initialization.","Correct. Initialization = declaration + assignment in one line: type + name + = + value."] },
+            { title: "Question", prompt: "What is <code>(int)('A') + 1</code>? (ASCII 'A' = 65)",
+              options: ["A) 'B'","B) 65","C) 66","D) 'A1'"], correctIndex: 2,
+              optionExplanations: ["(int) casts 'A' to integer 65, so the result is int, not char.","65 is (int)'A' alone. Adding 1 gives 66.","Correct. (int)'A' = 65, then 65 + 1 = 66. The result is an int.","Java doesn't concatenate chars and ints as strings here — it does arithmetic."] },
+            { title: "Question", prompt: "What is the data type of <code>(double) 10 / 3</code>?",
+              options: ["A) int","B) double","C) float","D) long"], correctIndex: 1,
+              optionExplanations: ["The (double) cast promotes 10 to 10.0, making this double division.","Correct. (double)10 = 10.0, so 10.0/3 = 3.333... as a double.","float requires an explicit 'f' suffix. (double) produces a double.","long is for large integers. The cast to double makes this a double."] },
+            { title: "Question", prompt: "Which Scanner method reads a <strong>whole number</strong> from user input?",
+              options: ["A) nextLine()","B) readInt()","C) getInt()","D) nextInt()"], correctIndex: 3,
+              optionExplanations: ["nextLine() reads a full line of text as a String.","readInt() is not a Scanner method.","getInt() is not a Scanner method.","Correct. nextInt() reads the next integer from the input stream."] },
+            { title: "Question", prompt: "What does <code>System.out.println()</code> with <strong>no arguments</strong> print?",
+              options: ["A) A blank line","B) Nothing at all","C) The word 'null'","D) An error"], correctIndex: 0,
+              optionExplanations: ["Correct. println() with no arguments simply prints a newline, creating a blank line in the output.","It does print something — a newline character, which creates a blank line.","null is printed when you pass a null reference. No arguments prints a blank line.","This is valid Java — it compiles and runs without error."] }
+        ];
+
+        // ====== UNIT 3: IO & EXPRESSIONS — FILL IN BLANK (15 questions, 10 shown) ======
+        const blankQuestionsU3 = [
+            { title: "Expression", prompt: "Evaluate: <code>6 - 75 % 12 * 5 + 87 / 12 % 3</code>",
+              snippet: "6 - 75%12*5 + 87/12%3 = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "-8", caseSensitive: true, alternates: [], category: "expression" },
+
+            { title: "Expression", prompt: "Evaluate: <code>25 % 7 + 18 / 5</code>",
+              snippet: "25%7 + 18/5 = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "7", caseSensitive: true, alternates: [], category: "expression" },
+
+            { title: "Expression", prompt: "Evaluate: <code>(int) 9.7 + (int) 2.3</code>",
+              snippet: "(int)9.7 + (int)2.3 = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "11", caseSensitive: true, alternates: [], category: "casting" },
+
+            { title: "Expression", prompt: "Evaluate to 2 decimal places: <code>(double) 53 / 6</code>",
+              snippet: "(double)53 / 6 = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "8.83", caseSensitive: true, alternates: ["8.833","8.8333"], category: "expression" },
+
+            { title: "Expression", prompt: "Evaluate: <code>(int)('B') - (int)('A')</code> (ASCII 'A'=65, 'B'=66)",
+              snippet: "(int)('B') - (int)('A') = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "1", caseSensitive: true, alternates: [], category: "casting" },
+
+            { title: "Data Type", prompt: "What data type is the result of <code>8 / 3 + 2.0</code>?",
+              snippet: "8/3 + 2.0 → type: <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "double", caseSensitive: false, alternates: [], category: "datatype" },
+
+            { title: "Data Type", prompt: "What data type is the result of <code>(char)(70)</code>?",
+              snippet: "(char)(70) → type: <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "char", caseSensitive: false, alternates: [], category: "datatype" },
+
+            { title: "Output Prediction", prompt: "What is the output? (press Enter for new lines)",
+              snippet: `<span style='color:#a9b7c6;'>System.out.println(<span style='color:#6A8759;'>"Start"</span>);<br>System.out.print(<span style='color:#6A8759;'>"A"</span>);<br>System.out.println(<span style='color:#6A8759;'>"B"</span>);<br>System.out.print(<span style='color:#6A8759;'>"End"</span>);</span>`,
+              correct: "Start\nAB\nEnd", caseSensitive: true, alternates: [], category: "output-multi" },
+
+            { title: "Output Prediction", prompt: "What is the output? (press Enter for new lines)",
+              snippet: `<span style='color:#a9b7c6;'><span style='color:#CC7832;'>int</span> x = <span style='color:#6897BB;'>10</span>;<br><span style='color:#CC7832;'>int</span> y = <span style='color:#6897BB;'>3</span>;<br>System.out.println(x / y);<br>System.out.println(x % y);</span>`,
+              correct: "3\n1", caseSensitive: true, alternates: [], category: "output-multi" },
+
+            { title: "Output Prediction", prompt: "What is the output? (press Enter for new lines)",
+              snippet: `<span style='color:#a9b7c6;'>System.out.println(<span style='color:#6A8759;'>"A"</span>);<br>System.out.print(<span style='color:#6A8759;'>"B"</span>);<br>System.out.print(<span style='color:#6A8759;'>"C"</span>);<br>System.out.println(<span style='color:#6A8759;'>"D"</span>);<br>System.out.print(<span style='color:#6A8759;'>"E"</span>);</span>`,
+              correct: "A\nBCD\nE", caseSensitive: true, alternates: [], category: "output-multi" },
+
+            { title: "Expression", prompt: "What character does <code>(char)(65 + 3)</code> produce? (type the character only)",
+              snippet: "(char)(65 + 3) = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "D", caseSensitive: true, alternates: ["d"], category: "casting" },
+
+            { title: "Expression", prompt: "Evaluate: <code>100 / 3 * 3 + 100 % 3</code>",
+              snippet: "100/3*3 + 100%3 = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "100", caseSensitive: true, alternates: [], category: "expression" },
+
+            { title: "Expression", prompt: "Evaluate: <code>(short)(73.5) / 8</code>",
+              snippet: "(short)(73.5) / 8 = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "9", caseSensitive: true, alternates: [], category: "casting" },
+
+            { title: "Data Type", prompt: "What data type is the result of <code>'A' + 1</code> in Java?",
+              snippet: "'A' + 1 → type: <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "int", caseSensitive: false, alternates: [], category: "datatype" },
+
+            { title: "Output Prediction", prompt: "What is the output? (press Enter for new lines)",
+              snippet: `<span style='color:#a9b7c6;'><span style='color:#CC7832;'>double</span> d = <span style='color:#6897BB;'>7.5</span>;<br>System.out.println((<span style='color:#CC7832;'>int</span>) d);<br>System.out.println(d);</span>`,
+              correct: "7\n7.5", caseSensitive: true, alternates: [], category: "output-multi" }
+        ];
+
+        // ====== UNIT 3: IO & EXPRESSIONS — CODE QUESTIONS (4 questions, 2 shown) ======
+        const codeQuestionsU3 = [
+            { title: "Circle Area Calculator",
+              prompt: "Write a <strong>complete Java program</strong> in a class called <code>CircleArea</code> that:<br>• Imports Scanner and creates one to read user input<br>• Has a main method<br>• Prompts the user with <code>\"Enter radius: \"</code> and reads a <strong>double</strong><br>• Calculates the area using pi (hint: Java has a built-in constant for this) multiplied by radius squared<br>• Prints the result using formatted output with 2 decimal places: <code>\"Area: X.XX\"</code>",
+              solution: `import java.util.Scanner;\npublic class CircleArea\n{\n    public static void main(String[] args)\n    {\n        Scanner kb = new Scanner(System.in);\n        System.out.print("Enter radius: ");\n        double radius = kb.nextDouble();\n        double area = Math.PI * radius * radius;\n        System.out.printf("Area: %.2f", area);\n    }\n}`,
+              requirements: [
+                  { pattern: "import\\s+java\\.util\\.Scanner", label: "Import Scanner (import java.util.Scanner)" },
+                  { pattern: "new\\s+Scanner\\s*\\(\\s*System\\.in\\s*\\)", label: "Create Scanner with System.in" },
+                  { pattern: "nextDouble\\s*\\(", label: "Read double input (nextDouble())" },
+                  { pattern: "Math\\.PI", label: "Use Math.PI for pi" },
+                  { pattern: "printf", label: "Use printf for formatted output" },
+                  { pattern: "\\.2f", label: "Format to 2 decimal places (%.2f)" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "class\\s+\\w+", label: "Class declaration" }
+              ] },
+            { title: "Test Score Average",
+              prompt: "Write a <strong>complete Java program</strong> in a class called <code>TestAverage</code> that:<br>• Imports Scanner and creates one to read user input<br>• Has a main method<br>• Prompts and reads <strong>3 separate integer</strong> test scores (prompt each with <code>\"Enter score 1: \"</code>, <code>\"Enter score 2: \"</code>, <code>\"Enter score 3: \"</code>)<br>• Calculates the <strong>average as a double</strong> — be careful to avoid integer division when dividing the sum<br>• Prints the result using formatted output with 2 decimal places: <code>\"Average: X.XX\"</code>",
+              solution: `import java.util.Scanner;\npublic class TestAverage\n{\n    public static void main(String[] args)\n    {\n        Scanner kb = new Scanner(System.in);\n        System.out.print("Enter score 1: ");\n        int s1 = kb.nextInt();\n        System.out.print("Enter score 2: ");\n        int s2 = kb.nextInt();\n        System.out.print("Enter score 3: ");\n        int s3 = kb.nextInt();\n        double avg = (s1 + s2 + s3) / 3.0;\n        System.out.printf("Average: %.2f", avg);\n    }\n}`,
+              requirements: [
+                  { pattern: "import\\s+java\\.util\\.Scanner", label: "Import Scanner" },
+                  { pattern: "new\\s+Scanner\\s*\\(\\s*System\\.in\\s*\\)", label: "Create Scanner with System.in" },
+                  { pattern: "nextInt\\s*\\(", label: "Read integer input (nextInt())" },
+                  { pattern: "3\\.0|\\(double\\)|1\\.0\\s*\\*", label: "Divide by 3.0 (avoid integer division)" },
+                  { pattern: "printf", label: "Use printf for formatted output" },
+                  { pattern: "\\.2f", label: "Format to 2 decimal places (%.2f)" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "class\\s+\\w+", label: "Class declaration" }
+              ] },
+            { title: "Temperature Converter",
+              prompt: "Write a <strong>complete Java program</strong> in a class called <code>TempConverter</code> that:<br>• Imports Scanner and creates one to read user input<br>• Has a main method<br>• Prompts the user with <code>\"Enter temperature in Fahrenheit: \"</code> and reads a <strong>double</strong><br>• Converts to Celsius using the standard formula — be careful to avoid integer division<br>• Prints using formatted output with 1 decimal place in the format: <code>\"X.X°F = X.X°C\"</code>",
+              solution: `import java.util.Scanner;\npublic class TempConverter\n{\n    public static void main(String[] args)\n    {\n        Scanner kb = new Scanner(System.in);\n        System.out.print("Enter temperature in Fahrenheit: ");\n        double f = kb.nextDouble();\n        double c = (f - 32) * 5.0 / 9;\n        System.out.printf("%.1f°F = %.1f°C", f, c);\n    }\n}`,
+              requirements: [
+                  { pattern: "import\\s+java\\.util\\.Scanner", label: "Import Scanner" },
+                  { pattern: "new\\s+Scanner\\s*\\(\\s*System\\.in\\s*\\)", label: "Create Scanner with System.in" },
+                  { pattern: "nextDouble\\s*\\(", label: "Read double input (nextDouble())" },
+                  { pattern: "32", label: "Subtract 32 in formula" },
+                  { pattern: "5\\.0|5\\.0/9|5/9\\.0", label: "Use 5.0/9 (avoid integer division)" },
+                  { pattern: "printf", label: "Use printf for formatted output" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" }
+              ] },
+            { title: "Paycheck Calculator",
+              prompt: "Write a <strong>complete Java program</strong> in a class called <code>Paycheck</code> that:<br>• Imports Scanner and creates one to read user input<br>• Has a main method<br>• Prompts <code>\"Enter hours worked: \"</code> and reads an <strong>integer</strong><br>• Prompts <code>\"Enter hourly rate: \"</code> and reads a <strong>double</strong><br>• Calculates total pay by multiplying hours by rate<br>• Prints using formatted output: <code>\"Hours: X | Rate: $X.XX | Total: $X.XX\"</code> with 2 decimal places for the dollar amounts",
+              solution: `import java.util.Scanner;\npublic class Paycheck\n{\n    public static void main(String[] args)\n    {\n        Scanner kb = new Scanner(System.in);\n        System.out.print("Enter hours worked: ");\n        int hours = kb.nextInt();\n        System.out.print("Enter hourly rate: ");\n        double rate = kb.nextDouble();\n        double totalPay = hours * rate;\n        System.out.printf("Hours: %d | Rate: $%.2f | Total: $%.2f", hours, rate, totalPay);\n    }\n}`,
+              requirements: [
+                  { pattern: "import\\s+java\\.util\\.Scanner", label: "Import Scanner" },
+                  { pattern: "new\\s+Scanner\\s*\\(\\s*System\\.in\\s*\\)", label: "Create Scanner with System.in" },
+                  { pattern: "nextInt\\s*\\(", label: "Read integer input for hours" },
+                  { pattern: "nextDouble\\s*\\(", label: "Read double input for rate" },
+                  { pattern: "hours\\s*\\*\\s*rate|rate\\s*\\*\\s*hours", label: "Calculate hours * rate" },
+                  { pattern: "printf", label: "Use printf for formatted output" },
+                  { pattern: "\\.2f", label: "Format to 2 decimal places" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" }
+              ] }
+        ];
+
+        // ====== UNIT 4: METHODS & CLASSES — MULTIPLE CHOICE (20 questions, 15 shown) ======
+        const mcQuestionsU4 = [
+            { title: "Question", prompt: "In <code>public int honda(short passengers, int insurance, String model, double price)</code>, what is the <strong>name</strong> of the method?",
+              options: ["A) int","B) honda","C) public","D) price"], correctIndex: 1,
+              optionExplanations: ["int is the return type, written just before the name.","Correct. The method name sits right before the parameter list: honda.","public is the access specifier, not the name.","price is the last parameter, not the name."] },
+            { title: "Question", prompt: "What is the <strong>access specifier</strong> of <code>public int honda(...)</code>?",
+              options: ["A) public","B) int","C) honda","D) void"], correctIndex: 0,
+              optionExplanations: ["Correct. public is the access specifier — it controls visibility.","int is the return type.","honda is the method name.","void does not appear in this header."] },
+            { title: "Question", prompt: "What is the <strong>return type</strong> of <code>public int honda(...)</code>?",
+              options: ["A) void","B) String","C) int","D) double"], correctIndex: 2,
+              optionExplanations: ["void would mean it returns nothing, but this returns int.","String is a parameter type, not the return type.","Correct. The return type is int — it appears right before the method name.","double is a parameter type, not the return type."] },
+            { title: "Question", prompt: "How many <strong>parameters</strong> does <code>honda(short passengers, int insurance, String model, double price)</code> have?",
+              options: ["A) 1","B) 2","C) 3","D) 4"], correctIndex: 3,
+              optionExplanations: ["Count the comma-separated items in the parentheses.","There are more than 2.","Close, but count again: passengers, insurance, model, price.","Correct. Four parameters: passengers, insurance, model, price."] },
+            { title: "Question", prompt: "What is the <strong>return type</strong> of a constructor?",
+              options: ["A) void","B) none — constructors have no return type","C) int","D) the class name"], correctIndex: 1,
+              optionExplanations: ["Constructors do not use void either.","Correct. Constructors have NO return type written at all — not even void.","Constructors never declare int.","The class name is the constructor's name, not a return type."] },
+            { title: "Question", prompt: "Write the heading for a <strong>no-args constructor</strong> in a class called <code>Acura</code>.",
+              options: ["A) public void Acura()","B) public Acura","C) public Acura()","D) Acura() public"], correctIndex: 2,
+              optionExplanations: ["Constructors never have a return type, so no void.","Missing the parentheses required for a constructor.","Correct. public Acura() — access specifier, class name, empty parentheses, no return type.","The access specifier comes first, and parentheses are needed."] },
+            { title: "Question", prompt: "In <code>int finalPrice = Car.nissan( ... );</code>, what does <code>Car</code> refer to?",
+              options: ["A) the class that contains the method","B) an object instance","C) a parameter being passed in","D) the value returned"], correctIndex: 0,
+              optionExplanations: ["Correct. ClassName.method() calls a static method — Car is the class that holds nissan.","No object was created with new; this is a static call on the class.","Car is not a parameter; it is the class name.","Car is the class, not the return value."] },
+            { title: "Question", prompt: "What is the data type of the value passed into <code>taxes</code> in <code>Car.taxes(1.085 * grossCarPrice)</code>?",
+              options: ["A) int","B) String","C) boolean","D) double"], correctIndex: 3,
+              optionExplanations: ["1.085 is a double, so the whole expression is a double.","No text is involved here.","No true/false value is involved.","Correct. 1.085 is a double, so 1.085 * grossCarPrice produces a double."] },
+            { title: "Question", prompt: "In the nested call <code>nissan( taxes(x), model )</code>, which method runs <strong>first</strong>?",
+              options: ["A) nissan","B) taxes","C) both at the same time","D) model"], correctIndex: 1,
+              optionExplanations: ["nissan needs its arguments evaluated first, so it cannot run first.","Correct. The inner call taxes(x) is evaluated first; its result becomes an argument to nissan.","Java evaluates one call at a time, inner before outer.","model is an argument, not a method."] },
+            { title: "Question", prompt: "How many <strong>arguments</strong> does <code>nissan</code> require, based on <code>nissan( taxes(x), model )</code>?",
+              options: ["A) 1","B) 2","C) 3","D) 4"], correctIndex: 1,
+              optionExplanations: ["There are two items inside nissan's parentheses.","Correct. Two arguments are passed: the result of taxes(x), and model.","Only two items separated by a comma.","Only two arguments are listed."] },
+            { title: "Question", prompt: "Which keyword <strong>declares a class</strong>?",
+              options: ["A) new","B) public","C) class","D) void"], correctIndex: 2,
+              optionExplanations: ["new creates objects, it does not declare a class.","public is an access specifier.","Correct. The class keyword declares a class: public class PlanRates.","void is a return type for methods."] },
+            { title: "Question", prompt: "In <code>private int minutesMess, data, numUsers;</code> (written inside a class but outside any method), these variables are called:",
+              options: ["A) fields (instance variables)","B) local variables","C) parameters","D) methods"], correctIndex: 0,
+              optionExplanations: ["Correct. Variables declared in the class body (outside methods) are fields, also called instance variables.","Local variables are declared inside methods.","Parameters appear inside a method's parentheses.","These are variables, not methods."] },
+            { title: "Question", prompt: "Which data type best fits a base cost of <code>$20.00</code>?",
+              options: ["A) int","B) double","C) String","D) boolean"], correctIndex: 1,
+              optionExplanations: ["int cannot store the .00 decimal portion.","Correct. Money has decimals, so double is the appropriate type.","A price is a number you calculate with, not text.","boolean only stores true/false."] },
+            { title: "Question", prompt: "Which data type best fits the <strong>number of users</strong> (a whole number)?",
+              options: ["A) double","B) String","C) char","D) int"], correctIndex: 3,
+              optionExplanations: ["double is for decimals; a user count is a whole number.","A count is a number, not text.","char holds a single character.","Correct. A whole-number count uses int."] },
+            { title: "Question", prompt: "A <strong>no-args constructor</strong>:",
+              options: ["A) takes 4 parameters","B) returns void","C) has the class name and no parameters","D) must be private"], correctIndex: 2,
+              optionExplanations: ["No-args means zero parameters.","Constructors have no return type, not even void.","Correct. It shares the class name and has empty parentheses (no parameters).","Constructors are typically public."] },
+            { title: "Question", prompt: "An <strong>overloaded constructor</strong> differs from the no-args constructor by:",
+              options: ["A) its parameter list","B) its return type","C) its name","D) its access specifier"], correctIndex: 0,
+              optionExplanations: ["Correct. Overloaded constructors share the same name but have different parameter lists.","Constructors have no return type to differ by.","Both constructors share the class name.","Access specifier is not what distinguishes overloads."] },
+            { title: "Question", prompt: "Which constructor does <code>new PlanRates(0, 100, 0.15, 0)</code> call?",
+              options: ["A) the no-args constructor","B) the overloaded 4-parameter constructor","C) a getter method","D) the main method"], correctIndex: 1,
+              optionExplanations: ["The no-args constructor takes zero arguments, but four were passed.","Correct. Four arguments match the overloaded 4-parameter constructor.","Getters are not called with new.","main is not a constructor."] },
+            { title: "Question", prompt: "Which keyword <strong>creates an object</strong>?",
+              options: ["A) class","B) this","C) void","D) new"], correctIndex: 3,
+              optionExplanations: ["class declares a type, it does not create an object.","this refers to the current object, it does not create one.","void is a return type.","Correct. new allocates a new object: new PlanRates(...)."] },
+            { title: "Question", prompt: "In <code>this.start = start;</code>, what does <code>this</code> refer to?",
+              options: ["A) the current object","B) the class file","C) the parameter","D) the superclass"], correctIndex: 0,
+              optionExplanations: ["Correct. this refers to the current object, so this.start is the object's field.","this is not the file.","this.start is the field; the plain start is the parameter.","this is not super."] },
+            { title: "Question", prompt: "A getter such as <code>getDataRate()</code>:",
+              options: ["A) prints the field to the screen","B) changes the field's value","C) returns the value of the field","D) deletes the field"], correctIndex: 2,
+              optionExplanations: ["A getter returns a value; it does not print.","That describes a setter, not a getter.","Correct. A getter returns the value of a private field so other classes can read it.","Getters never delete anything."] }
+        ];
+
+        // ====== UNIT 4: METHODS & CLASSES — FILL IN BLANK (15 questions, 10 shown) ======
+        const blankQuestionsU4 = [
+            { title: "Method Anatomy", prompt: "What is the <strong>name</strong> of this method?",
+              snippet: "public int <span style='color:#00F0FF;font-weight:bold;'>[?]</span>(short passengers, int insurance, String model, double price)",
+              correct: "honda", caseSensitive: false, alternates: [], category: "method" },
+            { title: "Method Anatomy", prompt: "What is the <strong>return type</strong> of this method?",
+              snippet: "public <span style='color:#00F0FF;font-weight:bold;'>[?]</span> honda(short passengers, int insurance, String model, double price)",
+              correct: "int", caseSensitive: false, alternates: [], category: "method" },
+            { title: "Method Anatomy", prompt: "How many <strong>parameters</strong> does this method have?",
+              snippet: "public int honda(short passengers, int insurance, String model, double price) → params: <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "4", caseSensitive: false, alternates: ["four"], category: "method" },
+            { title: "Class Header", prompt: "Fill in the keyword that declares a class.",
+              snippet: "public <span style='color:#00F0FF;font-weight:bold;'>[?]</span> PlanRates",
+              correct: "class", caseSensitive: false, alternates: [], category: "class" },
+            { title: "Field Declaration", prompt: "Write the full line that declares a <strong>public double</strong> field named <code>start</code>.",
+              snippet: "// inside the class body:<br><span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "public double start;", caseSensitive: false, alternates: ["public double start ;"], category: "class" },
+            { title: "Constructor", prompt: "Write the full heading for a <strong>no-args constructor</strong> in a class named <code>Book</code>.",
+              snippet: "// no-args constructor heading:<br><span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "public Book()", caseSensitive: false, alternates: ["public Book ()"], category: "constructor" },
+            { title: "Creating Objects", prompt: "Fill in the keyword that creates the object.",
+              snippet: "Book b = <span style='color:#00F0FF;font-weight:bold;'>[?]</span> Book();",
+              correct: "new", caseSensitive: false, alternates: [], category: "class" },
+            { title: "Static Call", prompt: "Write the call to the <strong>static</strong> method <code>taxes</code> (located in class <code>Car</code>), passing in the variable <code>x</code>.",
+              snippet: "double t = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>;",
+              correct: "Car.taxes(x)", caseSensitive: false, alternates: ["Car.taxes( x )","Car.taxes(x )"], category: "method" },
+            { title: "Constructor Body", prompt: "Write the line that assigns the parameter <code>pages</code> to the field <code>pages</code> using <code>this</code>.",
+              snippet: "public Book(String title, int pages)<br>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:#00F0FF;font-weight:bold;'>[?]</span><br>}",
+              correct: "this.pages = pages;", caseSensitive: false, alternates: ["this.pages=pages;"], category: "constructor" },
+            { title: "Getter", prompt: "Write the <strong>return statement</strong> a getter would use to return the field <code>pages</code>.",
+              snippet: "public int getPages()<br>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:#00F0FF;font-weight:bold;'>[?]</span><br>}",
+              correct: "return pages;", caseSensitive: false, alternates: ["return pages ;"], category: "method" },
+            { title: "Calling a Method", prompt: "Write the line that calls the <code>findInfo()</code> method on the object <code>user1</code>.",
+              snippet: "PhonePlan user1 = new PhonePlan();<br><span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "user1.findInfo();", caseSensitive: false, alternates: ["user1.findInfo ();"], category: "method" },
+            { title: "Output Prediction", prompt: "What is the output? (press Enter for new lines)",
+              snippet: `<span style='color:#a9b7c6;'>System.out.print(<span style='color:#6A8759;'>"The total weight is $"</span>);<br>System.out.println(<span style='color:#6897BB;'>809.42</span>);<br>System.out.print(<span style='color:#6A8759;'>"Done"</span>);</span>`,
+              correct: "The total weight is $809.42\nDone", caseSensitive: true, alternates: [], category: "output-multi" },
+            { title: "Output Prediction", prompt: "A method prints these lines. What is the output? (press Enter for new lines)",
+              snippet: `<span style='color:#a9b7c6;'>System.out.println(<span style='color:#6A8759;'>"Menu"</span>);<br>System.out.print(<span style='color:#6A8759;'>"1) "</span>);<br>System.out.print(<span style='color:#6A8759;'>"Start"</span>);<br>System.out.println();<br>System.out.print(<span style='color:#6A8759;'>"2) Quit"</span>);</span>`,
+              correct: "Menu\n1) Start\n2) Quit", caseSensitive: true, alternates: [], category: "output-multi" },
+            { title: "String Concatenation", prompt: "What is printed by this line?",
+              snippet: `<span style='color:#a9b7c6;'>System.out.print(<span style='color:#6A8759;'>"The group plan will cost you: $"</span> + <span style='color:#6897BB;'>425.0</span>);</span>`,
+              correct: "The group plan will cost you: $425.0", caseSensitive: true, alternates: [], category: "method" },
+            { title: "Default Constructor Call", prompt: "Write the right-hand side that creates a <code>PlanRates</code> object using its <strong>no-args</strong> constructor.",
+              snippet: "PlanRates individual = <span style='color:#00F0FF;font-weight:bold;'>[?]</span>;",
+              correct: "new PlanRates()", caseSensitive: false, alternates: ["new PlanRates ()"], category: "constructor" }
+        ];
+
+        // ====== UNIT 4: METHODS & CLASSES — CODE QUESTIONS (4 questions, 2 shown) ======
+        const codeQuestionsU4 = [
+            { title: "Static Method: Cube",
+              prompt: "Write a <strong>complete Java program</strong> in a class called <code>MathUtil</code> that:<br>• Has a <strong>static method</strong> called <code>cube</code> that takes one int parameter and <strong>returns</strong> that number multiplied by itself three times (n cubed)<br>• Has a main method that <strong>calls</strong> <code>cube(4)</code> and prints the result",
+              solution: `public class MathUtil\n{\n    public static int cube(int n)\n    {\n        return n * n * n;\n    }\n\n    public static void main(String[] args)\n    {\n        System.out.println(cube(4));\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+\\w+", label: "Class declaration" },
+                  { pattern: "public\\s+static\\s+int\\s+cube", label: "Static method: public static int cube" },
+                  { pattern: "cube\\s*\\(\\s*int\\s+\\w+\\s*\\)", label: "cube takes one int parameter" },
+                  { pattern: "return\\s+\\w+\\s*\\*\\s*\\w+\\s*\\*\\s*\\w+", label: "Return n * n * n" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "cube\\s*\\(\\s*4\\s*\\)", label: "Call cube(4) from main" },
+                  { pattern: "System\\.out\\.print", label: "Print the result" }
+              ] },
+            { title: "Class with Constructor: Book",
+              prompt: "Write a <strong>complete Java program</strong> in a class called <code>Book</code> that:<br>• Has two <strong>private fields</strong>: a String for the title and an int for the number of pages<br>• Has a constructor that takes a title and a page count and assigns them to the fields (use <code>this</code>)<br>• Has a <strong>getter</strong> that returns the pages<br>• Has a main method that creates a Book and prints its pages using the getter",
+              solution: `public class Book\n{\n    private String title;\n    private int pages;\n\n    public Book(String title, int pages)\n    {\n        this.title = title;\n        this.pages = pages;\n    }\n\n    public int getPages()\n    {\n        return pages;\n    }\n\n    public static void main(String[] args)\n    {\n        Book b = new Book("Hatchet", 200);\n        System.out.println(b.getPages());\n    }\n}`,
+              requirements: [
+                  { pattern: "private\\s+String\\s+\\w+", label: "Private String field" },
+                  { pattern: "private\\s+int\\s+\\w+", label: "Private int field" },
+                  { pattern: "public\\s+Book\\s*\\(", label: "Constructor heading public Book(...)" },
+                  { pattern: "this\\.\\w+\\s*=", label: "Assign fields using this" },
+                  { pattern: "public\\s+int\\s+getPages", label: "Getter: public int getPages()" },
+                  { pattern: "return\\s+pages", label: "Getter returns pages" },
+                  { pattern: "new\\s+Book\\s*\\(", label: "Create a Book object with new" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" }
+              ] },
+            { title: "Two Constructors: Student",
+              prompt: "Write a <strong>complete Java program</strong> in a class called <code>Student</code> that:<br>• Has two <strong>private fields</strong>: a String name and a double gpa<br>• Has a <strong>no-args constructor</strong> that sets name to \"none\" and gpa to 0.0<br>• Has an <strong>overloaded constructor</strong> that takes a name and gpa and assigns them with <code>this</code><br>• Has a getter that returns the gpa<br>• Has a main method that creates a Student with the overloaded constructor and prints the gpa",
+              solution: `public class Student\n{\n    private String name;\n    private double gpa;\n\n    public Student()\n    {\n        name = "none";\n        gpa = 0.0;\n    }\n\n    public Student(String name, double gpa)\n    {\n        this.name = name;\n        this.gpa = gpa;\n    }\n\n    public double getGpa()\n    {\n        return gpa;\n    }\n\n    public static void main(String[] args)\n    {\n        Student s = new Student("Kunal", 3.9);\n        System.out.println(s.getGpa());\n    }\n}`,
+              requirements: [
+                  { pattern: "private\\s+String\\s+\\w+", label: "Private String field" },
+                  { pattern: "private\\s+double\\s+\\w+", label: "Private double field" },
+                  { pattern: "public\\s+Student\\s*\\(\\s*\\)", label: "No-args constructor public Student()" },
+                  { pattern: "public\\s+Student\\s*\\(\\s*String", label: "Overloaded constructor public Student(String, ...)" },
+                  { pattern: "this\\.\\w+\\s*=", label: "Assign fields using this" },
+                  { pattern: "public\\s+double\\s+getGpa", label: "Getter: public double getGpa()" },
+                  { pattern: "new\\s+Student\\s*\\(", label: "Create a Student object with new" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" }
+              ] },
+            { title: "Instance Method: Rectangle",
+              prompt: "Write a <strong>complete Java program</strong> in a class called <code>Rectangle</code> that:<br>• Has two <strong>private int fields</strong>: width and height<br>• Has a constructor that takes a width and height and assigns them with <code>this</code><br>• Has a method <code>getArea</code> that <strong>returns</strong> width times height<br>• Has a main method that creates a Rectangle and prints its area",
+              solution: `public class Rectangle\n{\n    private int width;\n    private int height;\n\n    public Rectangle(int width, int height)\n    {\n        this.width = width;\n        this.height = height;\n    }\n\n    public int getArea()\n    {\n        return width * height;\n    }\n\n    public static void main(String[] args)\n    {\n        Rectangle r = new Rectangle(4, 5);\n        System.out.println(r.getArea());\n    }\n}`,
+              requirements: [
+                  { pattern: "private\\s+int\\s+\\w+", label: "Private int fields" },
+                  { pattern: "public\\s+Rectangle\\s*\\(\\s*int", label: "Constructor public Rectangle(int, ...)" },
+                  { pattern: "this\\.\\w+\\s*=", label: "Assign fields using this" },
+                  { pattern: "public\\s+int\\s+getArea", label: "Method: public int getArea()" },
+                  { pattern: "return\\s+\\w+\\s*\\*\\s*\\w+", label: "Return width * height" },
+                  { pattern: "new\\s+Rectangle\\s*\\(", label: "Create a Rectangle object with new" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" }
+              ] }
+        ];
+
+        // ====== UNIT 5: OOP INHERITANCE — MULTIPLE CHOICE (15 questions, 10 shown) ======
+        const mcQuestionsU5 = [
+            { title: "Question", prompt: "Which keyword makes one class <strong>inherit</strong> from another?",
+              options: ["A) inherits","B) extends","C) implements","D) super"], correctIndex: 1,
+              optionExplanations: ["Java does not use an inherits keyword.","Correct. A subclass uses extends to inherit from a superclass.","implements is used for interfaces, not class inheritance.","super refers to the parent, but does not establish inheritance in the header."] },
+            { title: "Question", prompt: "In <code>public class Wizard extends Character</code>, <code>Character</code> is the:",
+              options: ["A) subclass","B) interface","C) superclass (parent)","D) object"], correctIndex: 2,
+              optionExplanations: ["Wizard is the subclass, not Character.","Character is a class, not an interface.","Correct. Character is the superclass (parent) that Wizard inherits from.","Character is a class, not an object."] },
+            { title: "Question", prompt: "In <code>public class Wizard extends Character</code>, <code>Wizard</code> is the:",
+              options: ["A) subclass (child)","B) superclass","C) parent","D) constructor"], correctIndex: 0,
+              optionExplanations: ["Correct. Wizard is the subclass (child) — it extends Character.","The superclass is Character.","Parent is another word for superclass, which is Character.","Wizard is a class, not a constructor."] },
+            { title: "Question", prompt: "Based on the taxonomy, the direct <strong>base (superclass) of Wizard</strong> is:",
+              options: ["A) Ninja","B) Pyromancer","C) Character","D) Knight"], correctIndex: 2,
+              optionExplanations: ["Ninja is far below Wizard in the tree.","Pyromancer is a subclass of Wizard, not its base.","Correct. Wizard extends Character, so Character is its base.","Knight is a sibling of Wizard, not its base."] },
+            { title: "Question", prompt: "What does <code>super()</code> call?",
+              options: ["A) the parent's constructor","B) the child's constructor","C) a getter method","D) the main method"], correctIndex: 0,
+              optionExplanations: ["Correct. super() calls the superclass (parent) constructor.","The child's own constructor is the one containing super().","super() targets a constructor, not a getter.","main is not a constructor."] },
+            { title: "Question", prompt: "To <strong>override</strong> <code>doDamage()</code> in the Trapper class, you:",
+              options: ["A) use super.super.doDamage()","B) delete doDamage() from Character","C) call add.doDamage()","D) write doDamage() in the Trapper class"], correctIndex: 3,
+              optionExplanations: ["Java does not allow super.super.","You never modify the parent to override.","add.doDamage() is not valid Java.","Correct. Overriding means writing your own doDamage() (same signature) inside Trapper."] },
+            { title: "Question", prompt: "What does <code>super.doDamage()</code> do inside an overridden method?",
+              options: ["A) calls the child's version","B) calls the parent's version","C) calls both versions","D) causes an error"], correctIndex: 1,
+              optionExplanations: ["Plain doDamage() would call the child's version (and recurse).","Correct. super.doDamage() runs the parent's original version of the method.","It calls only the parent's version.","This is valid and commonly used."] },
+            { title: "Question", prompt: "Based on the taxonomy, <code>Marksman</code> is the <strong>superclass of</strong>:",
+              options: ["A) Archer","B) Healer","C) Sniper","D) Knight"], correctIndex: 2,
+              optionExplanations: ["Archer is the superclass of Marksman, not the other way around.","Healer is in a different branch.","Correct. Sniper extends Marksman, so Marksman is Sniper's superclass.","Knight is in a different branch entirely."] },
+            { title: "Question", prompt: "A subclass <strong>inherits</strong>:",
+              options: ["A) only the private fields","B) nothing from the parent","C) the public members of its superclass","D) only the constructor"], correctIndex: 2,
+              optionExplanations: ["Private members are not directly accessible to the subclass.","A subclass inherits a great deal from its parent.","Correct. A subclass inherits the public (and protected) members of its superclass.","It inherits methods and fields, not just a constructor."] },
+            { title: "Question", prompt: "In the Character class, <code>combat</code> is declared as a class-level variable. It is a:",
+              options: ["A) local variable","B) field","C) static variable","D) temporary variable"], correctIndex: 1,
+              optionExplanations: ["Local variables live inside methods.","Correct. Declared in the class body (outside any method), combat is a field.","Nothing marks it static.","There is no such thing as a 'temporary variable' keyword."] },
+            { title: "Question", prompt: "In Java, a class can directly <strong>extend</strong>:",
+              options: ["A) one superclass","B) two superclasses","C) unlimited superclasses","D) zero — extends is not allowed"], correctIndex: 0,
+              optionExplanations: ["Correct. Java uses single inheritance — a class extends exactly one superclass.","Java does not allow extending two classes.","Multiple class inheritance is not allowed in Java.","extends is allowed; classes may extend one parent."] },
+            { title: "Question", prompt: "When a subclass object is created, <code>super(...)</code> runs:",
+              options: ["A) after the subclass constructor body","B) never","C) only if called twice","D) before the subclass constructor body"], correctIndex: 3,
+              optionExplanations: ["The parent must be built first, so super runs before.","super always runs (explicitly or implicitly) when an object is built.","super is called once, at the start of the constructor.","Correct. The superclass constructor runs first, before the rest of the subclass constructor."] },
+            { title: "Question", prompt: "The <code>extends</code> relationship represents a(n):",
+              options: ["A) has-a relationship","B) is-a relationship","C) uses-a relationship","D) none of these"], correctIndex: 1,
+              optionExplanations: ["has-a describes composition (a field that is another object).","Correct. Inheritance models an is-a relationship (a Wizard is-a Character).","uses-a is not the inheritance relationship.","Inheritance is specifically is-a."] },
+            { title: "Question", prompt: "To change the inherited field <code>combat</code> to <code>\"protect\"</code> inside a subclass (as taught in class), you write:",
+              options: ["A) combat == \"protect\"","B) this.combat();","C) new combat(\"protect\")","D) super.combat = \"protect\";"], correctIndex: 3,
+              optionExplanations: ["== compares, it does not assign.","combat is a field, not a method to call.","combat is a field, not a constructor.","Correct. super.combat = \"protect\"; assigns the inherited field a new value."] },
+            { title: "Question", prompt: "To correctly <strong>override</strong> a method, the new method must have the same:",
+              options: ["A) return value","B) access specifier only","C) signature (name and parameters)","D) class name"], correctIndex: 2,
+              optionExplanations: ["The returned value can differ at runtime; that is not the rule.","Matching only the access specifier is not enough.","Correct. An override must match the method signature — same name and parameter list.","Override has nothing to do with matching a class name."] }
+        ];
+
+        // ====== UNIT 5: OOP INHERITANCE — FILL IN BLANK (10 questions, 7 shown) ======
+        const blankQuestionsU5 = [
+            { title: "Inheritance Keyword", prompt: "Fill in the single keyword that makes Wizard inherit from Character.",
+              snippet: "public class Wizard <span style='color:#00F0FF;font-weight:bold;'>[?]</span> Character",
+              correct: "extends", caseSensitive: false, alternates: [], category: "inheritance" },
+            { title: "Hierarchy", prompt: "From the taxonomy: the <strong>super-superclass</strong> of Aegis (two levels up) is:",
+              snippet: "Aegis &rarr; Paladin &rarr; <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "Knight", caseSensitive: false, alternates: [], category: "inheritance" },
+            { title: "Hierarchy", prompt: "From the taxonomy: Healer is derived from (its direct superclass):",
+              snippet: "Healer extends <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "Character", caseSensitive: false, alternates: [], category: "inheritance" },
+            { title: "Hierarchy", prompt: "From the taxonomy: Pyromancer is a subclass of:",
+              snippet: "Pyromancer extends <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "Wizard", caseSensitive: false, alternates: [], category: "inheritance" },
+            { title: "Hierarchy", prompt: "From the taxonomy: Marksman is the superclass of:",
+              snippet: "<span style='color:#00F0FF;font-weight:bold;'>[?]</span> extends Marksman",
+              correct: "Sniper", caseSensitive: false, alternates: [], category: "inheritance" },
+            { title: "Calling super()", prompt: "Inside a subclass constructor, write the line that calls the parent constructor, passing the variable <code>combat</code>.",
+              snippet: "public Trapper(String combat)<br>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:#00F0FF;font-weight:bold;'>[?]</span><br>}",
+              correct: "super(combat);", caseSensitive: false, alternates: ["super( combat );","super(combat) ;"], category: "inheritance" },
+            { title: "Calling super method", prompt: "Inside an overridden method, write the line that runs the <strong>parent's</strong> version of <code>doDamage()</code>.",
+              snippet: "public void doDamage()<br>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:#00F0FF;font-weight:bold;'>[?]</span><br>}",
+              correct: "super.doDamage();", caseSensitive: false, alternates: ["super.doDamage() ;"], category: "inheritance" },
+            { title: "Changing an Inherited Field", prompt: "In a subclass, write the line that sets the inherited field <code>combat</code> to <code>\"protect\"</code> (as taught in class).",
+              snippet: "// inside a method of the subclass:<br><span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "super.combat = \"protect\";", caseSensitive: true, alternates: ["super.combat=\"protect\";"], category: "inheritance" },
+            { title: "Variable Type", prompt: "In the Character class, <code>combat</code> is a field and a ___ variable. (Give the data type.)",
+              snippet: "private String combat; &nbsp;&rarr;&nbsp; data type: <span style='color:#00F0FF;font-weight:bold;'>[?]</span>",
+              correct: "String", caseSensitive: false, alternates: [], category: "inheritance" },
+            { title: "Subclass Header", prompt: "Write the full class header for a class <code>Dog</code> that inherits from <code>Animal</code>.",
+              snippet: "<span style='color:#00F0FF;font-weight:bold;'>[?]</span><br>{",
+              correct: "public class Dog extends Animal", caseSensitive: false, alternates: ["public class Dog  extends Animal"], category: "inheritance" }
+        ];
+
+        // ====== UNIT 5: OOP INHERITANCE — CODE QUESTIONS (3 questions, 2 shown) ======
+        const codeQuestionsU5 = [
+            { title: "Override a Method: Animal / Dog",
+              prompt: "Write a <strong>complete Java program</strong> with two classes:<br>• A superclass called <code>Animal</code> with a method <code>speak()</code> that prints <code>Some sound</code><br>• A subclass <code>Dog</code> that <strong>extends</strong> Animal and <strong>overrides</strong> <code>speak()</code> to print <code>Woof</code><br>• The Dog class has a main method that creates a Dog object and calls <code>speak()</code>",
+              solution: `class Animal\n{\n    public void speak()\n    {\n        System.out.println("Some sound");\n    }\n}\n\npublic class Dog extends Animal\n{\n    public void speak()\n    {\n        System.out.println("Woof");\n    }\n\n    public static void main(String[] args)\n    {\n        Dog d = new Dog();\n        d.speak();\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+Animal", label: "Superclass Animal" },
+                  { pattern: "class\\s+Dog\\s+extends\\s+Animal", label: "Dog extends Animal" },
+                  { pattern: "void\\s+speak", label: "A speak() method (override in Dog)" },
+                  { pattern: "new\\s+Dog\\s*\\(", label: "Create a Dog object with new" },
+                  { pattern: "\\.speak\\s*\\(", label: "Call speak() on the object" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" }
+              ] },
+            { title: "super() Constructor: Vehicle / Car",
+              prompt: "Write a <strong>complete Java program</strong> with two classes:<br>• A superclass <code>Vehicle</code> with a private String field <code>name</code>, a constructor that sets it with <code>this</code>, and a getter <code>getName()</code><br>• A subclass <code>Car</code> that <strong>extends</strong> Vehicle, has a constructor that takes a name and passes it up with <code>super(...)</code><br>• The Car class has a main method that creates a Car and prints its name with the getter",
+              solution: `class Vehicle\n{\n    private String name;\n\n    public Vehicle(String name)\n    {\n        this.name = name;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n}\n\npublic class Car extends Vehicle\n{\n    public Car(String name)\n    {\n        super(name);\n    }\n\n    public static void main(String[] args)\n    {\n        Car c = new Car("Tesla");\n        System.out.println(c.getName());\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+Vehicle", label: "Superclass Vehicle" },
+                  { pattern: "class\\s+Car\\s+extends\\s+Vehicle", label: "Car extends Vehicle" },
+                  { pattern: "super\\s*\\(\\s*\\w+", label: "Call super(name) in the Car constructor" },
+                  { pattern: "public\\s+String\\s+getName", label: "Getter getName() in Vehicle" },
+                  { pattern: "new\\s+Car\\s*\\(", label: "Create a Car object with new" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" }
+              ] },
+            { title: "Override with Fields: Shape / Circle",
+              prompt: "Write a <strong>complete Java program</strong> with two classes:<br>• A superclass <code>Shape</code> with a method <code>area()</code> that returns <code>0.0</code><br>• A subclass <code>Circle</code> that <strong>extends</strong> Shape, has a private double field <code>radius</code> set by its constructor, and <strong>overrides</strong> <code>area()</code> to return pi times radius squared<br>• The Circle class has a main method that creates a Circle and prints its area with 2 decimal places",
+              solution: `class Shape\n{\n    public double area()\n    {\n        return 0.0;\n    }\n}\n\npublic class Circle extends Shape\n{\n    private double radius;\n\n    public Circle(double radius)\n    {\n        this.radius = radius;\n    }\n\n    public double area()\n    {\n        return Math.PI * radius * radius;\n    }\n\n    public static void main(String[] args)\n    {\n        Circle c = new Circle(2.0);\n        System.out.printf("%.2f", c.area());\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+Shape", label: "Superclass Shape" },
+                  { pattern: "class\\s+Circle\\s+extends\\s+Shape", label: "Circle extends Shape" },
+                  { pattern: "private\\s+double\\s+radius", label: "Private double field radius" },
+                  { pattern: "double\\s+area", label: "Override area() returning double" },
+                  { pattern: "Math\\.PI", label: "Use Math.PI" },
+                  { pattern: "new\\s+Circle\\s*\\(", label: "Create a Circle object with new" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" }
+              ] }
+        ];
+
+        // ====== STATE ======
         const subSidebar = document.getElementById('sub-sidebar');
         const displayWindow = document.getElementById('display-window');
 
-        let activeSelectionElement = null;
-        let activeSelectionValue = null;
+        let activeMC = [];
+        let activeBlank = [];
+        let activeCode = [];
+        let currentUnit = 0;
+        let currentQuestionIndex = 0;
+        let currentModule = "";
+        let selectedOptionIndex = null;
+        let score = 0;
+        let currentShuffledOptions = [];
+        let currentCorrectIndex = -1;
 
-        function openSubMenu() { subSidebar.style.display = 'flex'; }
-        function closeSubMenu() { subSidebar.style.display = 'none'; resetPage(); }
+        // ====== NAVIGATION ======
+        function openSubMenu(unit) {
+            currentUnit = unit;
+            // Highlight the active unit in the sidebar
+            const unitBtns = document.querySelectorAll('#sidebar button');
+            unitBtns.forEach(b => b.classList.remove('active-unit'));
+            if (unitBtns[unit - 1]) unitBtns[unit - 1].classList.add('active-unit');
+            if(!subSidebar) return;
+
+            let buttonsHTML = `<span style="color:#8892B0; font-size:0.75rem; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">Select Module</span>`;
+            buttonsHTML += `<button onclick="closeSubMenu()" style="border-color:#f87171; color:#f87171;">&larr; Go Back</button>`;
+
+            if (unit === 1) {
+                buttonsHTML += `<button onclick="startMultipleChoice()" style="display:flex; justify-content:space-between; align-items:center;"><span>Multiple Choice</span><span>&rarr;</span></button>`;
+                buttonsHTML += `<button onclick="startFillInBlank()" style="display:flex; justify-content:space-between; align-items:center;"><span>Fill in the Blank</span><span>&rarr;</span></button>`;
+            } else if (unit === 2) {
+                buttonsHTML += `<button onclick="startFillInBlankU2()" style="display:flex; justify-content:space-between; align-items:center;"><span>Fill in the Blank</span><span>&rarr;</span></button>`;
+                buttonsHTML += `<button onclick="startCodeWorkspace(2)" style="display:flex; justify-content:space-between; align-items:center;"><span>Code Workspace</span><span>&rarr;</span></button>`;
+            } else if (unit === 3) {
+                buttonsHTML += `<button onclick="startMCU3()" style="display:flex; justify-content:space-between; align-items:center;"><span>Multiple Choice</span><span>&rarr;</span></button>`;
+                buttonsHTML += `<button onclick="startFillInBlankU3()" style="display:flex; justify-content:space-between; align-items:center;"><span>Fill in the Blank</span><span>&rarr;</span></button>`;
+                buttonsHTML += `<button onclick="startCodeWorkspace(3)" style="display:flex; justify-content:space-between; align-items:center;"><span>Code Workspace</span><span>&rarr;</span></button>`;
+            } else if (unit === 4) {
+                buttonsHTML += `<button onclick="startMCU4()" style="display:flex; justify-content:space-between; align-items:center;"><span>Multiple Choice</span><span>&rarr;</span></button>`;
+                buttonsHTML += `<button onclick="startFillInBlankU4()" style="display:flex; justify-content:space-between; align-items:center;"><span>Fill in the Blank</span><span>&rarr;</span></button>`;
+                buttonsHTML += `<button onclick="startCodeWorkspace(4)" style="display:flex; justify-content:space-between; align-items:center;"><span>Code Workspace</span><span>&rarr;</span></button>`;
+            } else if (unit === 5) {
+                buttonsHTML += `<button onclick="startMCU5()" style="display:flex; justify-content:space-between; align-items:center;"><span>Multiple Choice</span><span>&rarr;</span></button>`;
+                buttonsHTML += `<button onclick="startFillInBlankU5()" style="display:flex; justify-content:space-between; align-items:center;"><span>Fill in the Blank</span><span>&rarr;</span></button>`;
+                buttonsHTML += `<button onclick="startCodeWorkspace(5)" style="display:flex; justify-content:space-between; align-items:center;"><span>Code Workspace</span><span>&rarr;</span></button>`;
+            }
+
+            subSidebar.innerHTML = buttonsHTML;
+            subSidebar.style.display = 'flex';
+        }
+
+        function closeSubMenu() { if(subSidebar) subSidebar.style.display = 'none'; resetPage(); }
 
         function resetPage() {
-            displayWindow.classList.remove('expanded-layout');
+            document.querySelectorAll('#sidebar button').forEach(b => b.classList.remove('active-unit'));
+            if(!displayWindow) return;
+            displayWindow.classList.add('centered-view');
             displayWindow.innerHTML = `
                 <h1>Online Practice Tests</h1>
-                <p>Welcome to the testing sandbox. These modules are configured to match our exact class pacing to keep you on track and well prepared without skipping ahead. Use these interactive quizzes to study, practice logic, and write error-free code before your upcoming unit exams.</p>
+                <p>Welcome to the testing sandbox. Use these interactive quizzes to study, practice logic, and write error-free code before your upcoming unit exams.</p>
             `;
         }
 
-        // Branch 1: Multiple Choice
-        function loadMultipleChoice() {
-            activeSelectionElement = null;
-            activeSelectionValue = null;
-            
-            displayWindow.classList.add('expanded-layout');
+        // ====== QUIZ STARTERS (shuffle & slice) ======
+        function startMultipleChoice() {
+            score = 0;
+            activeMC = shuffleArray(mcQuestions).slice(0, 7);
+            loadMultipleChoice(0);
+        }
+
+        function startFillInBlank() {
+            score = 0;
+            activeBlank = shuffleArray(blankQuestions).slice(0, 15);
+            loadFillInBlank(0);
+        }
+
+        function startFillInBlankU2() {
+            score = 0;
+            activeBlank = shuffleArray(blankQuestionsU2).slice(0, 5);
+            loadBlankGeneric(0);
+        }
+
+        function startCodeWorkspace(unit) {
+            score = 0;
+            if (unit === 2) {
+                activeCode = shuffleArray(codeQuestionsU2).slice(0, 2);
+            } else if (unit === 3) {
+                activeCode = shuffleArray(codeQuestionsU3).slice(0, 2);
+            } else if (unit === 4) {
+                activeCode = shuffleArray(codeQuestionsU4).slice(0, 2);
+            } else if (unit === 5) {
+                activeCode = shuffleArray(codeQuestionsU5).slice(0, 2);
+            }
+            loadCodeQuestion(0);
+        }
+
+        function startMCU3() {
+            score = 0;
+            activeMC = shuffleArray(mcQuestionsU3).slice(0, 10);
+            loadMCGeneric(0);
+        }
+
+        function startFillInBlankU3() {
+            score = 0;
+            activeBlank = shuffleArray(blankQuestionsU3).slice(0, 10);
+            loadBlankGeneric(0);
+        }
+
+        function startMCU4() {
+            score = 0;
+            activeMC = shuffleArray(mcQuestionsU4).slice(0, 15);
+            loadMCGeneric(0);
+        }
+
+        function startFillInBlankU4() {
+            score = 0;
+            activeBlank = shuffleArray(blankQuestionsU4).slice(0, 10);
+            loadBlankGeneric(0);
+        }
+
+        function startMCU5() {
+            score = 0;
+            activeMC = shuffleArray(mcQuestionsU5).slice(0, 10);
+            loadMCGeneric(0);
+        }
+
+        function startFillInBlankU5() {
+            score = 0;
+            activeBlank = shuffleArray(blankQuestionsU5).slice(0, 7);
+            loadBlankGeneric(0);
+        }
+
+        // ====== MULTIPLE CHOICE CONTROLLER ======
+        function loadMultipleChoice(index) {
+            if(!displayWindow) return;
+            displayWindow.classList.remove('centered-view');
+            currentModule = "MC";
+            currentQuestionIndex = index;
+            selectedOptionIndex = null;
+
+            if (index >= activeMC.length) { showScoreReport(activeMC.length); return; }
+
+            const q = activeMC[index];
+            const labels = ['A','B','C','D'];
+
+            // Pair each option with its explanation and correct flag, then shuffle order
+            const paired = q.options.map((opt, idx) => ({
+                text: opt.replace(/^[A-D]\)\s*/, ''),
+                explanation: q.optionExplanations[idx],
+                isCorrect: idx === q.correctIndex
+            }));
+            currentShuffledOptions = shuffleArray(paired);
+            currentCorrectIndex = currentShuffledOptions.findIndex(o => o.isCorrect);
+
+            let optionsHTML = "";
+            currentShuffledOptions.forEach((opt, idx) => {
+                optionsHTML += `<button class="option-btn" onclick="stageOptionSelection(${idx})">${labels[idx]}) ${opt.text}</button>`;
+            });
+
             displayWindow.innerHTML = `
-                <h1>Intro to Java: Multiple Choice</h1>
+                <h1>Computer Fundamentals: Multiple Choice</h1>
                 <div class="challenge-container">
-                    <div class="challenge-title">Question 1</div>
-                    <p style="color:#CCD6F6; font-size:1.15rem; margin-top:0;">Which statement accurately describes the foundational structural nature of Java?</p>
-                    
-                    <div class="options-list">
-                        <button class="option-btn" onclick="stageOptionSelection(this, true)">A) Every functional line of executable code must reside inside a class wrapper structure.</button>
-                        <button class="option-btn" onclick="stageOptionSelection(this, false)">B) Java is a loose, interpreted scripting language that requires no strict system compilation files.</button>
-                        <button class="option-btn" onclick="stageOptionSelection(this, false)">C) Execution instructions run directly from top to bottom without needing an explicit driver header main configuration.</button>
-                        <button class="option-btn" onclick="stageOptionSelection(this, false)">D) Statements can be saved anywhere on a machine file and ran natively by operating engines without compiling.</button>
-                    </div>
-                    
-                    <button class="action-btn submit-trigger-btn" id="submit-choice-btn" onclick="commitMultipleChoiceAnswer()" disabled>Submit Answer</button>
-                    
+                    <h3>${q.title} ${index + 1} of ${activeMC.length}</h3>
+                    <p style="color:#CCD6F6;">${q.prompt}</p>
+                    <div id="options-container">${optionsHTML}</div>
+                    <button class="action-btn" id="submit-choice-btn" onclick="commitMultipleChoiceAnswer()" disabled>Submit Answer</button>
                     <div class="feedback" id="challenge-feedback"></div>
-                    <button class="action-btn next-btn" id="next-q-btn" onclick="loadBlankNextQuestion('Multiple Choice')">Next Question &rarr;</button>
+                    <div id="explanation-area"></div>
+                    <button class="action-btn next-btn" id="next-q-btn" style="display:none;" onclick="loadMultipleChoice(${index + 1})">Next Question &rarr;</button>
                 </div>
             `;
         }
 
-        function stageOptionSelection(element, isCorrect) {
+        // Generic MC loader for units 3+
+        function loadMCGeneric(index) {
+            if(!displayWindow) return;
+            displayWindow.classList.remove('centered-view');
+            currentModule = "MC";
+            currentQuestionIndex = index;
+            selectedOptionIndex = null;
+            if (index >= activeMC.length) { showScoreReport(activeMC.length); return; }
+            const q = activeMC[index];
+            const labels = ['A','B','C','D'];
+            const paired = q.options.map((opt, idx) => ({
+                text: opt.replace(/^[A-D]\)\s*/, ''),
+                explanation: q.optionExplanations[idx],
+                isCorrect: idx === q.correctIndex
+            }));
+            currentShuffledOptions = shuffleArray(paired);
+            currentCorrectIndex = currentShuffledOptions.findIndex(o => o.isCorrect);
+            let optionsHTML = "";
+            currentShuffledOptions.forEach((opt, idx) => {
+                optionsHTML += `<button class="option-btn" onclick="stageOptionSelection(${idx})">${labels[idx]}) ${opt.text}</button>`;
+            });
+            displayWindow.innerHTML = `
+                <h1>${getUnitTitle()}: Multiple Choice</h1>
+                <div class="challenge-container">
+                    <h3>${q.title} ${index + 1} of ${activeMC.length}</h3>
+                    <p style="color:#CCD6F6;">${q.prompt}</p>
+                    <div id="options-container">${optionsHTML}</div>
+                    <button class="action-btn" id="submit-choice-btn" onclick="commitMultipleChoiceAnswer()" disabled>Submit Answer</button>
+                    <div class="feedback" id="challenge-feedback"></div>
+                    <div id="explanation-area"></div>
+                    <button class="action-btn next-btn" id="next-q-btn" style="display:none;" onclick="loadMCGeneric(${index + 1})">Next Question &rarr;</button>
+                </div>
+            `;
+        }
+
+        function stageOptionSelection(idx) {
+            selectedOptionIndex = idx;
             const allOptions = document.querySelectorAll('.option-btn');
             allOptions.forEach(opt => opt.classList.remove('selected-state'));
-            
-            element.classList.add('selected-state');
-            activeSelectionElement = element;
-            activeSelectionValue = isCorrect;
-            
-            document.getElementById('submit-choice-btn').disabled = false;
+            if(allOptions[idx]) allOptions[idx].classList.add('selected-state');
+            const submitBtn = document.getElementById('submit-choice-btn');
+            if(submitBtn) submitBtn.disabled = false;
         }
 
         function commitMultipleChoiceAnswer() {
-            if (!activeSelectionElement) return;
-            
             const fb = document.getElementById('challenge-feedback');
+            const expArea = document.getElementById('explanation-area');
             const allOptions = document.querySelectorAll('.option-btn');
-            
-            allOptions.forEach(opt => opt.disabled = true);
-            document.getElementById('submit-choice-btn').style.display = "none";
-            
-            if (activeSelectionValue === true) {
-                activeSelectionElement.style.borderColor = "#4ade80";
-                fb.innerHTML = `<span class="correct">✓ Correct!</span> <span class="explanation-text">Java is fully object-oriented; all statement logs must reside inside a class wrapper structure to compile cleanly.</span>`;
+            const submitBtn = document.getElementById('submit-choice-btn');
+            const nextBtn = document.getElementById('next-q-btn');
+
+            allOptions.forEach((opt, idx) => {
+                opt.classList.add('answered');
+                opt.classList.remove('selected-state');
+                if (idx === currentCorrectIndex) {
+                    opt.classList.add('answer-correct');
+                } else if (idx === selectedOptionIndex) {
+                    opt.classList.add('answer-wrong');
+                }
+            });
+
+            if(submitBtn) submitBtn.style.display = "none";
+
+            if (selectedOptionIndex === currentCorrectIndex) {
+                if(fb) fb.innerHTML = `<span class="correct">✓ Correct!</span>`;
+                score++;
             } else {
-                activeSelectionElement.style.borderColor = "#f87171";
-                fb.innerHTML = `<span class="wrong">✗ Incorrect.</span> <span class="explanation-text"><strong>Correct answer: A.</strong> Java code cannot run freely in text blocks. It demands explicit object class packaging footprints and runtime anchor configurations.</span>`;
+                if(fb) fb.innerHTML = `<span class="wrong">✗ Incorrect.</span>`;
             }
-            document.getElementById('next-q-btn').style.display = "inline-block";
+
+            let breakdownHTML = '<div class="explanation-breakdown">';
+            const labels = ['A','B','C','D'];
+            currentShuffledOptions.forEach((opt, idx) => {
+                const isRight = idx === currentCorrectIndex;
+                breakdownHTML += `<div class="exp-row"><span class="exp-label ${isRight ? 'exp-correct' : 'exp-wrong'}">${isRight ? '✓' : '✗'} ${labels[idx]})</span> <span style="color:#CCD6F6;">${opt.explanation}</span></div>`;
+            });
+            breakdownHTML += '</div>';
+            if(expArea) expArea.innerHTML = breakdownHTML;
+            if(nextBtn) nextBtn.style.display = "inline-block";
         }
 
-        // Branch 2: Fill in the Blank
-        function loadFillInBlank() {
-            displayWindow.classList.add('expanded-layout');
+        // ====== FILL IN THE BLANK CONTROLLER ======
+        function checkBlankAnswer(q, ans) {
+            const trimmed = ans.trim();
+            const correct = q.correct;
+            if (trimmed === correct) return true;
+            if (!q.caseSensitive && trimmed.toLowerCase() === correct.toLowerCase()) return true;
+            if (q.alternates) {
+                for (const alt of q.alternates) {
+                    if (!q.caseSensitive && trimmed.toLowerCase() === alt.toLowerCase()) return true;
+                    if (trimmed === alt) return true;
+                }
+            }
+            if (q.category && (q.category.includes("bin") || q.category === "hex-bin")) {
+                if (trimmed.replace(/\s/g, '') === correct.replace(/\s/g, '')) return true;
+            }
+            return false;
+        }
+
+        function loadFillInBlank(index) {
+            if(!displayWindow) return;
+            displayWindow.classList.remove('centered-view');
+            currentModule = "Blank";
+            currentQuestionIndex = index;
+
+            if (index >= activeBlank.length) { showScoreReport(activeBlank.length); return; }
+
+            const q = activeBlank[index];
             displayWindow.innerHTML = `
-                <h1>Intro to Java: Fill in the Blank</h1>
+                <h1>Computer Fundamentals: Fill in the Blank</h1>
                 <div class="challenge-container">
-                    <div class="challenge-title">Syntax Completion</div>
-                    <p style="color:#CCD6F6; font-size:1.15rem; margin-top:0;">Fill in the exact case-sensitive method name call needed to display output text and automatically append a new console line break:</p>
-                    <div class="input-field" style="background:#0A192F; padding:15px; border:1px solid #233554; color:#ccd6f6; margin-bottom:15px; border-radius:4px;">
-                        System.out.<span style="color:#00F0FF; font-weight:bold;">[blank]</span>("Hello Hub");
+                    <h3>${q.title} — ${index + 1} of ${activeBlank.length}</h3>
+                    <p style="color:#CCD6F6;">${q.prompt}</p>
+                    <div style="background:#020C1B; padding:15px; border:1px solid #233554; font-family:monospace; margin-bottom:15px; border-radius:6px; font-size:1.1rem;">
+                        ${q.snippet}
                     </div>
-                    <input type="text" class="input-field" id="blank-input" placeholder="Type case-sensitive answer here..." autocomplete="off">
+                    <input type="text" class="input-field" id="blank-input" placeholder="Type your answer here..." autocomplete="off"><br>
                     <button class="action-btn" id="submit-blank-btn" onclick="evalBlank()">Submit Answer</button>
                     <div class="feedback" id="challenge-feedback"></div>
-                    <button class="action-btn next-btn" id="next-q-btn" onclick="loadBlankNextQuestion('Fill in the Blank')">Next Question &rarr;</button>
+                    <div id="ai-hint-area"></div>
+                    <button class="action-btn next-btn" id="next-q-btn" style="display:none;" onclick="loadFillInBlank(${index + 1})">Next Question &rarr;</button>
                 </div>
             `;
+        }
+
+        function getBlankHint(q, ans) {
+            if (!ans) return "You didn't enter an answer. Give it a try!";
+            switch(q.category) {
+                case "policy":
+                    return `<code>${ans}</code> is not correct. Review the class syllabus — these are specific rules your teacher set for the course.`;
+                case "grade-calc":
+                    if (isNaN(ans)) return "The answer should be a whole number. Multiply each grade × weight, add them, then solve: total + 15(x) = 9000.";
+                    const target = parseInt(q.correct);
+                    const guess = parseInt(ans);
+                    if (guess === target - 1) return `Very close! You got ${ans}, but you need to round <strong>up</strong> to the next integer since you can't score a fraction.`;
+                    if (guess < target) return `${ans} is too low. Steps: 1) Multiply each grade by its weight. 2) Add all products. 3) Subtract from 9000. 4) Divide by 15. 5) Round UP to integer.`;
+                    if (guess > target) return `${ans} is too high. Double-check your arithmetic: multiply each grade by its weight, sum them, subtract from 9000, divide by 15.`;
+                    return `${ans} is not correct. Set up the equation: sum of (weight × grade) + 15(x) = 9000, then solve for x.`;
+                case "ascii":
+                    if (ans === "7") return "That's the digit character itself, not its ASCII code. ASCII digits start at 48 ('0'=48), so count forward.";
+                    if (ans === "48") return "48 is the code for '0'. The question asks for '7', which is 7 positions later: 48 + 7 = <strong>55</strong>.";
+                    return `<code>${ans}</code> is not correct. ASCII digit characters start at 48 ('0') and go up: '1'=49, '2'=50 ... '7'=55.`;
+                case "bin-hex":
+                    if (/[^0-9a-fA-F]/.test(ans)) return "Hexadecimal only uses digits 0-9 and letters A-F.";
+                    if (/^\d+$/.test(ans) && !isNaN(ans)) return "That looks like a decimal value. For hex, split the binary into nibbles (groups of 4) and convert each to a hex digit.";
+                    return `<code>${ans}</code> is not correct. Split into nibbles: 0000=0 ... 1001=9, 1010=A, 1011=B, 1100=C, 1101=D, 1110=E, 1111=F.`;
+                case "bin-dec":
+                    if (/[a-fA-F]/.test(ans)) return "That looks like hex. For decimal, add up place values: 128, 64, 32, 16, 8, 4, 2, 1 (left to right).";
+                    return `<code>${ans}</code> is not correct. Multiply each bit by its place value (128, 64, 32, 16, 8, 4, 2, 1) and add them together.`;
+                case "dec-hex":
+                    if (/[^0-9a-fA-F]/.test(ans)) return "Hex uses only 0-9 and A-F.";
+                    if (/^[01]+$/.test(ans) && ans.length > 3) return "That looks like binary, not hex. Divide the decimal by 16 to get hex digits.";
+                    return `<code>${ans}</code> is not correct. Divide by 16: quotient = first hex digit, remainder = second. A=10, B=11, C=12, D=13, E=14, F=15.`;
+                case "dec-bin":
+                    if (/[^01\s]/.test(ans)) return "Binary only uses 0s and 1s.";
+                    return `<code>${ans}</code> is not correct. Repeatedly divide by 2 and read remainders bottom-to-top.`;
+                case "hex-dec":
+                    if (/[a-fA-F]/.test(ans)) return "The answer should be a plain decimal number (0-9 only).";
+                    return `<code>${ans}</code> is not correct. Multiply the first hex digit by 16, then add the second. A=10, B=11, C=12, D=13, E=14, F=15.`;
+                case "hex-bin":
+                    if (/[^01\s]/.test(ans)) return "Binary only uses 0s and 1s.";
+                    return `<code>${ans}</code> is not correct. Convert each hex digit to 4-bit binary: 3=0011, F=1111, A=1010, C=1100, etc.`;
+                case "memory-calc":
+                    if (isNaN(ans)) return "The answer should be a number. Steps: 1) Convert minutes to seconds. 2) Multiply rate × time for total KB. 3) Divide by 1024 for MB, again for GB, again for TB.";
+                    return `<code>${ans}</code> is not correct. Steps: 1) Convert time to seconds (×60). 2) Multiply rate × seconds = total KB. 3) Divide by 1024 for each unit step (KB→MB→GB→TB). Round to 2 decimal places.`;
+                case "shortcut":
+                    const map = {"ctrl+c":"copy","ctrl+v":"paste","ctrl+p":"print","ctrl+x":"cut","ctrl+z":"undo","ctrl+s":"save"};
+                    if (map[ans.toLowerCase()]) return `You typed the key combination, but the question asks for the <em>function name</em>. ${ans} performs: <strong>${map[ans.toLowerCase()]}</strong>.`;
+                    if (["copy","paste","print","cut","undo","save"].includes(ans.toLowerCase())) return `<code>${ans}</code> is not the right function for this shortcut. Remember: Ctrl+C=copy, Ctrl+V=paste, Ctrl+X=cut, Ctrl+Z=undo, Ctrl+P=print.`;
+                    return `<code>${ans}</code> is not correct. Common shortcuts: Ctrl+C=copy, Ctrl+V=paste, Ctrl+X=cut, Ctrl+Z=undo.`;
+                case "newline":
+                    if (ans === "1") return "1 byte would be just a Line Feed (LF). On Windows, a newline uses <strong>both</strong> Carriage Return (CR) and Line Feed (LF) = 2 bytes.";
+                    if (ans === "4") return "A newline on Windows is only 2 bytes (CR + LF), not 4.";
+                    return `<code>${ans}</code> is not correct. Windows uses CRLF for newlines: CR (1 byte) + LF (1 byte) = 2 bytes.`;
+                case "bits":
+                    if (ans === "4") return "4 bits make a nibble (half a byte). A full byte = <strong>8</strong> bits.";
+                    if (ans === "16") return "16 bits = 2 bytes. A single byte is <strong>8</strong> bits.";
+                    return `<code>${ans}</code> is not correct. 1 byte = 8 bits — the most fundamental unit in computing.`;
+                default:
+                    return `<code>${ans}</code> is not correct. The correct answer is: <code>${q.correct}</code>.`;
+            }
         }
 
         function evalBlank() {
-            const ans = document.getElementById('blank-input').value.trim();
+            const q = activeBlank[currentQuestionIndex];
+            const inputEl = document.getElementById('blank-input');
+            const ans = inputEl ? inputEl.value.trim() : "";
             const fb = document.getElementById('challenge-feedback');
-            document.getElementById('submit-blank-btn').style.display = "none";
-            
-            if(ans === "println") {
-                fb.innerHTML = `<span class="correct">✓ Correct!</span> <span class="explanation-text">The method 'println' correctly outputs parameters and drops the terminal pointer row down to the next row index space line.</span>`;
-            } else if(ans.toLowerCase() === "println") {
-                fb.innerHTML = `<span class="wrong">✗ Incorrect (Case Sensitivity Error).</span> <span class="explanation-text"><strong>Correct answer: println.</strong> You typed uppercase letters! Compilers treat 'Println' and 'println' as completely unique symbols. Java keywords use strict lowercase layouts.</span>`;
+            const hintArea = document.getElementById('ai-hint-area');
+            const submitBtn = document.getElementById('submit-blank-btn');
+            const nextBtn = document.getElementById('next-q-btn');
+
+            if(submitBtn) submitBtn.style.display = "none";
+            if(inputEl) inputEl.disabled = true;
+
+            if (checkBlankAnswer(q, ans)) {
+                if(fb) fb.innerHTML = `<span class="correct">✓ Correct!</span> <span class="explanation-text">The answer is <code>${q.correct}</code>.</span>`;
+                score++;
             } else {
-                fb.innerHTML = `<span class="wrong">✗ Incorrect.</span> <span class="explanation-text"><strong>Correct answer: println.</strong> The standard call print structure blueprint definition format is System.out.println();</span>`;
+                if(fb) fb.innerHTML = `<span class="wrong">✗ Incorrect.</span> <span class="explanation-text">Correct answer: <code>${q.correct}</code></span>`;
+                const hint = getBlankHint(q, ans);
+                if(hintArea) hintArea.innerHTML = `<div class="ai-hint"><div class="ai-hint-header">JavaLab Assistant</div><span style="color:#CCD6F6;">${hint}</span></div>`;
             }
-            document.getElementById('next-q-btn').style.display = "inline-block";
+            if(nextBtn) nextBtn.style.display = "inline-block";
         }
 
-        // Branch 3: Code Compilation Workspace
-        function loadCodeExercise() {
-            displayWindow.classList.add('expanded-layout');
+        // ====== GENERIC FILL IN BLANK LOADER (Units 2+3) ======
+        function getUnitTitle() {
+            switch(currentUnit) {
+                case 1: return "Computer Fundamentals";
+                case 2: return "Data Types &amp; Printing";
+                case 3: return "IO &amp; Expressions";
+                case 4: return "Methods &amp; Classes";
+                case 5: return "OOP Inheritance";
+                default: return "";
+            }
+        }
+
+        function loadBlankGeneric(index) {
+            if(!displayWindow) return;
+            displayWindow.classList.remove('centered-view');
+            currentModule = "BlankGen";
+            currentQuestionIndex = index;
+
+            if (index >= activeBlank.length) { showScoreReport(activeBlank.length); return; }
+
+            const q = activeBlank[index];
+            const isMulti = q.category === 'print-multiline' || (q.correct && q.correct.includes('\n'));
+            const inputHTML = isMulti
+                ? `<textarea class="input-field" id="blank-input" rows="4" placeholder="Type output here... press Enter for new lines" style="resize:vertical; width:100%; max-width:500px; font-family:'Courier New',monospace;" autocomplete="off"></textarea>`
+                : `<input type="text" class="input-field" id="blank-input" placeholder="Type your answer here..." autocomplete="off">`;
+
             displayWindow.innerHTML = `
-                <h1>Intro to Java: Coding File Workspace</h1>
-                <div class="challenge-container" id="ide-container">
-                    <div class="challenge-title">Interactive Compilation Challenge</div>
-                    <div class="ide-wrapper">
-                        <div class="ide-left">
-                            <div class="scrollable-prompt">
-                                <strong>Task Instructions:</strong><br>
-                                Write a single, complete statement that outputs the text <code>Java Hub</code> to the terminal display console. Make sure to use exact uppercase syntax spacing, parameters, and terminating markers!
-                            </div>
-                            <textarea class="code-editor" id="editor-textarea" placeholder="// Write empty code file statement here..." autocomplete="off" spellcheck="false"></textarea>
-                            <div>
-                                <button class="action-btn" onclick="compileCodeSandbox()">Run Code</button>
-                            </div>
-                        </div>
-                        <div class="ide-right">
-                            <div class="console-box" id="console-output">
-                                <div class="console-header">System Output Console Simulation</div>[Awaiting code execution file run...]
-                            </div>
-                        </div>
+                <h1>${getUnitTitle()}: Fill in the Blank</h1>
+                <div class="challenge-container">
+                    <h3>${q.title} — ${index + 1} of ${activeBlank.length}</h3>
+                    <p style="color:#CCD6F6;">${q.prompt}</p>
+                    <div style="background:#020C1B; padding:15px; border:1px solid #233554; font-family:monospace; margin-bottom:15px; border-radius:6px; font-size:1.05rem; line-height:1.8;">
+                        ${q.snippet}
                     </div>
+                    ${inputHTML}<br>
+                    <button class="action-btn" id="submit-blank-btn" onclick="evalBlankGeneric()">Submit Answer</button>
                     <div class="feedback" id="challenge-feedback"></div>
-                    <button class="action-btn next-btn" id="next-q-btn" onclick="loadBlankNextQuestion('Code Sandbox')">Next Question &rarr;</button>
+                    <div id="ai-hint-area"></div>
+                    <button class="action-btn next-btn" id="next-q-btn" style="display:none;" onclick="loadBlankGeneric(${index + 1})">Next Question &rarr;</button>
                 </div>
             `;
         }
 
-        function compileCodeSandbox() {
-            const codeInput = document.getElementById('editor-textarea').value.trim();
-            const consoleOutput = document.getElementById('console-output');
-            const ideContainer = document.getElementById('ide-container');
+        function evalBlankGeneric() {
+            const q = activeBlank[currentQuestionIndex];
+            const inputEl = document.getElementById('blank-input');
+            const rawAns = inputEl ? inputEl.value : "";
             const fb = document.getElementById('challenge-feedback');
-            
-            consoleOutput.innerHTML = `<div class="console-header">System Output Console Simulation</div>Compiling and running workspace binary...`;
-            
-            setTimeout(() => {
-                if (codeInput === 'System.out.print("Java Hub");' || codeInput === 'System.out.println("Java Hub");') {
-                    consoleOutput.style.color = "#4ade80";
-                    consoleOutput.innerHTML = `<div class="console-header">System Output Console Simulation</div>Java Hub\n\nProcess finished with exit code 0`;
-                    ideContainer.classList.add('success-highlight');
-                    fb.innerHTML = `<span class="correct">✓ Code Verification Complete!</span> <span class="explanation-text">Your structural input parameters handle exact capitalization values and semicolon line termination markers cleanly.</span>`;
-                } else {
-                    consoleOutput.style.color = "#f87171";
-                    consoleOutput.innerHTML = `<div class="console-header">System Output Console Simulation</div>ERROR: Main compilation syntax logic error thrown.\nProcess terminated with exit code 1`;
-                    ideContainer.classList.remove('success-highlight');
-                    fb.innerHTML = `<span class="wrong">✗ Compilation Output Test Failed.</span> <span class="explanation-text"><strong>Expected Answer:</strong> <code>System.out.println("Java Hub");</code><br>Check for missing structural capitalization flags (S in System), unmatched quotes, or missing closing semicolon characters!</span>`;
-                }
-                document.getElementById('next-q-btn').style.display = "inline-block";
-            }, 600);
+            const hintArea = document.getElementById('ai-hint-area');
+            const submitBtn = document.getElementById('submit-blank-btn');
+            const nextBtn = document.getElementById('next-q-btn');
+
+            if(submitBtn) submitBtn.style.display = "none";
+            if(inputEl) inputEl.readOnly = true;
+
+            // Normalize: trim each line, then join
+            const normLines = s => s.split('\n').map(l => l.trimEnd()).join('\n').trim();
+            const normAns = normLines(rawAns);
+            const normCorrect = normLines(q.correct);
+
+            let isCorrect = normAns === normCorrect;
+            if (!isCorrect && !q.caseSensitive) isCorrect = normAns.toLowerCase() === normCorrect.toLowerCase();
+            if (!isCorrect && q.alternates) {
+                isCorrect = q.alternates.some(a => normAns === normLines(a) || (!q.caseSensitive && normAns.toLowerCase() === normLines(a).toLowerCase()));
+            }
+
+            const displayCorrect = q.correct.replace(/\n/g, '<br>');
+            if (isCorrect) {
+                if(fb) fb.innerHTML = `<span class="correct">✓ Correct!</span> <span class="explanation-text">Output:<br><code style="white-space:pre-wrap;">${displayCorrect}</code></span>`;
+                score++;
+            } else {
+                if(fb) fb.innerHTML = `<span class="wrong">✗ Incorrect.</span> <span class="explanation-text">Expected output:<br><code style="white-space:pre-wrap;">${displayCorrect}</code></span>`;
+                const hint = getGenericBlankHint(q, rawAns.trim());
+                if(hintArea) hintArea.innerHTML = `<div class="ai-hint"><div class="ai-hint-header">JavaLab Assistant</div><span style="color:#CCD6F6;">${hint}</span></div>`;
+            }
+            if(nextBtn) nextBtn.style.display = "inline-block";
         }
 
-        function loadBlankNextQuestion(moduleType) {
+        function getGenericBlankHint(q, ans) {
+            if (!ans) return "You didn't enter an answer. Try tracing through the code line by line.";
+            switch(q.category) {
+                case "print-output":
+                    return `<code>${ans}</code> is not correct. <code>print()</code> keeps the cursor on the same line, <code>println()</code> adds a newline after.`;
+                case "print-multiline":
+                    return `Not quite. Trace line by line: <code>println()</code> ends the current line. <code>print()</code> keeps the cursor on the same line. <code>\\n</code> inside a string starts a new line.`;
+                case "concat":
+                    return `<code>${ans}</code> is not correct. Java evaluates left to right: once it hits a String, everything after uses concatenation. Numbers before the first String are added normally.`;
+                case "expression":
+                    return `<code>${ans}</code> is not correct. Follow order of operations (PEMDAS): first *, /, % left to right, then +, - left to right. Watch for integer division (no decimals) vs float division.`;
+                case "datatype":
+                    return `<code>${ans}</code> is not correct. Remember: any operation involving a <code>double</code> produces <code>double</code>. Integer-only operations produce <code>int</code>. Explicit casts override the natural type.`;
+                case "output-multi":
+                    return `Not quite. Trace each line of code in order. Check whether each uses <code>print</code> or <code>println</code>. Press Enter in your answer where the output moves to a new line.`;
+                case "casting":
+                    return `<code>${ans}</code> is not correct. <code>(int)</code> truncates decimals — it does NOT round. <code>(char)</code> converts a number to its ASCII character. <code>(double)</code> enables decimal division.`;
+                case "method":
+                    return `<code>${ans}</code> is not correct. A method header reads: access specifier, return type, name, then (parameters). The name comes right before the parentheses; the return type comes right before the name.`;
+                case "class":
+                    return `<code>${ans}</code> is not correct. A class holds fields (declared in the class body) and methods. Use the <code>class</code> keyword to declare it and <code>new</code> to build an object from it.`;
+                case "constructor":
+                    return `<code>${ans}</code> is not correct. A constructor shares the class name, has no return type, and uses <code>this.field = field;</code> to set fields. A no-args constructor has empty parentheses.`;
+                case "inheritance":
+                    return `<code>${ans}</code> is not correct. Use <code>extends</code> in the header, <code>super(...)</code> to call the parent constructor, and <code>super.method()</code> to run the parent's version of an overridden method.`;
+                default:
+                    return `<code>${ans}</code> is not correct. Review the concept and try again.`;
+            }
+        }
+
+        // ====== GENERIC CODE WORKSPACE CONTROLLER ======
+        function loadCodeQuestion(index) {
+            if(!displayWindow) return;
+            displayWindow.classList.remove('centered-view');
+            currentModule = "Code";
+            currentQuestionIndex = index;
+
+            if (index >= activeCode.length) { showScoreReport(activeCode.length); return; }
+
+            const q = activeCode[index];
+            const isLong = q.requirements != null;
+
+            if (isLong) {
+                // Long-form: CodeMirror editor with syntax highlighting + terminal
+                displayWindow.innerHTML = `
+                    <h1>${getUnitTitle()}: Code Workspace</h1>
+                    <div class="challenge-container">
+                        <h3>${q.title} — ${index + 1} of ${activeCode.length}</h3>
+                        <div style="color:#8892B0; font-size:0.8rem; margin-bottom:8px;">📐 Use <strong>Allman style</strong> braces — opening <code>{</code> goes on its OWN line. Tab indents. Press <strong>Run Code</strong> to test, then <strong>Submit</strong> for grading.</div>
+                        <div class="ide-wrapper">
+                            <div class="ide-left">
+                                <div class="scrollable-prompt">
+                                    <p style="color:#CCD6F6; margin:0; line-height:1.6;">${q.prompt}</p>
+                                </div>
+                                <textarea id="code-input" style="display:none;"></textarea>
+                            </div>
+                            <div class="ide-right">
+                                <div class="console-box" id="console-output">
+                                    <div class="console-header">Terminal</div>
+                                    <span style="color:#64748b; font-style:italic;">$ Run your code to see the output...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-row">
+                            <button class="action-btn" id="run-code-btn" onclick="runCode()">&#9654; Run Code</button>
+                            <button class="action-btn" id="submit-code-btn" onclick="evalCode()">Submit for Grading</button>
+                        </div>
+                        <div class="feedback" id="challenge-feedback"></div>
+                        <div id="ai-hint-area"></div>
+                        <button class="action-btn next-btn" id="next-q-btn" style="display:none;" onclick="loadCodeQuestion(${index + 1})">Next Question &rarr;</button>
+                    </div>
+                `;
+                // Initialize CodeMirror after DOM is ready
+                window._cmSolution = null;
+                const ta = document.getElementById('code-input');
+                window._cmEditor = CodeMirror.fromTextArea(ta, {
+                    mode: 'text/x-java',
+                    theme: 'dracula',
+                    lineNumbers: true,
+                    matchBrackets: true,
+                    autoCloseBrackets: true,
+                    lineWrapping: true,
+                    indentUnit: 4,
+                    tabSize: 4,
+                    indentWithTabs: false,
+                    extraKeys: { Tab: cm => cm.execCommand('indentMore'), 'Shift-Tab': cm => cm.execCommand('indentLess') }
+                });
+                window._cmEditor.setSize(null, '280px');
+                // Position CodeMirror after the scrollable-prompt (inside ide-left)
+                const ideLeft = displayWindow.querySelector('.ide-left');
+                ideLeft.appendChild(window._cmEditor.getWrapperElement());
+                window._cmEditor.getWrapperElement().classList.add('tall');
+            } else {
+                // Short-form: plain textarea (Unit 2 single-line answers)
+                displayWindow.innerHTML = `
+                    <h1>${getUnitTitle()}: Code Workspace</h1>
+                    <div class="challenge-container">
+                        <h3>${q.title} — ${index + 1} of ${activeCode.length}</h3>
+                        <div class="ide-wrapper">
+                            <div class="ide-left">
+                                <div class="scrollable-prompt">
+                                    <p style="color:#CCD6F6; margin:0; line-height:1.6;">${q.prompt}</p>
+                                </div>
+                                <textarea class="code-editor" id="code-input" placeholder="Type your answer here..." spellcheck="false"></textarea>
+                            </div>
+                            <div class="ide-right">
+                                <div class="console-box" id="console-output">
+                                    <div class="console-header">Terminal</div>
+                                    <span style="color:#64748b; font-style:italic;">$ Run your code to see the output...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-row">
+                            <button class="action-btn" id="run-code-btn" onclick="runCode()">&#9654; Run Code</button>
+                            <button class="action-btn" id="submit-code-btn" onclick="evalCode()">Submit for Grading</button>
+                        </div>
+                        <div class="feedback" id="challenge-feedback"></div>
+                        <div id="ai-hint-area"></div>
+                        <button class="action-btn next-btn" id="next-q-btn" style="display:none;" onclick="loadCodeQuestion(${index + 1})">Next Question &rarr;</button>
+                    </div>
+                `;
+                window._cmEditor = null;
+                window._cmSolution = null;
+                // Enable Tab to indent in plain textarea
+                const ta = document.getElementById('code-input');
+                if (ta) {
+                    ta.addEventListener('keydown', function(e) {
+                        if (e.key === 'Tab') {
+                            e.preventDefault();
+                            const start = this.selectionStart, end = this.selectionEnd;
+                            this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+                            this.selectionStart = this.selectionEnd = start + 4;
+                        }
+                    });
+                }
+            }
+        }
+
+        // ====== JAVA COMPILER SIMULATION (for the Run button) ======
+        function escapeHtml(s) {
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+        function levDist(a, b) {
+            const m = a.length, n = b.length;
+            const d = Array.from({length: m+1}, (_, i) => [i, ...Array(n).fill(0)]);
+            for (let j = 0; j <= n; j++) d[0][j] = j;
+            for (let i = 1; i <= m; i++)
+                for (let j = 1; j <= n; j++)
+                    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (a[i-1]===b[j-1]?0:1));
+            return d[m][n];
+        }
+        function classNameOf(code) {
+            const m = code.match(/class\s+([A-Za-z_]\w*)/);
+            return m ? m[1] : 'Main';
+        }
+        // Remove string/char literals and comments (keep newlines) so structural checks aren't fooled
+        function stripLiterals(code) {
+            let out = '', i = 0;
+            let inStr=false, inChar=false, inLine=false, inBlock=false;
+            while (i < code.length) {
+                const c = code[i], n = code[i+1];
+                if (inLine) { if (c === '\n'){ inLine=false; out+=c; } i++; continue; }
+                if (inBlock) { if (c==='*' && n==='/'){ inBlock=false; i+=2; } else { if(c==='\n') out+=c; i++; } continue; }
+                if (inStr) { if (c==='\\'){ i+=2; continue; } if (c==='"') inStr=false; i++; continue; }
+                if (inChar) { if (c==='\\'){ i+=2; continue; } if (c==="'") inChar=false; i++; continue; }
+                if (c==='/' && n==='/'){ inLine=true; i+=2; continue; }
+                if (c==='/' && n==='*'){ inBlock=true; i+=2; continue; }
+                if (c==='"'){ inStr=true; i++; continue; }
+                if (c==="'"){ inChar=true; i++; continue; }
+                out += c; i++;
+            }
+            return out;
+        }
+        // Static-analysis "compiler": returns a list of {line, msg, why}
+        function analyzeJava(rawCode) {
+            const errors = [];
+            const stripped = stripLiterals(rawCode);
+            const strLines = stripped.split('\n');
+
+            // 1) Brace balance
+            const opens = (stripped.match(/{/g) || []).length;
+            const closes = (stripped.match(/}/g) || []).length;
+            if (opens !== closes) {
+                errors.push({ line: null,
+                    msg: opens > closes ? "error: reached end of file while parsing" : "error: class, interface, or enum expected",
+                    why: `Your curly braces don't match up — ${opens} opening '{' but ${closes} closing '}'. Every '{' needs exactly one matching '}'.` });
+            }
+            // 2) Parenthesis balance
+            const po = (stripped.match(/\(/g) || []).length;
+            const pc = (stripped.match(/\)/g) || []).length;
+            if (po !== pc) {
+                errors.push({ line: null, msg: "error: ')' expected",
+                    why: `Your parentheses don't match up — ${po} opening '(' but ${pc} closing ')'.` });
+            }
+            const headerRe = /^\s*(public|private|protected|static|final|abstract|class|interface|enum|void|if|else|for|while|switch|do|try|catch|finally|import|package)\b/;
+            // 3) Allman style + 4) missing semicolons
+            for (let idx = 0; idx < strLines.length; idx++) {
+                const trimmed = strLines[idx].trim();
+                if (!trimmed) continue;
+
+                // Allman: an opening brace must sit alone on its line
+                if (trimmed.includes('{') && trimmed !== '{') {
+                    const before = trimmed.split('{')[0].trim();
+                    errors.push({ line: idx + 1, msg: "warning: Allman brace style required",
+                        why: `Line ${idx + 1}: move the opening brace '{' to its OWN line. In Allman style it should not sit next to '${before || ')'}'.` });
+                }
+
+                // Missing-semicolon detection (skip braces & continuation lines)
+                if (trimmed === '{' || trimmed === '}') continue;
+                const last = trimmed[trimmed.length - 1];
+                if (';{}(,+-*/&|<>='.includes(last)) continue;          // already terminated or clearly continued
+                // find next non-blank stripped line
+                let nextNB = '';
+                for (let k = idx + 1; k < strLines.length; k++){ if (strLines[k].trim()){ nextNB = strLines[k].trim(); break; } }
+                if (headerRe.test(trimmed) && (nextNB.startsWith('{') || last === ')')) continue; // class/method/control header
+                errors.push({ line: idx + 1, msg: "error: ';' expected",
+                    why: `Line ${idx + 1}: Java statements must end with a semicolon ';'. It looks like one is missing here.` });
+            }
+            // 5) Misspelled structural keywords (conservative: only close, longer words)
+            const dict = ['public','static','class','String','System','Scanner','import','println','printf','nextInt','nextDouble','nextLine','double','boolean'];
+            // Valid Java words that must never be flagged (even if 1 letter from a dict word)
+            const known = new Set([...dict,
+                'print','out','in','next','hasNext','hasNextInt','hasNextDouble','close','args','length','equals',
+                'Math','PI','abs','sqrt','pow','max','min','round','random','floor','ceil',
+                'int','char','void','new','final','return','true','false','long','float','short','byte','this','null','main','util','java','lang']);
+            const tokens = stripped.match(/[A-Za-z_]\w*/g) || [];
+            const flagged = new Set();
+            for (const t of tokens) {
+                if (known.has(t) || flagged.has(t) || t.length < 5) continue;
+                for (const d of dict) {
+                    if (Math.abs(d.length - t.length) <= 1 && levDist(t, d) === 1) {
+                        flagged.add(t);
+                        errors.push({ line: null, msg: `error: cannot find symbol — variable ${t}`,
+                            why: `'${t}' looks misspelled. Did you mean '${d}'? Java is case-sensitive, so names must match exactly.` });
+                        break;
+                    }
+                }
+            }
+            return errors;
+        }
+        // Simulate the printed output (literal strings the program would print)
+        function simulateOutput(rawCode) {
+            const re = /System\s*\.\s*out\s*\.\s*(printf|println|print)\s*\(\s*("(?:\\.|[^"\\])*")?/g;
+            let m, buf = '';
+            while ((m = re.exec(rawCode)) !== null) {
+                const kind = m[1];
+                let str = m[2] ? m[2].slice(1, -1) : '';
+                str = str.replace(/\\n/g,'\n').replace(/\\t/g,'\t').replace(/\\"/g,'"').replace(/\\\\/g,'\\');
+                if (kind === 'printf') buf += str.replace(/%[-0-9.]*[dfsc]/g, '▢');
+                else if (kind === 'println') buf += str + '\n';
+                else buf += str;
+            }
+            return buf;
+        }
+        // Allman violation check used by grading
+        function hasAllmanViolation(code) {
+            return stripLiterals(code).split('\n').some(l => { const t = l.trim(); return t.includes('{') && t !== '{'; });
+        }
+        function runCode() {
+            const consoleBox = document.getElementById('console-output');
+            if (!consoleBox) return;
+            const taEl = document.getElementById('code-input');
+            const code = (window._cmEditor ? window._cmEditor.getValue() : (taEl ? taEl.value : '')).replace(/ /g, ' ');
+            const cls = classNameOf(code);
+            let html = `<div class="console-header">Terminal</div>`;
+            if (!code.trim()) {
+                html += `<span style="color:#f87171;">error: no source code to compile</span>`;
+                consoleBox.innerHTML = html; return;
+            }
+            const errors = analyzeJava(code);
+            html += `<div style="color:#8892B0;">$ javac ${cls}.java</div>`;
+            if (errors.length) {
+                errors.forEach(e => {
+                    const loc = `${cls}.java${e.line ? ':' + e.line : ''}: `;
+                    const color = e.msg.startsWith('warning') ? '#fbbf24' : '#f87171';
+                    html += `<div style="color:${color}; margin-top:8px;">${escapeHtml(loc + e.msg)}</div>`;
+                    html += `<div style="color:#94a3b8; margin-left:14px; font-size:0.85rem;">&#8627; ${escapeHtml(e.why)}</div>`;
+                });
+                const errCount = errors.filter(e => !e.msg.startsWith('warning')).length;
+                html += `<div style="color:#f87171; margin-top:10px;">${errCount} error${errCount !== 1 ? 's' : ''}</div>`;
+            } else {
+                html += `<div style="color:#4ade80;">&#10003; Compiled successfully</div>`;
+                html += `<div style="color:#8892B0; margin-top:6px;">$ java ${cls}</div>`;
+                const out = simulateOutput(code);
+                if (out) html += `<pre style="color:#e6edf3; margin:4px 0 0 0; white-space:pre-wrap; font-family:inherit;">${escapeHtml(out)}</pre>`;
+                if (out.includes('▢')) html += `<div style="color:#64748b; font-style:italic; margin-top:6px;">&#9634; = a value your program fills in at runtime</div>`;
+                html += `<div style="color:#64748b; font-style:italic; margin-top:6px;">Looks right? Click <strong>Submit for Grading</strong>.</div>`;
+            }
+            consoleBox.innerHTML = html;
+        }
+
+        function evalCode() {
+            const q = activeCode[currentQuestionIndex];
+            const inputEl = document.getElementById('code-input');
+            const consoleBox = document.getElementById('console-output');
+            const fb = document.getElementById('challenge-feedback');
+            const hintArea = document.getElementById('ai-hint-area');
+            const submitBtn = document.getElementById('submit-code-btn');
+            const runBtn = document.getElementById('run-code-btn');
+            const nextBtn = document.getElementById('next-q-btn');
+
+            // Get code from CodeMirror if active, else from textarea
+            const ans = (window._cmEditor ? window._cmEditor.getValue() : (inputEl ? inputEl.value : "")).trim();
+            if(submitBtn) submitBtn.style.display = "none";
+            if(runBtn) runBtn.style.display = "none";
+            if(window._cmEditor) { window._cmEditor.setOption('readOnly', 'nocursor'); }
+            else if(inputEl) { inputEl.readOnly = true; }
+
+            // Long-form code — check required components, then show the answer key
+            if (q.requirements) {
+                let missingHTML = '';
+                let missingCount = 0;
+                q.requirements.forEach(req => {
+                    if (!new RegExp(req.pattern, 'i').test(ans)) {
+                        missingCount++;
+                        missingHTML += `<div style="color:#f87171; margin:3px 0;">&#10007; Missing: ${req.label}</div>`;
+                    }
+                });
+                // Allman style is also required
+                if (hasAllmanViolation(ans)) {
+                    missingCount++;
+                    missingHTML += `<div style="color:#f87171; margin:3px 0;">&#10007; Use Allman style — put each opening brace <code>{</code> on its own line</div>`;
+                }
+                const allCorrect = missingCount === 0;
+                if (allCorrect) score++;
+
+                // Feedback line
+                if (allCorrect) {
+                    if(fb) fb.innerHTML = `<span class="correct">&#10003; Correct! Your program meets every requirement.</span>`;
+                } else {
+                    if(fb) fb.innerHTML = `<span class="wrong">&#10007; ${missingCount} thing${missingCount !== 1 ? 's' : ''} to fix.</span>`;
+                }
+
+                // Results panel: missing list (only if not perfect) + answer key
+                let resultHTML = `<div class="ai-hint"><div class="ai-hint-header">Submission Results</div>`;
+                if (!allCorrect) {
+                    resultHTML += `<div style="margin-bottom:12px;">${missingHTML}</div>`;
+                    resultHTML += `<div style="color:#8892B0; font-size:0.85rem; margin-bottom:6px;">Here is a correct solution (Allman style):</div>`;
+                } else {
+                    resultHTML += `<div style="color:#8892B0; font-size:0.85rem; margin-bottom:6px;">Nicely done. Here is the model solution for reference:</div>`;
+                }
+                resultHTML += `<textarea id="sol-key"></textarea></div>`;
+                if(hintArea) hintArea.innerHTML = resultHTML;
+
+                // Render the answer key as a read-only, syntax-highlighted editor
+                const solTa = document.getElementById('sol-key');
+                if (solTa) {
+                    solTa.value = q.solution;
+                    window._cmSolution = CodeMirror.fromTextArea(solTa, {
+                        mode: 'text/x-java', theme: 'dracula', lineNumbers: true, readOnly: true, lineWrapping: true
+                    });
+                    window._cmSolution.getWrapperElement().classList.add('solution-cm');
+                    window._cmSolution.setSize(null, 'auto');
+                }
+
+            } else {
+                // Short-form code (Unit 2 style) — exact match
+                const norm = s => s.replace(/\s+/g, ' ').replace(/\s*=\s*/g, '=').replace(/\s*;\s*/g, ';').trim();
+                const normAns = norm(ans);
+                let isCorrect = normAns === norm(q.correct);
+                if (!isCorrect && q.alternates) {
+                    isCorrect = q.alternates.some(a => normAns === norm(a));
+                }
+                if (isCorrect) {
+                    if(consoleBox) consoleBox.innerHTML = `<div class="console-header">Console Output</div><span style="color:#4ade80;">✓ Code compiles successfully</span>`;
+                    if(fb) fb.innerHTML = `<span class="correct">✓ Correct!</span> <span class="explanation-text">Your code: <code>${q.correct}</code></span>`;
+                    score++;
+                } else {
+                    if(consoleBox) consoleBox.innerHTML = `<div class="console-header">Console Output</div><span style="color:#f87171;">✗ Code does not match expected output</span>`;
+                    if(fb) fb.innerHTML = `<span class="wrong">✗ Incorrect.</span> <span class="explanation-text">Expected: <code>${q.correct}</code></span>`;
+                    if(hintArea) hintArea.innerHTML = `<div class="ai-hint"><div class="ai-hint-header">JavaLab Assistant</div><span style="color:#CCD6F6;">${q.hint}</span></div>`;
+                }
+            }
+            if(nextBtn) nextBtn.style.display = "inline-block";
+        }
+
+        // ====== SCORE REPORT ======
+        function showScoreReport(totalQuestions) {
+            if(!displayWindow) return;
+            displayWindow.classList.remove('centered-view');
+            const pct = Math.round((score / totalQuestions) * 100);
+            let grade = "";
+            if (pct >= 90) grade = "Excellent!";
+            else if (pct >= 70) grade = "Good work!";
+            else if (pct >= 50) grade = "Keep practicing!";
+            else grade = "Review the concepts and try again.";
+
             displayWindow.innerHTML = `
-                <h1>Intro to Java: ${moduleType}</h1>
-                <div class="challenge-container">
-                    <div class="challenge-title">Question 2</div>
-                    <p style="color:#64748b; font-size:1.2rem; font-style:italic; margin: 40px 0; text-align:center;">
-                        [Question 2 slot is currently blank. Ready for additional curriculum content items as the semester progresses.]
+                <h1>Quiz Complete!</h1>
+                <div class="challenge-container" style="text-align:center; padding:30px 20px;">
+                    <h2>Your Results</h2>
+                    <p style="font-size:1.5rem; color:#00F0FF; margin:20px 0;">
+                        You scored <strong>${score}</strong> out of <strong>${totalQuestions}</strong>
                     </p>
-                    <button class="action-btn" onclick="closeSubMenu()">&larr; Return to Module Hub</button>
+                    <p style="color:#8892B0;">Percentage: ${pct}% — ${grade}</p>
+                    <p style="color:#64748b; font-size:0.9rem; font-style:italic; margin-top:10px;">Questions are randomized — retake for a different set!</p>
+                    <button class="action-btn" onclick="score=0; closeSubMenu();" style="margin-top:20px;">&larr; Return to Dashboard</button>
                 </div>
             `;
         }

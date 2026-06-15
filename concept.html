@@ -131,6 +131,35 @@
             color: #00F0FF;
         }
 
+        .sub-sidebar .menu-item.active-topic {
+            border-color: #00F0FF;
+            color: #00F0FF;
+            box-shadow: inset 3px 0 0 #00F0FF;
+        }
+
+        /* Green labeled divider that groups concept topics by the test they prep for */
+        .sub-sidebar .sub-divider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #34d399;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 4px 2px 10px 2px;
+            cursor: default;
+            white-space: nowrap;
+        }
+        .sub-sidebar .sub-divider::before,
+        .sub-sidebar .sub-divider::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: #34d399;
+            border-radius: 2px;
+        }
+
         .back-btn {
             border-color: #f87171 !important;
             color: #f87171 !important;
@@ -297,15 +326,14 @@
     <div class="workspace">
         <div class="sidebar">
             <div class="menu-item" onclick="openSubMenu(1)"><span>Unit 1: Computer Fundamentals</span></div>
-            <div class="menu-item" onclick="openSubMenu(2)"><span>Unit 2: Data Types &amp; Printing</span></div>
-            <div class="menu-item" onclick="openSubMenu(3)"><span>Unit 3: IO &amp; Expressions</span></div>
-            <div class="menu-item" onclick="openSubMenu(4)"><span>Unit 4: Methods &amp; Classes</span></div>
-            <div class="menu-item" onclick="openSubMenu(5)"><span>Unit 5: OOP Inheritance</span></div>
-            <div class="menu-item locked"><span>6. Loops &amp; Iteration</span></div>
-            <div class="menu-item locked"><span>7. Single Arrays</span></div>
-            <div class="menu-item locked"><span>8. 2D Arrays</span></div>
-            <div class="menu-item locked"><span>9. ArrayLists</span></div>
-            <div class="menu-item locked"><span>10. Recursion &amp; Sorting</span></div>
+            <div class="menu-item" onclick="openSubMenu(2)"><span>Unit 2: IO, Data Types &amp; Formatting</span></div>
+            <div class="menu-item" onclick="openSubMenu(3)"><span>Unit 3: Methods &amp; Classes</span></div>
+            <div class="menu-item" onclick="openSubMenu(4)"><span>Unit 4: Inheritance &amp; If/Else</span></div>
+            <div class="menu-item locked"><span>5. Loops &amp; Iteration</span></div>
+            <div class="menu-item locked"><span>6. Single Arrays</span></div>
+            <div class="menu-item locked"><span>7. 2D Arrays</span></div>
+            <div class="menu-item locked"><span>8. ArrayLists</span></div>
+            <div class="menu-item locked"><span>9. Recursion &amp; Sorting</span></div>
         </div>
 
         <div class="sub-sidebar" id="sub-sidebar"></div>
@@ -327,28 +355,43 @@
             if (unitItems[unit - 1]) unitItems[unit - 1].classList.add('active-unit');
             let html = '<div class="menu-item back-btn" onclick="closeSubMenu()"><span>&larr; Go Back</span></div>';
             if (unit === 1) {
-                html += '<div class="menu-item" onclick="loadCalculatingGrades()"><span>Calculating Grades</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadBinaryConversion()"><span>Binary Conversion</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadMemoryStorage()"><span>Memory &amp; Storage</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadCalculatingGrades()"><span>Calculating Grades</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadBinaryConversion()"><span>Binary Conversion</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadMemoryStorage()"><span>Memory &amp; Storage</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>Computer Fundamentals Exam</span></div>';
             } else if (unit === 2) {
-                html += '<div class="menu-item" onclick="loadDataTypes()"><span>Data Types &amp; Variables</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadPrintStatements()"><span>Print Statements</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadEscapesFormatting()"><span>Escape Sequences &amp; Formatting</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadDataTypes()"><span>Data Types &amp; Variables</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadPrintStatements()"><span>Print Statements</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadEscapesFormatting()"><span>Escape Sequences &amp; Formatting</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>Data Types &amp; Printing Quiz</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadExpressions()"><span>Expressions &amp; Order of Operations</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadCastingASCII()"><span>Type Casting &amp; ASCII</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadScannerIO()"><span>Scanner &amp; Program Structure</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>IO &amp; Expressions Exam</span></div>';
             } else if (unit === 3) {
-                html += '<div class="menu-item" onclick="loadExpressions()"><span>Expressions &amp; Order of Operations</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadCastingASCII()"><span>Type Casting &amp; ASCII</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadScannerIO()"><span>Scanner &amp; Program Structure</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadTracingMethods()"><span>Tracing Method Calls</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>Methods Quiz</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadTracingClasses()"><span>Tracing Across Two Classes</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>Methods &amp; Classes Quiz</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadMethodAnatomy()"><span>Anatomy of a Method</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadClassesObjects()"><span>Classes, Objects &amp; Fields</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadConstructors()"><span>Constructors</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>Methods &amp; Classes Exam</span></div>';
             } else if (unit === 4) {
-                html += '<div class="menu-item" onclick="loadMethodAnatomy()"><span>Anatomy of a Method</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadClassesObjects()"><span>Classes, Objects &amp; Fields</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadConstructors()"><span>Constructors</span><span>&rarr;</span></div>';
-            } else if (unit === 5) {
-                html += '<div class="menu-item" onclick="loadInheritanceBasics()"><span>Inheritance Basics</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadSuperKeyword()"><span>Super &amp; Constructors</span><span>&rarr;</span></div>';
-                html += '<div class="menu-item" onclick="loadOverriding()"><span>Overriding Methods</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadHierarchyVocab()"><span>Reading Class Hierarchies</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>Inheritance Quiz</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadInheritanceBasics()"><span>Inheritance Basics</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadSuperKeyword()"><span>Super &amp; Constructors</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadOverriding()"><span>Overriding Methods</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>Inheritance &amp; If/Else Exam</span></div>';
             }
             subSidebar.innerHTML = html;
             subSidebar.style.display = 'flex';
+        }
+
+        function selectTopic(el) {
+            document.querySelectorAll('.sub-sidebar .menu-item').forEach(m => m.classList.remove('active-topic'));
+            if (el) el.classList.add('active-topic');
         }
 
         function closeSubMenu() { subSidebar.style.display = 'none'; resetPage(); }
@@ -793,7 +836,7 @@ Unix/Mac newline = LF only = 1 byte</div>
             displayWindow.innerHTML = ``;
             displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>Data Types &amp; Printing: Data Types &amp; Variables</h1>
+                <h1>IO, Data Types &amp; Formatting: Data Types &amp; Variables</h1>
 
                 <div class="concept-container">
                     <div class="concept-section-title">What Is a Variable?</div>
@@ -893,7 +936,7 @@ int class = 3;          // ✗ invalid — "class" is a keyword</div>
             displayWindow.innerHTML = ``;
             displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>Data Types &amp; Printing: Print Statements</h1>
+                <h1>IO, Data Types &amp; Formatting: Print Statements</h1>
 
                 <div class="concept-container">
                     <div class="concept-section-title">The Three Print Methods</div>
@@ -1029,7 +1072,7 @@ System.out.printf("%25s", "love to eat pie.");
             displayWindow.innerHTML = ``;
             displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>Data Types &amp; Printing: Escape Sequences &amp; Formatting</h1>
+                <h1>IO, Data Types &amp; Formatting: Escape Sequences &amp; Formatting</h1>
 
                 <div class="concept-container">
                     <div class="concept-section-title">What Are Escape Sequences?</div>
@@ -1163,7 +1206,7 @@ System.out.printf("%25s", "love to eat pie.");</div>
             displayWindow.innerHTML = ``;
             displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>IO &amp; Expressions: Expressions &amp; Order of Operations</h1>
+                <h1>IO, Data Types &amp; Formatting: Expressions &amp; Order of Operations</h1>
 
                 <div class="concept-container">
                     <div class="concept-section-title">Java's Order of Operations (PEMDAS)</div>
@@ -1257,7 +1300,7 @@ Rules:
             displayWindow.innerHTML = ``;
             displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>IO &amp; Expressions: Type Casting &amp; ASCII</h1>
+                <h1>IO, Data Types &amp; Formatting: Type Casting &amp; ASCII</h1>
 
                 <div class="concept-container">
                     <div class="concept-section-title">What Is Type Casting?</div>
@@ -1361,7 +1404,7 @@ Patterns:
             displayWindow.innerHTML = ``;
             displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>IO &amp; Expressions: Scanner &amp; Program Structure</h1>
+                <h1>IO, Data Types &amp; Formatting: Scanner &amp; Program Structure</h1>
 
                 <div class="concept-container">
                     <div class="concept-section-title">Java Program Template</div>
@@ -1489,6 +1532,158 @@ printf(...)      // a method of System.out (originated from C)</div>
         }
 
         // ====== UNIT 4 — MODULE 1: ANATOMY OF A METHOD ======
+        // ====== UNIT 3 — METHODS QUIZ PREP: TRACING METHOD CALLS ======
+        function loadTracingMethods() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Methods &amp; Classes: Tracing Method Calls</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">What &ldquo;Tracing&rdquo; Means</div>
+                    <p class="lead">
+                        Tracing is pretending to be the computer: you read the program one line at a time, in the exact order Java runs it, and keep track of every variable's current value. The program always starts at the first line of <code>main</code>.
+                    </p>
+                    <p class="muted">
+                        When a line <strong>calls a method</strong>, execution jumps into that method, runs it to the end, and then jumps back to continue right where it left off.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Parameters Receive a Copy of the Argument</div>
+                    <p class="lead">
+                        The value in the parentheses (the <strong>argument</strong>) is copied into the method's <strong>parameter</strong>. The parameter name is just a local label inside that method.
+                    </p>
+                    <div class="code-block">game = participate(pass);   // pass is 29
+
+public static double participate(int fun)
+{                              // fun starts as 29
+    fun = fun / 9;             // 29 / 9 = 3  (integer division!)
+    return ((double)(fun));    // returns 3.0
+}</div>
+                    <p class="muted">
+                        Because both numbers are <code>int</code>, <code>29 / 9</code> is <strong>3</strong>, not 3.22. Casting that 3 with <code>(double)</code> makes it print as <strong>3.0</strong>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Return Values Replace the Call</div>
+                    <p class="lead">
+                        A method's <code>return</code> value takes the place of the method call. So <code>game = participate(pass);</code> stores <strong>3.0</strong> into <code>game</code>.
+                    </p>
+                    <p class="warn">
+                        A <code>void</code> method returns <strong>nothing</strong> — you call it on its own line, you can't store its result in a variable.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Building the Output: print vs println</div>
+                    <p class="lead">
+                        <code>print</code> leaves the cursor on the same line; <code>println</code> moves to a new line afterward. Each piece of output is glued onto the last.
+                    </p>
+                    <div class="code-block">public static void player(String cheer)
+{
+    System.out.print("yesss " + cheer);
+}
+
+player("win");            // prints: yesss win
+player("3.0 talking");    // prints: yesss 3.0 talking</div>
+                    <p class="muted">
+                        Both calls use <code>print</code>, so the two pieces sit on one line: <code>yesss winyesss 3.0 talking</code>. There is no space between &ldquo;win&rdquo; and the next &ldquo;yesss&rdquo; because nothing was printed between them.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Method-Anatomy Table</div>
+                    <p class="lead">Every header has four parts you should be able to name:</p>
+                    <div class="code-block">public        static double   participate   (int fun)
+└ access      └ (ignore)      └ name        └ parameter (type + name)
+  specifier      return type ─┘</div>
+                    <p class="muted">
+                        For <code>public static double participate(int fun)</code>: access specifier = <strong>public</strong>, return type = <strong>double</strong>, name = <strong>participate</strong>, parameter = <strong>int fun</strong>. (You can ignore <code>static</code> for now.)
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 3 — METHODS & CLASSES QUIZ PREP: TRACING ACROSS TWO CLASSES ======
+        function loadTracingClasses() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Methods &amp; Classes: Tracing Across Two Classes</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Two Classes Working Together</div>
+                    <p class="lead">
+                        Often one class holds <code>main</code> (the driver) while a second class is a <strong>blueprint</strong> for objects. Tracing now means jumping between the two classes as objects are built and used.
+                    </p>
+                    <p class="muted">
+                        A class like <code>Mystery</code> has its own <strong>fields</strong> (data) and <strong>methods</strong> (behavior). You make a real object from it with <code>new</code>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Creating an Object Runs the Constructor</div>
+                    <p class="lead">
+                        <code>new Mystery(suspect)</code> runs the <strong>constructor</strong>, which sets up the object's private field. The argument is copied into the constructor's parameter.
+                    </p>
+                    <div class="code-block">Mystery robbery = new Mystery(suspect);  // suspect is 5.4
+
+public Mystery(double observe)
+{                                        // observe starts as 5.4
+    clue = ((int)(observe * 6)) - 8;     // (int)(32.4) - 8 = 32 - 8 = 24
+}</div>
+                    <p class="muted">
+                        Work inside-out: <code>observe * 6</code> = 32.4, <code>(int)(32.4)</code> truncates to 32, then <code>32 - 8</code> = <strong>24</strong>. The object's <code>clue</code> field is now 24.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Calling a Method ON an Object</div>
+                    <p class="lead">
+                        <code>robbery.investigate(cases)</code> runs the <code>investigate</code> method <em>using that object's</em> fields. The field keeps its value between calls.
+                    </p>
+                    <div class="code-block">doctor = robbery.investigate(cases);   // cases is 20, clue is 24
+
+public String investigate(int evidence)
+{
+    clue -= evidence;                  // 24 - 20 = 4, clue is now 4
+    return ("dear Watson: " + clue + ".");  // returns "dear Watson: 4."
+}</div>
+                    <p class="muted">
+                        The returned String replaces the call, so <code>doctor</code> becomes <code>dear Watson: 4.</code>
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Putting the Output Together</div>
+                    <p class="lead">Trace the prints in order, watching for <code>println</code> (new line) vs <code>print</code> (same line):</p>
+                    <div class="code-block">System.out.println(detective + cases);  // holmes20  (then new line)
+find(doctor);                           // prints: dear Watson: 4.Elementary,</div>
+                    <div class="code-block">holmes20
+dear Watson: 4.Elementary, _</div>
+                    <p class="muted">
+                        The <code>_</code> shows where the cursor ends — right after the last <code>print</code>, with no new line.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Table — Now With &ldquo;Class It Is In&rdquo;</div>
+                    <p class="lead">
+                        When two classes are involved, you also have to say <strong>which class</strong> a method lives in. A method is &ldquo;in&rdquo; whichever class's <code>{ }</code> body surrounds it.
+                    </p>
+                    <p class="muted">
+                        For <code>public String investigate(int evidence)</code> inside <code>class Mystery</code>: access specifier = <strong>public</strong>, return type = <strong>String</strong>, name = <strong>investigate</strong>, parameter = <strong>int evidence</strong>, class it is in = <strong>Mystery</strong>.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
         function loadMethodAnatomy() {
             displayWindow.classList.add('expanded-layout');
             displayWindow.innerHTML = ``;
@@ -1740,12 +1935,120 @@ user1.findInfo();                    // call a method on it</div>
         }
 
         // ====== UNIT 5 — MODULE 1: INHERITANCE BASICS ======
+        // ====== UNIT 4 — INHERITANCE QUIZ PREP: READING CLASS HIERARCHIES ======
+        function loadHierarchyVocab() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Inheritance &amp; If/Else: Reading Class Hierarchies</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Class Family Tree</div>
+                    <p class="lead">
+                        A <strong>taxonomy</strong> (or class hierarchy) is a tree that shows how classes relate through inheritance. Each <strong>arrow points from a subclass up to its superclass</strong> — from the more specific class to the more general one it builds on.
+                    </p>
+                    <div class="code-block">          Sports          &larr; base class (top of the tree)
+         /      \\
+     Soccer   Basketball     &larr; subclasses of Sports
+        |          |
+   Barcelona     Knicks      &larr; subclasses of Soccer / Basketball
+        |          |
+      Messi    Jalen Brunson &larr; no child classes (bottom)</div>
+                    <p class="muted">
+                        Read <strong>upward</strong> to find a parent, <strong>downward</strong> to find a child. The class at the very top (here, <strong class="accent">Sports</strong>) is the <strong>base class</strong> — every other class traces back to it.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Vocabulary You'll Be Quizzed On</div>
+                    <p class="lead">These words all describe the <em>same</em> relationship from different angles:</p>
+                    <p class="muted">
+                        &bull; <strong class="accent">Superclass / parent / base</strong> — the class being inherited <em>from</em> (higher in the tree).<br>
+                        &bull; <strong class="accent">Subclass / child / derived class</strong> — the class that inherits (lower in the tree).<br>
+                        &bull; &ldquo;Barcelona <strong>extends</strong> Soccer&rdquo;, &ldquo;Barcelona is a <strong>subclass of</strong> Soccer&rdquo;, and &ldquo;Barcelona is <strong>derived from</strong> Soccer&rdquo; all mean the same thing.<br>
+                        &bull; &ldquo;Soccer is the <strong>superclass of</strong> Barcelona&rdquo; says it the other way around.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Moving More Than One Level</div>
+                    <p class="lead">
+                        The <strong>direct</strong> superclass is one step up. A <strong>super-superclass</strong> is two steps up.
+                    </p>
+                    <p class="muted">
+                        From <strong>Messi</strong>: Messi &rarr; Barcelona &rarr; Soccer. So Barcelona is the direct superclass of Messi, and <strong class="accent">Soccer</strong> is the <strong>super-superclass</strong> of Messi.
+                    </p>
+                    <p class="warn">
+                        &bull; A class with <strong>no child class</strong> (nothing points up to it) sits at the bottom of the tree — e.g. Messi, Wimbledon, Pac-Man.<br>
+                        &bull; To find what a class &ldquo;extends&rdquo;, follow its arrow up exactly one level.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Building the Relationship: extends</div>
+                    <p class="lead">
+                        In code, the <code>extends</code> keyword in the subclass header creates the inheritance link.
+                    </p>
+                    <div class="code-block">public class Sport          // the superclass
+{
+    private String combat;
+    private int attack;
+}
+
+public class Soccer extends Sport   // Soccer is-a Sport
+{
+    // Soccer automatically inherits combat and attack
+}</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Constructors &amp; super()</div>
+                    <p class="lead">
+                        A subclass constructor can call its parent's constructor with <code>super(...)</code>. The arguments you pass must match a constructor that actually exists in the superclass.
+                    </p>
+                    <div class="code-block">public Soccer(String league)
+{
+    super(league);   // runs the Sport(String) constructor first
+}</div>
+                    <p class="muted">
+                        So if a subclass calls <code>super("catch")</code>, the matching superclass header looks like <code>public Sport(String combat)</code> — one <code>String</code> parameter.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Reaching Inherited Members: super &amp; this</div>
+                    <p class="lead">
+                        Use <code>super.</code> to reach a member that came from the parent, and <code>this.</code> to reach the object's own field.
+                    </p>
+                    <div class="code-block">super.combat = "protect";   // change the inherited combat field
+
+public Sport(String combat)
+{
+    this.combat = combat;   // set this object's field from the parameter
+}</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Overriding &amp; Variable Vocabulary</div>
+                    <p class="lead">
+                        <strong>Overriding</strong> means a subclass writes its <em>own</em> version of a method that already exists in the superclass — same name, new body in the child class.
+                    </p>
+                    <p class="muted">
+                        &bull; A <strong class="accent">field</strong> is a variable declared in the class body (outside any method). A <strong>local</strong> variable is declared inside a method.<br>
+                        &bull; In <code>private String combat;</code>, <code>combat</code> is a <strong>field</strong> and its <strong>data type</strong> is <code>String</code>.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
         function loadInheritanceBasics() {
             displayWindow.classList.add('expanded-layout');
             displayWindow.innerHTML = ``;
             displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>OOP Inheritance: Inheritance Basics</h1>
+                <h1>Inheritance &amp; If/Else: Inheritance Basics</h1>
 
                 <div class="concept-container">
                     <div class="concept-section-title">What Is Inheritance?</div>
@@ -1819,7 +2122,7 @@ public class Wizard extends Character   // Wizard is-a Character
             displayWindow.innerHTML = ``;
             displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>OOP Inheritance: Super &amp; Constructors</h1>
+                <h1>Inheritance &amp; If/Else: Super &amp; Constructors</h1>
 
                 <div class="concept-container">
                     <div class="concept-section-title">The super Keyword</div>
@@ -1894,7 +2197,7 @@ super.combat = "protect";      // change the inherited field</div>
             displayWindow.innerHTML = ``;
             displayWindow.scrollTop = 0;
             displayWindow.innerHTML = `
-                <h1>OOP Inheritance: Overriding Methods</h1>
+                <h1>Inheritance &amp; If/Else: Overriding Methods</h1>
 
                 <div class="concept-container">
                     <div class="concept-section-title">What Is Overriding?</div>

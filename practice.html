@@ -23,7 +23,6 @@
             flex-direction: column;
             min-height: 100vh;
             overflow: hidden;
-            
         }
 
         header {
@@ -454,8 +453,10 @@
             <div class="unit-drawer" id="drawer-3"></div>
             <button class="unit-btn" data-unit="4" onclick="toggleUnit(4)">Unit 4: Inheritance &amp; If/Else</button>
             <div class="unit-drawer" id="drawer-4"></div>
-            <button disabled>Unit 5: Loops &amp; Iteration</button>
-            <button disabled>Unit 6: Single Arrays</button>
+            <button class="unit-btn" data-unit="5" onclick="toggleUnit(5)">Unit 5: Loops &amp; Recursion</button>
+            <div class="unit-drawer" id="drawer-5"></div>
+            <button class="unit-btn" data-unit="6" onclick="toggleUnit(6)">Unit 6: Strings &amp; Object Reference</button>
+            <div class="unit-drawer" id="drawer-6"></div>
             <button disabled>Unit 7: 2D Arrays</button>
             <button disabled>Unit 8: ArrayLists</button>
             <button disabled>Unit 9: Recursion &amp; Sorting</button>
@@ -1216,6 +1217,7 @@
         let activeInteractive = null;
         let interactiveSelections = [];
         let interactiveGraded = false;
+        let interactiveStarter = null;   // which interactive test to reload on "Try Again"
         let currentCorrectIndex = -1;
 
         // ====== NAVIGATION ======
@@ -1224,7 +1226,9 @@
             1: ['u1'],
             2: ['u2quiz', 'u2exam'],
             3: ['u3quiz1', 'u3quiz2', 'u3exam'],
-            4: ['u4quiz', 'u4exam']
+            4: ['u4quiz', 'u4exam'],
+            5: ['u5quiz', 'u5exam'],
+            6: ['u6quiz', 'u6exam']
         };
 
         // Each test/quiz/exam: its display title + the test types it offers (empty = not built yet)
@@ -1255,7 +1259,19 @@
             'u4exam':  { title: "Inheritance &amp; If/Else Exam", types: [
                             { label: 'Multiple Choice', call: 'startMCU5()' },
                             { label: 'Fill in the Blank', call: 'startFillInBlankU5()' },
-                            { label: 'Code Workspace', call: 'startCodeWorkspace(5)' } ] }
+                            { label: 'Code Workspace', call: 'startCodeWorkspace(5)' } ] },
+            'u5quiz':  { title: "Loops Quiz", types: [
+                            { label: 'Interactive', call: 'startLoopsInteractive()' } ] },
+            'u5exam':  { title: "Loops &amp; Recursion Exam", types: [
+                            { label: 'Interactive', call: 'startLoopsExamInteractive()' },
+                            { label: 'Code Workspace', call: 'startLoopsCode()' } ] },
+            'u6quiz':  { title: "String Methods &amp; Object Reference Quiz", types: [
+                            { label: 'Multiple Choice', call: 'startStringsQuizMC()' },
+                            { label: 'Fill in the Blank', call: 'startStringsQuizBlank()' } ] },
+            'u6exam':  { title: "String Methods &amp; Object Reference Exam", types: [
+                            { label: 'Multiple Choice', call: 'startStringsExamMC()' },
+                            { label: 'Fill in the Blank', call: 'startStringsExamBlank()' },
+                            { label: 'Code Workspace', call: 'startStringsCode()' } ] }
         };
 
         // ===== ACCORDION SIDEBAR NAVIGATION =====
@@ -2255,6 +2271,7 @@
 
         function startInteractive() {
             score = 0;
+            interactiveStarter = startInteractive;
             activeInteractive = taxonomyQuizzes[Math.floor(Math.random() * taxonomyQuizzes.length)];
             interactiveSelections = activeInteractive.questions.map(() => null);
             interactiveGraded = false;
@@ -2277,6 +2294,7 @@
             tx.questions.forEach((q, i) => {
                 qHTML += `<div class="challenge-container interactive-q" id="iq-${i}">`;
                 qHTML += `<h3>Question ${i + 1} of ${tx.questions.length}</h3>`;
+                if (q.code) qHTML += `<pre class="code-trace">${q.code}</pre>`;
                 qHTML += `<p style="color:#CCD6F6;">${q.prompt}</p>`;
                 if (q.type === 'mc') {
                     q.options.forEach((opt, oi) => {
@@ -2292,7 +2310,7 @@
             });
             const topHTML = tx.svg
                 ? `<div class="taxo-diagram">${tx.svg}</div>`
-                : `<pre class="code-trace">${tx.code}</pre>`;
+                : (tx.code ? `<pre class="code-trace">${tx.code}</pre>` : '');
             const intro = tx.intro || (tx.svg
                 ? "Study the class hierarchy above — each arrow points from a <strong>subclass</strong> up to its <strong>superclass</strong>. Then answer every question below and click <strong>Submit Quiz</strong>."
                 : "Trace through the program above line by line — follow each method call and track every variable's value. Then answer every question below and click <strong>Submit Quiz</strong>.");
@@ -2369,7 +2387,7 @@
                         <h2>Your Results</h2>
                         <p style="font-size:1.4rem; color:#00F0FF; margin:14px 0;">You scored <strong>${score}</strong> / <strong>${total}</strong> (${pct}%)</p>
                         <div class="btn-row" style="justify-content:center;">
-                            <button class="action-btn" onclick="startInteractive();">Try Again (new diagram)</button>
+                            <button class="action-btn" onclick="(interactiveStarter || startInteractive)();">Try Again (new version)</button>
                             <button class="action-btn" onclick="score=0; closeModules();">&larr; Return to Dashboard</button>
                         </div>
                     </div>`;
@@ -2593,6 +2611,7 @@ public class Book
 
         function startMethodsInteractive() {
             score = 0;
+            interactiveStarter = startMethodsInteractive;
             activeInteractive = methodsQuizVersions[Math.floor(Math.random() * methodsQuizVersions.length)];
             interactiveSelections = activeInteractive.questions.map(() => null);
             interactiveGraded = false;
@@ -2600,6 +2619,7 @@ public class Book
         }
         function startMethodsClassesInteractive() {
             score = 0;
+            interactiveStarter = startMethodsClassesInteractive;
             activeInteractive = methodsClassesQuizVersions[Math.floor(Math.random() * methodsClassesQuizVersions.length)];
             interactiveSelections = activeInteractive.questions.map(() => null);
             interactiveGraded = false;
@@ -2614,6 +2634,450 @@ public class Book
             score = 0;
             activeBlank = shuffleArray(blankQuestionsMethodsClasses).slice(0, blankQuestionsMethodsClasses.length);
             loadBlankGeneric(0);
+        }
+
+        // ====== UNIT 5 — LOOPS QUIZ (interactive trace pool: show 4 of 5) ======
+        // Each question carries its own code block; the student traces it and writes the exact output.
+        const loopsQuizPool = [
+            { type:'blankMulti',
+              code: `for(int n = 30; n <= 55; n += 5)
+{
+    if(n % 2 == 0)
+        System.out.print(n + " ");
+    else
+        System.out.println("odd " + n);
+}`,
+              prompt:"Trace this <strong>for</strong> loop. Remember: <code>print</code> stays on the same line, <code>println</code> ends the line. Write the <strong>exact output</strong> (press Enter for each new line).",
+              correct:"30 odd 35\n40 odd 45\n50 odd 55", alternates:[] },
+            { type:'blankMulti',
+              code: `String word = new String("code");
+int n = 100;
+while(n > 5)
+{
+    n = n / 2;
+    word = word + "!";
+    System.out.println(word);
+}`,
+              prompt:"Trace this <strong>while</strong> loop. <code>n</code> is an int, so <code>n / 2</code> uses integer division. Write the <strong>exact output</strong>.",
+              correct:"code!\ncode!!\ncode!!!\ncode!!!!\ncode!!!!!", alternates:[] },
+            { type:'blankMulti',
+              code: `int k = 8;
+do
+{
+    System.out.println(k % 3 == 1);
+    k += 2;
+} while(k < 14);`,
+              prompt:"Trace this <strong>do-while</strong> loop. <code>k % 3 == 1</code> prints a boolean (<code>true</code>/<code>false</code>). Write the <strong>exact output</strong>.",
+              correct:"false\ntrue\nfalse", alternates:[] },
+            { type:'blankMulti',
+              code: `int total = 0;
+for(int i = 1; i <= 5; i++)
+{
+    total = total + i;
+    System.out.print(total + " ");
+}
+System.out.println("done " + total);`,
+              prompt:"Trace this loop, which keeps a running <code>total</code>. Every value is printed with <code>print</code> (same line) until the final <code>println</code>. Write the <strong>exact output</strong>.",
+              correct:"1 3 6 10 15 done 15", alternates:[] },
+            { type:'blankMulti',
+              code: `int p = 2;
+while(p > 0)
+{
+    System.out.println("step " + p);
+    p = p + 3;
+}`,
+              prompt:"Trace this <strong>while</strong> loop. If it never ends, trace <strong>three</strong> loops and then write <code>infinite</code> on the last line (as done in class).",
+              correct:"step 2\nstep 5\nstep 8\ninfinite",
+              alternates:["step 2\nstep 5\nstep 8\n...","step 2\nstep 5\nstep 8\n...\ninfinite","step 2\nstep 5\nstep 8"] }
+        ];
+
+        // ====== UNIT 5 — LOOPS & RECURSION EXAM (interactive: 4 loops + 1 recursion, show 4 of 5) ======
+        const loopsExamPool = [
+            { type:'blankMulti',
+              code: `int code = 60;
+for(code = 130; code > 90; code -= 15)
+    System.out.print(code + ", ");
+System.out.println((char)code);`,
+              prompt:"Trace this <strong>for</strong> loop. After the loop ends, <code>(char)code</code> prints the <strong>character</strong> for that ASCII number. Write the <strong>exact output</strong>. (Hint: ASCII 85 is the letter the alphabet's 21st capital.)",
+              correct:"130, 115, 100, U", alternates:[] },
+            { type:'blankMulti',
+              code: `boolean done = false;
+int up = 40;
+while(up > 0 && !done)
+{
+    System.out.println("up = " + up);
+    if(up < 25)
+        done = true;
+    up -= 10;
+}`,
+              prompt:"Trace this <strong>while</strong> loop. The condition uses a boolean flag (<code>!done</code>) joined with <code>&amp;&amp;</code>. Write the <strong>exact output</strong>.",
+              correct:"up = 40\nup = 30\nup = 20", alternates:[] },
+            { type:'blankMulti',
+              code: `double val = 64.0;
+do
+{
+    System.out.println(val + " go");
+    val = val / 2;
+} while(val > 0);`,
+              prompt:"Trace this <strong>do-while</strong> loop. <code>val</code> is a <code>double</code>. If it never ends, trace <strong>three</strong> loops and write <code>infinite</code> on the last line.",
+              correct:"64.0 go\n32.0 go\n16.0 go\ninfinite",
+              alternates:["64.0 go\n32.0 go\n16.0 go\n...","64.0 go\n32.0 go\n16.0 go\n...\ninfinite","64.0 go\n32.0 go\n16.0 go"] },
+            { type:'blankMulti',
+              code: `int sum = 0;
+for(int i = 5; i >= 1; i--)
+{
+    sum = sum + i;
+    System.out.print(i + ":" + sum + " ");
+}
+System.out.println("end");`,
+              prompt:"Trace this counting-down <strong>for</strong> loop. Each line of the body prints <code>i</code>, a colon, the running <code>sum</code>, then a space. Write the <strong>exact output</strong>.",
+              correct:"5:5 4:9 3:12 2:14 1:15 end", alternates:[] },
+            { type:'blankMulti',
+              code: `public class Repeat
+{
+    public static void main(String[] args)
+    {
+        String result = "";
+        result = repeatIt(275);
+        System.out.println("Returned value = " + result);
+    }
+
+    public static String repeatIt(int num)
+    {
+        num = (num + 100) / 3;
+        if(num > 52)
+            return ((char)num + "?" + repeatIt(num));
+        else
+            return (num - 10 + "");
+    }
+}`,
+              prompt:"<strong>Recursion.</strong> Trace <code>repeatIt</code> as it calls itself, drawing the stack on paper if it helps. <code>(char)num</code> becomes a character; the base case returns when <code>num &gt; 52</code> is false. Write the <strong>exact terminal output</strong>.",
+              correct:"Returned value = }?K?:?42", alternates:[] }
+        ];
+
+        // ====== UNIT 5 — LOOPS & RECURSION EXAM: CODE WORKSPACE (write a program; show 2 of 4) ======
+        const outBox = s => `<br><br><strong>Your program should print exactly:</strong><br><span style="display:block; white-space:pre; font-family:'Courier New',monospace; background:#0d1b2e; border:1px solid #233554; border-radius:6px; padding:10px 12px; margin-top:6px; color:#9fe7c4;">${s}</span>`;
+        const codeQuestionsLoops = [
+            { title: "Loop Sum: SumUp",
+              prompt: "Write a complete Java program in a class called <code>SumUp</code>. In the <code>main</code> method, use a <strong>for loop</strong> to add together every whole number from 1 to 10. Keep a running total in a variable as the loop runs, and once the loop has finished, print that total on its own line. The program takes no user input." + outBox("55"),
+              solution: `public class SumUp\n{\n    public static void main(String[] args)\n    {\n        int total = 0;\n        for(int i = 1; i <= 10; i++)\n        {\n            total = total + i;\n        }\n        System.out.println(total);\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+SumUp", label: "Class called SumUp" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "for\\s*\\(", label: "Uses a for loop" },
+                  { pattern: "\\w+\\s*=\\s*\\w+\\s*\\+", label: "Keeps a running total (accumulator)" },
+                  { pattern: "System\\.out\\.print", label: "Prints the total" }
+              ] },
+            { title: "Countdown: Countdown",
+              prompt: "Write a complete Java program in a class called <code>Countdown</code>. Using a <strong>while loop</strong>, start at 10 and count down to 1, printing each number followed by a single space, all on the <strong>same line</strong>. When the loop is finished, print the word <code>Blastoff</code> on a brand new line." + outBox("10 9 8 7 6 5 4 3 2 1 \nBlastoff"),
+              solution: `public class Countdown\n{\n    public static void main(String[] args)\n    {\n        int n = 10;\n        while(n >= 1)\n        {\n            System.out.print(n + " ");\n            n--;\n        }\n        System.out.println("Blastoff");\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+Countdown", label: "Class called Countdown" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "while\\s*\\(", label: "Uses a while loop" },
+                  { pattern: "System\\.out\\.print\\s*\\(", label: "Prints each number on the same line" },
+                  { pattern: "System\\.out\\.println\\s*\\(\\s*\"Blastoff\"", label: "Prints Blastoff on a new line" }
+              ] },
+            { title: "Find the Factors: Factors",
+              prompt: "Write a complete Java program in a class called <code>Factors</code>. In <code>main</code>, use a <strong>for loop</strong> to go through every number from 1 up to and including 12. For each number that divides evenly into 12 (a factor), print that number followed by a space, all on one line. Use the modulus operator <code>%</code> with an <code>if</code> statement to test whether a number is a factor." + outBox("1 2 3 4 6 12 "),
+              solution: `public class Factors\n{\n    public static void main(String[] args)\n    {\n        for(int i = 1; i <= 12; i++)\n        {\n            if(12 % i == 0)\n            {\n                System.out.print(i + " ");\n            }\n        }\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+Factors", label: "Class called Factors" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "for\\s*\\(", label: "Uses a for loop" },
+                  { pattern: "%", label: "Uses the modulus operator %" },
+                  { pattern: "if\\s*\\(", label: "Uses an if statement" },
+                  { pattern: "System\\.out\\.print", label: "Prints each factor" }
+              ] },
+            { title: "Even Numbers: Evens",
+              prompt: "Write a complete Java program in a class called <code>Evens</code>. Write a <strong>for loop</strong> in <code>main</code> that prints every even number from 2 through 20, each on its own line. You may either count by twos, or check each number with the modulus operator (<code>number % 2 == 0</code>)." + outBox("2\n4\n6\n8\n10\n12\n14\n16\n18\n20"),
+              solution: `public class Evens\n{\n    public static void main(String[] args)\n    {\n        for(int i = 2; i <= 20; i += 2)\n        {\n            System.out.println(i);\n        }\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+Evens", label: "Class called Evens" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "for\\s*\\(", label: "Uses a for loop" },
+                  { pattern: "System\\.out\\.println", label: "Prints each number on its own line" }
+              ] }
+        ];
+
+        function startLoopsInteractive() {
+            score = 0;
+            interactiveStarter = startLoopsInteractive;
+            activeInteractive = {
+                questions: shuffleArray(loopsQuizPool).slice(0, 4),
+                intro: "Trace each program above line by line, watching the loop variable and the data types. Then write the exact output for every question below and click <strong>Submit Quiz</strong>."
+            };
+            interactiveSelections = activeInteractive.questions.map(() => null);
+            interactiveGraded = false;
+            loadInteractive();
+        }
+
+        function startLoopsExamInteractive() {
+            score = 0;
+            interactiveStarter = startLoopsExamInteractive;
+            // Always include the recursion question (last in the pool); fill the rest from the loop questions
+            const loops = shuffleArray(loopsExamPool.slice(0, 4)).slice(0, 3);
+            const recursion = loopsExamPool[4];
+            activeInteractive = {
+                questions: shuffleArray([...loops, recursion]),
+                intro: "Trace each program above. Four are loops; one is a recursive method that calls itself. Write the exact output for every question, then click <strong>Submit Quiz</strong>."
+            };
+            interactiveSelections = activeInteractive.questions.map(() => null);
+            interactiveGraded = false;
+            loadInteractive();
+        }
+
+        function startLoopsCode() {
+            score = 0;
+            activeCode = shuffleArray(codeQuestionsLoops).slice(0, 2);
+            loadCodeQuestion(0);
+        }
+
+        // ==========================================================================
+        // ====== UNIT 6 — STRINGS & OBJECT REFERENCE ======
+        // ==========================================================================
+
+        // ---- QUIZ: Multiple Choice (object reference + String methods; show 10) ----
+        const mcStringsQuiz = [
+            { title: "Object Reference", prompt: "When you write <code>String a = new String(\"hi\");</code> and <code>String b = new String(\"hi\");</code>, what does <code>a == b</code> return?",
+              options: ["A) true","B) false","C) it depends on the text","D) it causes an error"], correctIndex: 1,
+              optionExplanations: ["<code>==</code> compares object addresses, and these are two different objects.","Correct. <code>new</code> makes two separate objects, so <code>==</code> (which compares addresses) is false.","<code>==</code> never compares the text — that is what <code>equals</code> does.","This is valid Java."] },
+            { title: "Object Reference", prompt: "Which method compares the <strong>contents (text)</strong> of two Strings?",
+              options: ["A) ==","B) compareTo only","C) equals","D) length"], correctIndex: 2,
+              optionExplanations: ["<code>==</code> compares addresses, not text.","<code>compareTo</code> orders Strings; <code>equals</code> is the true/false content check taught for this.","Correct. <code>a.equals(b)</code> returns true when the two Strings hold the same characters.","<code>length</code> counts characters, it does not compare."] },
+            { title: "Object Reference", prompt: "An object that <strong>no variable refers to anymore</strong> is called:",
+              options: ["A) an alias","B) garbage","C) a literal","D) null"], correctIndex: 1,
+              optionExplanations: ["An alias is when two variables share one object.","Correct. Once nothing points to an object, it becomes garbage.","A literal is text in quotes.","null means a variable points to no object at all."] },
+            { title: "Object Reference", prompt: "When two variables refer to the <strong>same</strong> object, they are:",
+              options: ["A) garbage","B) aliases","C) null","D) literals"], correctIndex: 1,
+              optionExplanations: ["Garbage is an object with no references.","Correct. Two variables pointing at one object are aliases of each other.","null is the absence of an object.","A literal is the quoted text itself."] },
+            { title: "Object Reference", prompt: "A String variable that is declared but <strong>never assigned</strong> (e.g. <code>String bezos;</code>) refers to:",
+              options: ["A) an empty String \"\"","B) a space","C) null","D) 0"], correctIndex: 2,
+              optionExplanations: ["An empty String is \"\", which must be assigned explicitly.","A space is also a value you would have to assign.","Correct. An unassigned object variable refers to null.","0 is for numbers, not object references."] },
+            { title: "String Methods", prompt: "For <code>String musk = \"SpaceX\";</code>, what does <code>musk.length()</code> return?",
+              options: ["A) 5","B) 6","C) 7","D) \"SpaceX\""], correctIndex: 1,
+              optionExplanations: ["Count again: S-p-a-c-e-X is 6 characters.","Correct. \"SpaceX\" has 6 characters, so length() is 6.","There are only 6 characters.","length() returns an int, not the String."] },
+            { title: "String Methods", prompt: "For <code>String bezos = \"BlueOrigin\";</code>, what does <code>bezos.substring(2, 5)</code> return?",
+              options: ["A) \"ueO\"","B) \"ueOr\"","C) \"lue\"","D) \"eOr\""], correctIndex: 0,
+              optionExplanations: ["Correct. substring(2, 5) takes indices 2, 3, 4 = u, e, O = \"ueO\" (5 is not included).","substring stops <em>before</em> index 5, so index 5 ('r') is not included.","That would be indices 1-3.","That would be indices 3-5."] },
+            { title: "String Methods", prompt: "<code>indexOf</code> returns <strong>what</strong> when the character is not found?",
+              options: ["A) 0","B) the length","C) -1","D) null"], correctIndex: 2,
+              optionExplanations: ["0 is a real index (the first character).","length is returned by length(), not a 'not found' signal.","Correct. indexOf returns -1 when the search value is not in the String.","indexOf returns an int, never null."] },
+            { title: "String Methods", prompt: "For <code>String nasa = \"SpaceXButBetter\";</code>, what does <code>nasa.indexOf('t', 5)</code> return?",
+              options: ["A) 8","B) 5","C) 11","D) -1"], correctIndex: 0,
+              optionExplanations: ["Correct. Starting the search at index 5, the first 't' is at index 8.","Index 5 is 'X', not 't'; the second argument is where to START searching.","11 is a later 't'; indexOf finds the FIRST one from the start point.","There is a 't' at index 8, so it is found."] },
+            { title: "String Methods", prompt: "<code>String nasa = musk.concat(\"ButBetter\");</code> where <code>musk = \"SpaceX\"</code>. What is <code>nasa</code>?",
+              options: ["A) \"ButBetterSpaceX\"","B) \"SpaceX ButBetter\"","C) \"SpaceXButBetter\"","D) \"SpaceX\""], correctIndex: 2,
+              optionExplanations: ["concat adds the argument to the END of the original.","concat does not insert a space.","Correct. concat glues \"ButBetter\" onto the end: \"SpaceXButBetter\".","concat returns a new, longer String."] },
+            { title: "String Methods", prompt: "<code>compareTo</code> returns a <strong>negative number</strong> when:",
+              options: ["A) the calling String comes first alphabetically (is 'smaller')","B) the two Strings are equal","C) the calling String comes later","D) the String is empty"], correctIndex: 0,
+              optionExplanations: ["Correct. A negative result means the calling String is 'less' (earlier) than the argument.","Equal Strings return 0.","That returns a positive number.","Empty has nothing to do with the sign."] }
+        ];
+
+        // ---- QUIZ: Fill in the Blank (object map + indices; show 8) ----
+        // Reference code used by several questions:
+        //   String elon = new String("musk"); String bill = "gates"; String larry = "page";
+        //   String bezos; String skunk = "gates"; bezos = bill; bill = "page"; elon = new String("gates");
+        const blankStringsQuiz = [
+            { title: "Objects Created", category:"string", caseSensitive:false, alternates:[],
+              prompt:"Using the object-map code, how many <strong>objects are created</strong> in total?",
+              snippet:`String elon = new String("musk");<br>String bill = "gates";<br>String larry = "page";<br>String skunk = "gates";<br>elon = new String("gates");`,
+              correct:"4" },
+            { title: "Objects Existing", category:"string", caseSensitive:false, alternates:[],
+              prompt:"After all the code runs, how many objects still <strong>exist</strong> (are not garbage)?",
+              snippet:`elon now points to new String("gates"), leaving the original "musk" with no reference.`,
+              correct:"3" },
+            { title: "Garbage", category:"string", caseSensitive:false, alternates:["musk","\"musk\""],
+              prompt:"After the code runs, which String is <strong>garbage</strong> (no variable refers to it)? Write the text.",
+              snippet:`String elon = new String("musk");<br>...<br>elon = new String("gates");   // elon moved off "musk"`,
+              correct:"musk" },
+            { title: "Aliases", category:"string", caseSensitive:false, alternates:["skunk","bezos"],
+              prompt:"<code>bezos = bill;</code> runs while <code>bill</code> still holds \"gates\". Which variable becomes an <strong>alias of bezos</strong> (shares the same \"gates\" object as skunk)?",
+              snippet:`String skunk = "gates";<br>bezos = bill;   // bill is "gates" here`,
+              correct:"skunk" },
+            { title: "== Operator", category:"string", caseSensitive:false, alternates:[],
+              prompt:"<code>elon</code> is a <code>new String(\"gates\")</code> object; <code>skunk</code> is the \"gates\" <em>literal</em>. What does <code>elon == skunk</code> return?",
+              snippet:`elon = new String("gates");<br>String skunk = "gates";<br>elon == skunk   // ?`,
+              correct:"false" },
+            { title: ".equals()", category:"string", caseSensitive:false, alternates:[],
+              prompt:"After the code, <code>bill</code> and <code>larry</code> both hold \"page\". What does <code>bill.equals(larry)</code> return?",
+              snippet:`bill = "page";<br>String larry = "page";<br>bill.equals(larry)   // ?`,
+              correct:"true" },
+            { title: "Value at Declaration", category:"string", caseSensitive:false, alternates:[],
+              prompt:"When <code>bezos</code> is first <strong>declared</strong> with <code>String bezos;</code> (before any assignment), what does it refer to?",
+              snippet:`String bezos;   // refers to [?]`,
+              correct:"null" },
+            { title: "Value at the End", category:"string", caseSensitive:false, alternates:["\"gates\"","gates"],
+              prompt:"At the <strong>end</strong> of the code, what text does <code>bezos</code> refer to? (<code>bezos = bill</code> ran while bill was \"gates\".)",
+              snippet:`bezos = bill;   // bill held "gates" at this moment`,
+              correct:"gates" },
+            { title: "indexOf", category:"string", caseSensitive:false, alternates:[],
+              prompt:"For <code>String bezos = \"BlueOrigin\";</code>, what does <code>bezos.indexOf('b')</code> return? (Note the lowercase b.)",
+              snippet:`B(0) l(1) u(2) e(3) O(4) r(5) i(6) g(7) i(8) n(9)<br>bezos.indexOf('b')   // lowercase b`,
+              correct:"-1" }
+        ];
+
+        // ---- EXAM: Multiple Choice (returned values + data types; show 10) ----
+        const mcStringsExam = [
+            { title: "Return Type", prompt: "What is the <strong>returned data type</strong> of <code>x.endsWith(\"end\")</code>?",
+              options: ["A) String","B) int","C) boolean","D) char"], correctIndex: 2,
+              optionExplanations: ["endsWith does not return text.","endsWith does not return a number.","Correct. endsWith answers a yes/no question, so it returns a boolean.","char is a single character; not what endsWith returns."] },
+            { title: "Return Type", prompt: "What is the <strong>returned data type</strong> of <code>x.charAt(2)</code>?",
+              options: ["A) String","B) char","C) int","D) boolean"], correctIndex: 1,
+              optionExplanations: ["charAt returns a single character, not a String.","Correct. charAt returns one char.","The index is an int, but the returned value is a char.","charAt is not a true/false test."] },
+            { title: "Return Type", prompt: "What is the <strong>returned data type</strong> of <code>y.substring(5)</code>?",
+              options: ["A) char","B) int","C) String","D) boolean"], correctIndex: 2,
+              optionExplanations: ["substring returns more than one character.","substring does not return a number.","Correct. substring returns a String.","substring is not a yes/no test."] },
+            { title: "Return Type", prompt: "What is the <strong>returned data type</strong> of <code>y.indexOf(\"m\")</code> and <code>z.compareTo(x)</code>?",
+              options: ["A) int","B) String","C) char","D) boolean"], correctIndex: 0,
+              optionExplanations: ["Correct. indexOf and compareTo both return an int.","They return numbers, not text.","They return whole numbers, not single characters.","They are not true/false tests."] },
+            { title: "endsWith", prompt: "For <code>String x = \"ReVeReNd\";</code>, what does <code>x.endsWith(\"end\")</code> return?",
+              options: ["A) true","B) false","C) \"end\"","D) -1"], correctIndex: 1,
+              optionExplanations: ["The last three letters are 'eNd', not 'end' — case matters.","Correct. 'eNd' does not match 'end' exactly (capital N), so it is false.","endsWith returns a boolean, not text.","-1 is an indexOf result."] },
+            { title: "substring", prompt: "For <code>String y = \"Martin Luther\";</code>, what does <code>y.substring(5)</code> return?",
+              options: ["A) \"Luther\"","B) \"n Luther\"","C) \" Luther\"","D) \"in Luther\""], correctIndex: 1,
+              optionExplanations: ["That would start at index 7.","Correct. Index 5 is 'n', and substring(5) goes to the end: \"n Luther\".","That starts at the space (index 6).","That starts at index 4."] },
+            { title: "Nested charAt", prompt: "For <code>x = \"ReVeReNd\"</code> and <code>z = \"Martin LutherReVeReNd \"</code>, what does <code>x.charAt(z.indexOf('n')/2)</code> return?",
+              options: ["A) 'V'","B) 'e'","C) 'R'","D) 'a'"], correctIndex: 0,
+              optionExplanations: ["Correct. z.indexOf('n') is 5; 5/2 is 2 (int division); x.charAt(2) is 'V'.","'e' is at index 1 or 3.","'R' is at index 0 or 4.","'a' is not in x."] },
+            { title: "trim + length", prompt: "For <code>z = \"Martin LutherReVeReNd \"</code> (one trailing space, 22 chars), what does <code>z.trim().length()</code> return?",
+              options: ["A) 22","B) 20","C) 21","D) 13"], correctIndex: 2,
+              optionExplanations: ["trim() removes the trailing space first.","Count carefully — 13 + 8 = 21 after the space is removed.","Correct. trim() drops the trailing space, leaving 21 characters.","13 is only the length of \"Martin Luther\"."] },
+            { title: "compareTo math", prompt: "For <code>z = \"Martin LutherReVeReNd \"</code> and <code>x = \"ReVeReNd\"</code>, what does <code>z.compareTo(x)</code> return? ('M'=77, 'R'=82)",
+              options: ["A) 5","B) -5","C) -17","D) 0"], correctIndex: 1,
+              optionExplanations: ["The result is negative because 'M' comes before 'R'.","Correct. First chars differ: 'M'(77) - 'R'(82) = -5.","-17 is 'B'-'S' from a different problem.","They are not equal, so it is not 0."] },
+            { title: "lastIndexOf", prompt: "For <code>y = \"Martin Luther\";</code>, what does <code>y.lastIndexOf('t', 9)</code> return?",
+              options: ["A) 3","B) 9","C) 12","D) -1"], correctIndex: 1,
+              optionExplanations: ["3 is the first 't'; lastIndexOf searches BACKWARD from index 9.","Correct. Searching backward from index 9, the first 't' found is at index 9.","12 is past the start index 9.","There is a 't' at index 9, so it is found."] },
+            { title: "indexOf not found", prompt: "For <code>y = \"Martin Luther\";</code>, what does <code>y.indexOf(\"m\")</code> return? (lowercase m)",
+              options: ["A) 0","B) 5","C) -1","D) 6"], correctIndex: 2,
+              optionExplanations: ["Index 0 is capital 'M', which does not match lowercase 'm'.","There is no lowercase 'm' in the String.","Correct. There is no lowercase 'm' (only capital 'M'), so it returns -1.","Index 6 is a space."] }
+        ];
+
+        // ---- EXAM: Fill in the Blank (returned values + data types + object map; show 10) ----
+        // x = "ReVeReNd"; y = "Martin Luther"; z = y + x + " " = "Martin LutherReVeReNd "
+        const blankStringsExam = [
+            { title: "Returned Value", category:"string", caseSensitive:false, alternates:["\"n Luther\"","n Luther"],
+              prompt:"For <code>String y = \"Martin Luther\";</code>, write the <strong>returned value</strong> of <code>y.substring(5)</code>.",
+              snippet:`M(0) a(1) r(2) t(3) i(4) n(5) &nbsp;(6) L(7) u(8) t(9) h(10) e(11) r(12)`,
+              correct:"n Luther" },
+            { title: "Returned Value", category:"string", caseSensitive:false, alternates:["\"IN LUT\"","IN LUT"],
+              prompt:"Write the <strong>returned value</strong> of <code>y.substring(4, 10).toUpperCase()</code> for <code>y = \"Martin Luther\"</code>.",
+              snippet:`y.substring(4, 10) = "in Lut", then .toUpperCase()`,
+              correct:"IN LUT" },
+            { title: "Returned Value", category:"string", caseSensitive:false, alternates:[],
+              prompt:"Write the <strong>returned value</strong> of <code>y.lastIndexOf('t', 9)</code> for <code>y = \"Martin Luther\"</code>.",
+              snippet:`t(3) ... t(9) &nbsp;&mdash;&nbsp; searching backward starting at index 9`,
+              correct:"9" },
+            { title: "Returned Value", category:"string", caseSensitive:false, alternates:[],
+              prompt:"Write the <strong>returned value</strong> of <code>z.indexOf('r', 5)</code> for <code>z = \"Martin LutherReVeReNd \"</code>.",
+              snippet:`...L(7) u(8) t(9) h(10) e(11) r(12)... &nbsp;&mdash;&nbsp; first lowercase 'r' at or after index 5`,
+              correct:"12" },
+            { title: "Returned Data Type", category:"string", caseSensitive:false, alternates:[],
+              prompt:"What is the <strong>returned data type</strong> of <code>x.charAt(z.indexOf('n')/2)</code>?",
+              snippet:`charAt( ... ) &rarr; data type?`,
+              correct:"char" },
+            { title: "Returned Data Type", category:"string", caseSensitive:false, alternates:[],
+              prompt:"What is the <strong>returned data type</strong> of <code>x.endsWith(\"end\")</code>?",
+              snippet:`x.endsWith("end") &rarr; data type?`,
+              correct:"boolean" },
+            { title: "Returned Data Type", category:"string", caseSensitive:false, alternates:[],
+              prompt:"What is the <strong>returned data type</strong> of <code>z.trim().length()</code>?",
+              snippet:`z.trim().length() &rarr; data type?`,
+              correct:"int" },
+            { title: "Objects Created", category:"string", caseSensitive:false, alternates:[],
+              prompt:"From the exam object map, how many <strong>objects are created</strong> in total?",
+              snippet:`String winter = "rain"; String summer = new String("hot");<br>spring = "rain"; String autumn = "hot";<br>winter = autumn; summer = new String("rain");`,
+              correct:"4" },
+            { title: "Garbage", category:"string", caseSensitive:false, alternates:["hot","\"hot\""],
+              prompt:"After the exam map code runs, which object becomes <strong>garbage</strong>? Write the text. (The <code>new String(\"hot\")</code> loses its only reference.)",
+              snippet:`String summer = new String("hot");<br>summer = new String("rain");   // summer moved off "hot"`,
+              correct:"hot" },
+            { title: "Value at Declaration", category:"string", caseSensitive:false, alternates:[],
+              prompt:"When <code>String spring;</code> is first <strong>declared</strong> (before assignment), what does it refer to?",
+              snippet:`String spring;   // refers to [?]`,
+              correct:"null" },
+            { title: "== Operator", category:"string", caseSensitive:false, alternates:[],
+              prompt:"<code>summer</code> is <code>new String(\"rain\")</code>; <code>spring</code> is the \"rain\" literal. What does <code>summer == spring</code> return?",
+              snippet:`summer = new String("rain");<br>spring = "rain";<br>summer == spring   // ?`,
+              correct:"false" },
+            { title: ".equals()", category:"string", caseSensitive:false, alternates:[],
+              prompt:"What does <code>summer.equals(spring)</code> return, given both hold the text \"rain\"?",
+              snippet:`summer.equals(spring)   // both contain "rain"`,
+              correct:"true" }
+        ];
+
+        // ---- EXAM: Code Workspace (String-processing programs, AcademicEmail-style; show 2) ----
+        const codeStringsExam = [
+            { title: "Clean a String: StringCleaner",
+              prompt: "Like the <code>getEmail</code> method on the exam, this program cleans a String. Write a complete Java program in a class called <code>StringCleaner</code>. In <code>main</code>, start with <code>String email = \"  HELLO World  \";</code> Use the String methods <code>trim()</code> and <code>toLowerCase()</code> together to remove the spaces on the ends and make everything lower case, store the result back into <code>email</code>, then print it." + outBox("hello world"),
+              solution: `public class StringCleaner\n{\n    public static void main(String[] args)\n    {\n        String email = "  HELLO World  ";\n        email = email.trim().toLowerCase();\n        System.out.println(email);\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+StringCleaner", label: "Class called StringCleaner" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "\\.trim\\s*\\(", label: "Uses trim()" },
+                  { pattern: "\\.toLowerCase\\s*\\(", label: "Uses toLowerCase()" },
+                  { pattern: "System\\.out\\.print", label: "Prints the cleaned String" }
+              ] },
+            { title: "Count a Character: LetterCount",
+              prompt: "Write a complete Java program in a class called <code>LetterCount</code>. In <code>main</code>, given <code>String word = \"Mississippi\";</code> use a <strong>for loop</strong> with <code>charAt</code> and <code>length()</code> to count how many times the letter <code>'s'</code> appears in the word, then print the count. (Loop through every index and compare each character to <code>'s'</code>.)" + outBox("4"),
+              solution: `public class LetterCount\n{\n    public static void main(String[] args)\n    {\n        String word = "Mississippi";\n        int count = 0;\n        for(int i = 0; i < word.length(); i++)\n        {\n            if(word.charAt(i) == 's')\n            {\n                count++;\n            }\n        }\n        System.out.println(count);\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+LetterCount", label: "Class called LetterCount" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "for\\s*\\(", label: "Uses a for loop" },
+                  { pattern: "\\.charAt\\s*\\(", label: "Uses charAt to read each character" },
+                  { pattern: "\\.length\\s*\\(", label: "Uses length() for the loop bound" },
+                  { pattern: "System\\.out\\.print", label: "Prints the count" }
+              ] },
+            { title: "First Word: FirstWord",
+              prompt: "Like the <code>analyzeEmail</code> method on the exam, this program pulls out the first word. Write a complete Java program in a class called <code>FirstWord</code>. In <code>main</code>, given <code>String sentence = \"swag master here\";</code> use <code>indexOf(' ')</code> to find the first space and <code>substring</code> to grab everything before it, then print that first word." + outBox("swag"),
+              solution: `public class FirstWord\n{\n    public static void main(String[] args)\n    {\n        String sentence = "swag master here";\n        String first = sentence.substring(0, sentence.indexOf(' '));\n        System.out.println(first);\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+FirstWord", label: "Class called FirstWord" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "\\.indexOf\\s*\\(", label: "Uses indexOf to find the space" },
+                  { pattern: "\\.substring\\s*\\(", label: "Uses substring to grab the first word" },
+                  { pattern: "System\\.out\\.print", label: "Prints the first word" }
+              ] },
+            { title: "Remove Punctuation: Depunct",
+              prompt: "Like the <code>removePunctuation</code> method on the exam, this program keeps only letters. Write a complete Java program in a class called <code>Depunct</code>. In <code>main</code>, given <code>String msg = \"h.e,l!l?o\";</code> make an empty <code>String temp = \"\";</code> then <strong>loop</strong> through every character with <code>charAt</code>. If the character is a letter, glue it onto <code>temp</code> (use <code>Character.isLetter</code>). Print <code>temp</code> at the end." + outBox("hello"),
+              solution: `public class Depunct\n{\n    public static void main(String[] args)\n    {\n        String msg = "h.e,l!l?o";\n        String temp = "";\n        for(int i = 0; i < msg.length(); i++)\n        {\n            char ch = msg.charAt(i);\n            if(Character.isLetter(ch))\n            {\n                temp = temp + ch;\n            }\n        }\n        System.out.println(temp);\n    }\n}`,
+              requirements: [
+                  { pattern: "class\\s+Depunct", label: "Class called Depunct" },
+                  { pattern: "public\\s+static\\s+void\\s+main", label: "Main method signature" },
+                  { pattern: "String\\s+temp", label: "Declares a String temp" },
+                  { pattern: "for\\s*\\(", label: "Loops through the message" },
+                  { pattern: "\\.charAt\\s*\\(", label: "Reads each character with charAt" },
+                  { pattern: "temp\\s*=\\s*temp\\s*\\+", label: "Builds temp by gluing on letters" },
+                  { pattern: "System\\.out\\.print", label: "Prints temp" }
+              ] }
+        ];
+
+        function startStringsQuizMC() {
+            score = 0;
+            activeMC = shuffleArray(mcStringsQuiz).slice(0, 10);
+            loadMCGeneric(0);
+        }
+        function startStringsQuizBlank() {
+            score = 0;
+            activeBlank = shuffleArray(blankStringsQuiz).slice(0, 8);
+            loadBlankGeneric(0);
+        }
+        function startStringsExamMC() {
+            score = 0;
+            activeMC = shuffleArray(mcStringsExam).slice(0, 10);
+            loadMCGeneric(0);
+        }
+        function startStringsExamBlank() {
+            score = 0;
+            activeBlank = shuffleArray(blankStringsExam).slice(0, 10);
+            loadBlankGeneric(0);
+        }
+        function startStringsCode() {
+            score = 0;
+            activeCode = shuffleArray(codeStringsExam).slice(0, 2);
+            loadCodeQuestion(0);
         }
 
         function showScoreReport(totalQuestions) {

@@ -149,12 +149,14 @@
             letter-spacing: 1px;
             margin: 4px 2px 10px 2px;
             cursor: default;
-            white-space: nowrap;
+            white-space: normal;
+            text-align: center;
         }
         .sub-sidebar .sub-divider::before,
         .sub-sidebar .sub-divider::after {
             content: '';
-            flex: 1;
+            flex: 1 0 12px;
+            min-width: 12px;
             height: 2px;
             background: #34d399;
             border-radius: 2px;
@@ -329,8 +331,8 @@
             <div class="menu-item" onclick="openSubMenu(2)"><span>Unit 2: IO, Data Types &amp; Formatting</span></div>
             <div class="menu-item" onclick="openSubMenu(3)"><span>Unit 3: Methods &amp; Classes</span></div>
             <div class="menu-item" onclick="openSubMenu(4)"><span>Unit 4: Inheritance &amp; If/Else</span></div>
-            <div class="menu-item locked"><span>5. Loops &amp; Iteration</span></div>
-            <div class="menu-item locked"><span>6. Single Arrays</span></div>
+            <div class="menu-item" onclick="openSubMenu(5)"><span>Unit 5: Loops &amp; Recursion</span></div>
+            <div class="menu-item" onclick="openSubMenu(6)"><span>Unit 6: Strings &amp; Object Reference</span></div>
             <div class="menu-item locked"><span>7. 2D Arrays</span></div>
             <div class="menu-item locked"><span>8. ArrayLists</span></div>
             <div class="menu-item locked"><span>9. Recursion &amp; Sorting</span></div>
@@ -384,6 +386,20 @@
                 html += '<div class="menu-item" onclick="selectTopic(this); loadSuperKeyword()"><span>Super &amp; Constructors</span><span>&rarr;</span></div>';
                 html += '<div class="menu-item" onclick="selectTopic(this); loadOverriding()"><span>Overriding Methods</span><span>&rarr;</span></div>';
                 html += '<div class="sub-divider"><span>Inheritance &amp; If/Else Exam</span></div>';
+            } else if (unit === 5) {
+                html += '<div class="menu-item" onclick="selectTopic(this); loadTracingLoops()"><span>Tracing Loops</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>Loops Quiz</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadTracingRecursion()"><span>Tracing Recursion</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadWritingLoops()"><span>Writing Loops</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>Loops &amp; Recursion Exam</span></div>';
+            } else if (unit === 6) {
+                html += '<div class="menu-item" onclick="selectTopic(this); loadObjectReference()"><span>Object Reference &amp; the Heap</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadStringToolbox()"><span>String Methods Toolbox</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>String Methods &amp; Object Reference Quiz</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadReadingObjectMaps()"><span>Reading an Object Map</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadReturnTypes()"><span>Return Values &amp; Data Types</span><span>&rarr;</span></div>';
+                html += '<div class="menu-item" onclick="selectTopic(this); loadStringPrograms()"><span>Writing String Programs</span><span>&rarr;</span></div>';
+                html += '<div class="sub-divider"><span>String Methods &amp; Object Reference Exam</span></div>';
             }
             subSidebar.innerHTML = html;
             subSidebar.style.display = 'flex';
@@ -1678,6 +1694,506 @@ dear Watson: 4.Elementary, _</div>
                     </p>
                     <p class="muted">
                         For <code>public String investigate(int evidence)</code> inside <code>class Mystery</code>: access specifier = <strong>public</strong>, return type = <strong>String</strong>, name = <strong>investigate</strong>, parameter = <strong>int evidence</strong>, class it is in = <strong>Mystery</strong>.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 5 — LOOPS QUIZ PREP: TRACING LOOPS ======
+        function loadTracingLoops() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Loops &amp; Recursion: Tracing Loops</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Trace Table</div>
+                    <p class="lead">
+                        To trace a loop, make a little table and fill in one row per loop. Track the loop variable and whether the <strong>check</strong> (the condition) is true or false. When the check is finally false, write <strong>stop</strong>.
+                    </p>
+                    <div class="code-block">loop | m            | check
+  1  | 60 &rarr; 55       | 60 &gt;= 23  T
+  2  | 55 &rarr; 50       | 55 &gt;= 23  T
+ ... | ...          | ...
+  9  | 18 &rarr; stop     | 18 &gt;= 23  F</div>
+                    <p class="muted">
+                        Going row by row keeps you honest. The moment the check is <strong>F</strong>, the loop ends and you stop tracing.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Three Loop Shapes</div>
+                    <p class="lead">All three repeat code, but they check the condition at different times:</p>
+                    <div class="code-block">for(int i = 1; i &lt;= 5; i++)     // init ; condition ; update
+{ ... }
+
+while(x &gt; 0)                    // checks BEFORE each loop
+{ ... }
+
+do
+{ ... }
+while(x &gt; 0);                   // checks AFTER each loop (runs at least once)</div>
+                    <p class="muted">
+                        A <code>do-while</code> always runs its body <strong>once</strong> before it ever checks the condition. A plain <code>while</code> might run zero times.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">print vs println Inside a Loop</div>
+                    <p class="lead">
+                        <code>print</code> keeps the cursor on the same line; <code>println</code> drops to a new line. In a loop this decides whether output stacks up or stretches across one line.
+                    </p>
+                    <div class="code-block">for(int n = 30; n &lt;= 55; n += 5)
+{
+    if(n % 2 == 0)
+        System.out.print(n + " ");      // same line
+    else
+        System.out.println("odd " + n); // new line
+}</div>
+                    <div class="code-block">30 odd 35
+40 odd 45
+50 odd 55</div>
+                    <p class="muted">
+                        Each <code>print</code> glues onto the line; the next <code>println</code> finishes that line. That is why &ldquo;30 &rdquo; and &ldquo;odd 35&rdquo; end up together.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Watch the Data Types</div>
+                    <p class="lead">
+                        Two <code>int</code>s divide with <strong>integer division</strong> (the decimals are thrown away). A <code>double</code> keeps its decimals.
+                    </p>
+                    <div class="code-block">int n = 100;
+n = n / 2;     // 100 / 2 = 50, then 50 / 2 = 25, then 25 / 2 = 12 ...
+
+double val = 64.0;
+val = val / 2; // 64.0 &rarr; 32.0 &rarr; 16.0 &rarr; 8.0 ... never reaches 0</div>
+                    <p class="warn">
+                        Be careful: <code>int</code> division shrinks fast and hits the stopping point; a <code>double</code> that keeps halving gets smaller forever but never equals 0.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Infinite Loops</div>
+                    <p class="lead">
+                        If the loop variable never moves toward making the condition false, the loop never ends. As done in class: trace <strong>three</strong> loops, then write <code>infinite</code>.
+                    </p>
+                    <div class="code-block">int p = 2;
+while(p &gt; 0)        // p only grows, so p &gt; 0 is always true
+{
+    System.out.println("step " + p);
+    p = p + 3;
+}</div>
+                    <div class="code-block">step 2
+step 5
+step 8
+infinite</div>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 5 — EXAM PREP: TRACING RECURSION ======
+        function loadTracingRecursion() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Loops &amp; Recursion: Tracing Recursion</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">A Method That Calls Itself</div>
+                    <p class="lead">
+                        Recursion is when a method calls <strong>itself</strong> with a new value. Each call is a fresh copy with its own parameter; it pauses, waits for the call it made to finish, then continues.
+                    </p>
+                    <p class="muted">
+                        Trace it just like a method call &mdash; but you will have several copies stacked up, each waiting on the one below it.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Base Case vs. Recursive Case</div>
+                    <p class="lead">
+                        Every recursion needs a <strong>base case</strong> &mdash; a condition that stops the calling. Without it you get infinite recursion.
+                    </p>
+                    <div class="code-block">public static String repeatIt(int num)
+{
+    num = (num + 100) / 3;
+    if(num &gt; 52)
+        return ((char)num + "?" + repeatIt(num));  // recursive case
+    else
+        return (num - 10 + "");                     // base case (stops)
+}</div>
+                    <p class="muted">
+                        While <code>num &gt; 52</code> is true it keeps calling itself. Once <code>num</code> is 52 or less, it returns a plain String and the chain unwinds.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Call Stack (Draw It!)</div>
+                    <p class="lead">
+                        Track each call's <code>num</code> on the way <em>down</em>, then build the returned String on the way <em>back up</em>. Starting from <code>repeatIt(275)</code>:
+                    </p>
+                    <div class="code-block">repeatIt(275): num = 375/3 = 125  &rarr; (char)125 + "?" + repeatIt(125)
+repeatIt(125): num = 225/3 = 75   &rarr; (char)75  + "?" + repeatIt(75)
+repeatIt(75):  num = 175/3 = 58   &rarr; (char)58  + "?" + repeatIt(58)
+repeatIt(58):  num = 158/3 = 52   &rarr; 52 - 10 + "" = "42"   (base case)</div>
+                    <p class="muted">
+                        Now unwind from the bottom: <code>"42"</code> &rarr; <code>":?42"</code> &rarr; <code>"K?:?42"</code> &rarr; <code>"}?K?:?42"</code>.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Casting an int to a char</div>
+                    <p class="lead">
+                        <code>(char)num</code> turns a number into the <strong>character</strong> with that ASCII code, and gluing it to a String shows the symbol, not the number.
+                    </p>
+                    <div class="code-block">(char)125 = '}'      (char)75 = 'K'      (char)58 = ':'</div>
+                    <div class="code-block">Returned value = }?K?:?42</div>
+                    <p class="muted">
+                        So the final printout is <code>Returned value = }?K?:?42</code>. Drawing the stack is the safest way to get the symbols in the right order.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 5 — EXAM PREP: WRITING LOOPS ======
+        function loadWritingLoops() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Loops &amp; Recursion: Writing Loops</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Anatomy of a for Loop</div>
+                    <p class="lead">
+                        A <code>for</code> loop packs three things into one line: where to <strong>start</strong>, how long to <strong>keep going</strong>, and how to <strong>change</strong> each time.
+                    </p>
+                    <div class="code-block">for(int i = 1; i &lt;= 10; i++)
+{          //  start    keep-going   change
+    System.out.println(i);
+}</div>
+                    <p class="muted">
+                        Use a <code>for</code> loop when you know how many times to repeat (counting 1 to 10). Use a <code>while</code> loop when you repeat until some condition changes.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">The Accumulator Pattern</div>
+                    <p class="lead">
+                        To add things up, make a total variable <strong>before</strong> the loop, then add to it <strong>inside</strong> the loop. Print it after the loop ends.
+                    </p>
+                    <div class="code-block">int total = 0;
+for(int i = 1; i &lt;= 10; i++)
+{
+    total = total + i;   // running total
+}
+System.out.println(total);   // prints 55</div>
+                    <p class="warn">
+                        Declaring <code>total</code> inside the loop would reset it to 0 every time &mdash; always declare it outside.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Same Line vs. New Lines</div>
+                    <p class="lead">
+                        Use <code>print</code> with a trailing space to lay results across one line; use <code>println</code> to put each on its own line.
+                    </p>
+                    <div class="code-block">for(int n = 10; n &gt;= 1; n--)
+    System.out.print(n + " ");   // 10 9 8 7 6 5 4 3 2 1
+System.out.println("Blastoff");  // new line: Blastoff</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Using % to Test Numbers</div>
+                    <p class="lead">
+                        The modulus operator <code>%</code> gives the remainder. A remainder of 0 means &ldquo;divides evenly&rdquo; &mdash; perfect for finding factors or even numbers.
+                    </p>
+                    <div class="code-block">for(int i = 1; i &lt;= 12; i++)
+{
+    if(12 % i == 0)              // i is a factor of 12
+        System.out.print(i + " ");
+}                               // prints: 1 2 3 4 6 12</div>
+                    <p class="muted">
+                        <code>n % 2 == 0</code> tests for an even number; <code>12 % i == 0</code> tests whether <code>i</code> is a factor of 12.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 6 — QUIZ PREP: OBJECT REFERENCE ======
+        function loadObjectReference() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Strings &amp; Object Reference: Object Reference &amp; the Heap</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Variables Hold Arrows, Not Objects</div>
+                    <p class="lead">
+                        A String variable does not hold the text itself &mdash; it holds an <strong>arrow (a reference)</strong> that points to a String object living in memory. Drawing those arrows is the &ldquo;object map.&rdquo;
+                    </p>
+                    <div class="code-block">String bill = "gates";     bill  &rarr;  "gates"
+String bezos = bill;       bezos &rarr;  "gates"   (same object!)</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">new vs. a Literal</div>
+                    <p class="lead">
+                        The word <code>new</code> always builds a <strong>brand-new object</strong>, even if an identical String already exists. A plain literal in quotes reuses one shared copy.
+                    </p>
+                    <div class="code-block">String a = new String("hi");   // a fresh object
+String b = new String("hi");   // ANOTHER fresh object
+String c = "hi";               // shared literal
+String d = "hi";               // same shared literal as c</div>
+                    <p class="muted">
+                        So <code>a</code> and <code>b</code> point to two different objects, but <code>c</code> and <code>d</code> point to the same one.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">== vs. .equals()</div>
+                    <p class="lead">
+                        <code>==</code> asks &ldquo;<strong>same object?</strong>&rdquo; (same arrow). <code>.equals()</code> asks &ldquo;<strong>same text?</strong>&rdquo;
+                    </p>
+                    <div class="code-block">a == b            // false  (different objects)
+a.equals(b)       // true   (same text "hi")
+c == d            // true   (both the shared literal)</div>
+                    <p class="warn">
+                        Almost always use <code>.equals()</code> to compare String contents. <code>==</code> on objects is a trap.
+                    </p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Reassigning, Garbage &amp; Aliases</div>
+                    <p class="lead">
+                        Assigning a variable just moves its arrow. If an object is left with <strong>no arrows pointing to it</strong>, it becomes <strong>garbage</strong>. When two variables point to one object, they are <strong>aliases</strong>.
+                    </p>
+                    <div class="code-block">String elon = new String("musk");  // elon &rarr; "musk"
+elon = new String("gates");        // elon now &rarr; "gates"
+                                   // the "musk" object is now GARBAGE</div>
+                    <p class="muted">
+                        A variable declared but never assigned (e.g. <code>String bezos;</code>) points to <strong>null</strong> &mdash; no object at all.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 6 — QUIZ PREP: STRING METHODS ======
+        function loadStringToolbox() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Strings &amp; Object Reference: String Methods Toolbox</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Indexes Start at 0</div>
+                    <p class="lead">Every character has an index, counting from 0. Write them out before answering any method question.</p>
+                    <div class="code-block">String bezos = "BlueOrigin";
+ B  l  u  e  O  r  i  g  i  n
+ 0  1  2  3  4  5  6  7  8  9</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">length() and charAt()</div>
+                    <div class="code-block">"SpaceX".length()        // 6  (count of characters)
+bezos.charAt(4)          // 'O' (the character at index 4)</div>
+                    <p class="muted"><code>length()</code> returns an <strong>int</strong>; <code>charAt()</code> returns a single <strong>char</strong>.</p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">substring(start) and substring(start, end)</div>
+                    <p class="lead">The <strong>end index is NOT included</strong>. One argument means &ldquo;from here to the end.&rdquo;</p>
+                    <div class="code-block">bezos.substring(2, 5)    // "ueO"   (indices 2,3,4 — stops before 5)
+"Martin Luther".substring(5)   // "n Luther"  (index 5 to the end)</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">indexOf — and the second argument</div>
+                    <p class="lead">
+                        <code>indexOf</code> gives the index of the first match, or <strong>-1</strong> if it is not found. A second argument says <strong>where to start searching</strong>.
+                    </p>
+                    <div class="code-block">"SpaceXButBetter".indexOf('t', 5)   // 8  (first 't' at or after index 5)
+"BlueOrigin".indexOf('b')           // -1 (lowercase b is not present)</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">concat and compareTo</div>
+                    <p class="lead">
+                        <code>concat</code> glues a String onto the end. <code>compareTo</code> returns a number: <strong>0</strong> if equal, <strong>negative</strong> if the caller comes first, <strong>positive</strong> if it comes later.
+                    </p>
+                    <div class="code-block">"SpaceX".concat("ButBetter")   // "SpaceXButBetter"
+
+// compareTo: subtract the first characters that differ
+"BlueOrigin".compareTo("SpaceX")   // 'B'(66) - 'S'(83) = -17
+// if one String IS the start of the other, subtract the lengths
+"SpaceXButBetter".compareTo("SpaceX")  // 15 - 6 = 9</div>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 6 — EXAM PREP: READING AN OBJECT MAP ======
+        function loadReadingObjectMaps() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Strings &amp; Object Reference: Reading an Object Map</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Draw It Line by Line</div>
+                    <p class="lead">Go through the code in order, drawing or re-pointing one arrow per line. Watch every <code>new</code> (makes an object) and every <code>=</code> (moves an arrow).</p>
+                    <div class="code-block">String winter = "rain";              winter &rarr; "rain"
+String summer = new String("hot");   summer &rarr; new "hot"
+spring = "rain";                     spring &rarr; "rain"
+String autumn = "hot";               autumn &rarr; "hot"
+winter = autumn;                     winter &rarr; "hot"
+summer = new String("rain");         summer &rarr; new "rain"</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Created vs. Still Existing</div>
+                    <p class="lead">
+                        <strong>Created</strong> counts every object the code ever made. <strong>Existing</strong> counts only the ones still pointed to at the end. The difference is the garbage.
+                    </p>
+                    <div class="code-block">Created:  "rain" literal, new "hot", "hot" literal, new "rain"   = 4
+Garbage:  new "hot"   (summer moved off it &rarr; nothing points to it)
+Existing: 4 - 1 = 3</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Aliases, Declared Value, End Value</div>
+                    <p class="lead">After the map is drawn, the questions answer themselves:</p>
+                    <div class="code-block">Aliases:  autumn and winter  (both &rarr; the "hot" literal)
+
+Declared (first line only):  spring = null,  summer = "hot",  winter = "rain"
+At the end:                  spring = "rain", summer = "rain", winter = "hot"</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">== vs .equals() on the Map</div>
+                    <div class="code-block">summer == spring        // false (new "rain" object vs "rain" literal)
+summer.equals(spring)   // true  (both hold the text "rain")</div>
+                    <p class="muted">
+                        Same trap as always: <code>==</code> compares the arrows, <code>.equals()</code> compares the text.
+                    </p>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 6 — EXAM PREP: RETURN VALUES & DATA TYPES ======
+        function loadReturnTypes() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Strings &amp; Object Reference: Return Values &amp; Data Types</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Every Method Returns a Value AND a Type</div>
+                    <p class="lead">On the exam you give both the result and its data type. Memorize this table:</p>
+                    <div class="code-block">length()           &rarr; int       indexOf(...)      &rarr; int
+charAt(i)          &rarr; char      lastIndexOf(...)  &rarr; int
+substring(...)     &rarr; String    compareTo(...)    &rarr; int
+trim()             &rarr; String    equals(...)       &rarr; boolean
+toUpperCase()      &rarr; String    endsWith(...)     &rarr; boolean</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Work Nested Calls Inside-Out</div>
+                    <p class="lead">When one method's result feeds another, solve the innermost piece first.</p>
+                    <div class="code-block">x = "ReVeReNd",  z = "Martin LutherReVeReNd "
+
+x.charAt( z.indexOf('n') / 2 )
+        z.indexOf('n')  &rarr; 5      // first 'n' in z
+        5 / 2           &rarr; 2      // int division
+        x.charAt(2)     &rarr; 'V'    // answer is 'V', a char</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">trim() Then Count; Watch Case</div>
+                    <div class="code-block">z = "Martin LutherReVeReNd "   // 22 chars (one trailing space)
+z.trim().length()   &rarr; 21    // trim removes the end space first
+
+x.endsWith("end")   &rarr; false // x ends with "eNd" — the capital N matters</div>
+                    <p class="warn">String methods are <strong>case-sensitive</strong>. 'N' and 'n' are different characters.</p>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">compareTo Returns a Number</div>
+                    <p class="lead">Subtract the ASCII codes of the first characters that differ. If one String is the start of the other, subtract their lengths.</p>
+                    <div class="code-block">z.compareTo(x)    // 'M'(77) - 'R'(82) = -5
+y.indexOf("m")    // -1, because y has 'M' but no lowercase 'm'</div>
+                    <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
+                </div>
+            `;
+        }
+
+        // ====== UNIT 6 — EXAM PREP: WRITING STRING PROGRAMS ======
+        function loadStringPrograms() {
+            displayWindow.classList.add('expanded-layout');
+            displayWindow.innerHTML = ``;
+            displayWindow.scrollTop = 0;
+            displayWindow.innerHTML = `
+                <h1>Strings &amp; Object Reference: Writing String Programs</h1>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Cleaning Input (getEmail style)</div>
+                    <p class="lead">Chain methods to clean a String: <code>trim()</code> removes the spaces on the ends, <code>toLowerCase()</code> makes it all lower case. Save the result back into the variable.</p>
+                    <div class="code-block">email = email.trim().toLowerCase();</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Building a New String (removePunctuation style)</div>
+                    <p class="lead">
+                        Start with an empty <code>String temp = ""</code>, loop through every character with <code>charAt</code>, and <strong>glue on</strong> only the ones you want to keep.
+                    </p>
+                    <div class="code-block">String temp = "";
+for(int i = 0; i &lt; email.length(); i++)
+{
+    char ch = email.charAt(i);
+    if(Character.isLetter(ch) || ch == ' ')
+        temp = temp + ch;     // keep letters and spaces
+}
+email = temp;</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Peeling Off Words (analyzeEmail style)</div>
+                    <p class="lead">
+                        To grab the first word, take everything up to the first space. To move on, cut that word off the front. Compare words with <code>.equals()</code>.
+                    </p>
+                    <div class="code-block">first = email.substring(0, email.indexOf(' '));   // first word
+email = email.substring(email.indexOf(' ') + 1);  // drop that word
+
+if(first.equals("dude") || first.equals("bruh"))  // slang check
+    numSlang++;</div>
+                </div>
+
+                <div class="concept-container">
+                    <div class="concept-section-title">Math &amp; Formatted Output (getEmailGrade / printGrade)</div>
+                    <p class="lead">
+                        Cast to <code>double</code> so the division keeps decimals, and use <code>printf</code> with <code>%.2f</code> to print two decimal places.
+                    </p>
+                    <div class="code-block">return (1 - (double)numSlang / numWords);   // e.g. 1 - 3/14
+
+System.out.printf("Your grade was %.2f%%", grade);
+if(grade &gt;= 0.9)
+    System.out.println("so send the email.");
+else
+    System.out.println("so do not send the email.");</div>
+                    <p class="muted">
+                        The <code>(double)</code> cast is essential &mdash; without it, <code>numSlang / numWords</code> would do integer division and the grade would be wrong.
                     </p>
                     <button class="action-btn" onclick="closeSubMenu()">&larr; Back to Concept Labs</button>
                 </div>
